@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserService {
 
@@ -29,6 +31,15 @@ public class UserService {
 
     private boolean emailExist(String email) {
         return userRepository.findUserByEmail(email).isPresent();
+    }
+
+
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    public User saveUser(User user) {
+        return userRepository.save(user);
     }
 
     // Additional methods like validateUser, deleteUser, etc., could also be here.
