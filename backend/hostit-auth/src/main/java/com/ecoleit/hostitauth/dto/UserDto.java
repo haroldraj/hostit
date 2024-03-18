@@ -18,42 +18,11 @@ public class UserDto {
     private String confirmPassword;
 
     @NotBlank(message = "Email is required")
-    // Add your email validation pattern here
     private String email;
 
-    // Getters and setters for all fields
+    // Getters and setters
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
-
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    // Your getters and setters here
 
     // Optionally, you can add a method to check if password and confirm password match
     public boolean isPasswordConfirmed() {
