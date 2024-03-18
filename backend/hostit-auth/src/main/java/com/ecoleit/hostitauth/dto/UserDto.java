@@ -28,4 +28,24 @@ public class UserDto {
     public boolean isPasswordConfirmed() {
         return this.password != null && this.password.equals(this.confirmPassword);
     }
+
+    //get user name
+    public String getUsername() {
+        return username;
+    }
+
+    //set user name
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    //get user password
+    public String getPassword() {
+        return password;
+    }
+
+    //set user password
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

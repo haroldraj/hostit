@@ -9,10 +9,6 @@ import org.springframework.stereotype.Component;
 public class SecurityUtility {
 
     // This Bean could also be declared in a @Configuration class
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
     // You could add more utility methods related to security here
     // For example, methods for JWT token creation and validation,
