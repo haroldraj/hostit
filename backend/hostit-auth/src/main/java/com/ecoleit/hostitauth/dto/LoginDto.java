@@ -1,6 +1,7 @@
 package com.ecoleit.hostitauth.dto;
 
-import javax.validation.constraints.NotBlank;
+
+import org.hibernate.validator.constraints.NotBlank;
 
 public class LoginDto {
 

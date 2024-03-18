@@ -38,17 +38,20 @@ public class TwoFactorAuthenticationUtil {
                 .label(account)
                 .secret(secretKey)
                 .issuer(issuer)
-                .algorithm(QrData.Algorithm.SHA1) // or the one you chose
+                //.algorithm(QrData.Algorithm.SHA1) // or the one you chose
                 .digits(6)
                 .period(30)
                 .build();
 
         return String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s",
-                data.getIssuer(), data.getLabel(), data.getSecret(), data.getIssuer());
+                issuer, account, secretKey, issuer);
     }
 
     public byte[] generateQrCode(String totpUrl, int width, int height) throws QrGenerationException {
-        return qrGenerator.generate(totpUrl, width, height);
+        QrData data = new QrData.Builder()
+                .label(totpUrl)
+                .build();
+        return qrGenerator.generate(data);
     }
 
     public boolean verifyCode(String secret, String code) {
