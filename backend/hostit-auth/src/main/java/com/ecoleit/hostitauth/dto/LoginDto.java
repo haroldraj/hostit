@@ -1,8 +1,8 @@
 package com.ecoleit.hostitauth.dto;
 
 
-import org.hibernate.validator.constraints.NotBlank;
-
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 public class LoginDto {
 
     @NotBlank(message = "Username cannot be blank")
