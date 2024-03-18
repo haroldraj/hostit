@@ -1,6 +1,7 @@
 package com.ecoleit.hostitauth.entity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+
 import java.util.Collection;
 
 @Entity
