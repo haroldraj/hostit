@@ -1,8 +1,8 @@
 package com.ecoleit.hostitauth.entity;
 
-import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users") // 'user' is often a reserved keyword in SQL

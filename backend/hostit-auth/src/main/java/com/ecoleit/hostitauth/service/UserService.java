@@ -28,7 +28,7 @@ public class UserService {
     }
 
     private boolean emailExist(String email) {
-        return userRepository.findByEmail(email).isPresent();
+        return userRepository.findUserByEmail(email).isPresent();
     }
 
     // Additional methods like validateUser, deleteUser, etc., could also be here.
