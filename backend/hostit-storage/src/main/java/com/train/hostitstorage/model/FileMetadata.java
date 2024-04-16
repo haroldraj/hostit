@@ -1,7 +1,5 @@
 package com.train.hostitstorage.model;
 
-import jakarta.persistence.Entity;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
