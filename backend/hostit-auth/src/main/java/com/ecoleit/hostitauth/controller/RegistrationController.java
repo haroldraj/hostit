@@ -33,10 +33,16 @@ public class RegistrationController {
             return ResponseEntity.badRequest().body("Username is already taken");
         }
 
+        // Check if email already exists
+        if (userService.emailExist(registrationDto.getEmail())) {
+            return ResponseEntity.badRequest().body("Email is already taken");
+        }
+
         // Create a new user and set its properties from the DTO
         User newUser = new User();
         newUser.setUsername(registrationDto.getUsername());
         newUser.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
+        newUser.setEmail(registrationDto.getEmail());
         // You might want to set other properties or roles as well
 
         // Save the new user

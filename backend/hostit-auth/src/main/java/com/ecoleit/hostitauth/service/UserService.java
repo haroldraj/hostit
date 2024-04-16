@@ -29,7 +29,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    private boolean emailExist(String email) {
+    public boolean emailExist(String email) {
         return userRepository.findUserByEmail(email).isPresent();
     }
 
