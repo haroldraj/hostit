@@ -1,38 +1,56 @@
 package com.train.hostit_synchro.controller;
 
+import com.train.hostit_synchro.dto.SyncRequestDto;
+import com.train.hostit_synchro.dto.FileSyncStatusDto;
+import com.train.hostit_synchro.service.SyncService;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/sync")
 public class SyncController {
 
-    // Inject any necessary services or dependencies here
+    private final SyncService syncService;
 
     @Autowired
-    public SyncController() {
-        // Constructor for dependency injection if needed
-    }
-
-    // Define endpoints for synchronization operations
-
-    @GetMapping("/status")
-    public String getSyncStatus() {
-        // Implement logic to retrieve synchronization status
-        return "Sync status: OK"; // Placeholder response
+    public SyncController(SyncService syncService) {
+        this.syncService = syncService;
     }
 
     @PostMapping("/start")
-    public String startSync() {
-        // Implement logic to start synchronization
-        return "Synchronization started"; // Placeholder response
+    public ResponseEntity<?> startSynchronization(@RequestBody SyncRequestDto syncRequestDto) {
+        try {
+            syncService.startSynchronization(syncRequestDto);
+            return ResponseEntity.ok().body("Synchronization has started successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error starting synchronization: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/status/{syncJobId}")
+    public ResponseEntity<?> checkSynchronizationStatus(@PathVariable String syncJobId) {
+        try {
+            FileSyncStatusDto status = syncService.getSyncStatus(syncJobId);
+            return ResponseEntity.ok(status);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error retrieving synchronization status: " + e.getMessage());
+        }
     }
 
     @PostMapping("/stop")
-    public String stopSync() {
-        // Implement logic to stop synchronization
-        return "Synchronization stopped"; // Placeholder response
+    public ResponseEntity<?> stopSynchronization(@RequestBody String syncJobId) {
+        try {
+            syncService.stopSynchronization(syncJobId);
+            return ResponseEntity.ok().body("Synchronization has been requested to stop.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error stopping synchronization: " + e.getMessage());
+        }
     }
 
-    // Add more endpoints for synchronization operations as needed
+    // Additional controller methods for other synchronization operations can be added here.
 }

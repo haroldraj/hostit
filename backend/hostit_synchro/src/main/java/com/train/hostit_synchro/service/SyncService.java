@@ -1,32 +1,36 @@
 package com.train.hostit_synchro.service;
 
-import com.train.hostit_synchro.model.SyncEvent;
+import com.train.hostit_synchro.dto.SyncRequestDto;
+import io.minio.MinioClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SyncService {
 
-    public void handleLocalFileChange(String filePath) {
-        // Logic to handle local file changes
-        // This method will be invoked when a change is detected in the local file system
-        System.out.println("Handling local file change: " + filePath);
-        // Emit a sync event
-        emitSyncEvent("LOCAL_FILE_CHANGE");
+    private final MinioClient minioClient;
+
+    @Autowired
+    public SyncService(MinioClient minioClient) {
+        this.minioClient = minioClient;
     }
 
-    public void handleRemoteFileChange(String filePath) {
-        // Logic to handle remote file changes
-        // This method will be invoked when a change is detected in the remote file system
-        System.out.println("Handling remote file change: " + filePath);
-        // Emit a sync event
-        emitSyncEvent("REMOTE_FILE_CHANGE");
+    public void startSynchronization(SyncRequestDto syncRequest) {
+        // Logic to start synchronization with Minio
+        // This could involve uploading, downloading, or syncing files
+        // For demonstration purposes, the details are not implemented
     }
 
-    private void emitSyncEvent(String eventType) {
-        // Logic to emit a sync event
-        // This method will create and publish a SyncEvent to notify about the synchronization event
-        SyncEvent syncEvent = new SyncEvent(eventType);
-        // Here you can publish the event using WebSocket, HTTP request, or any other appropriate method
-        System.out.println("Sync event emitted: " + syncEvent.getEventType());
+    public String getSyncStatus(String syncJobId) {
+        // Logic to get the current status of the sync job
+        // You might check Minio for the sync status or a database that tracks sync jobs
+        return "Status of sync job " + syncJobId; // Placeholder status
     }
+
+    public void stopSynchronization(String syncJobId) {
+        // Logic to stop the sync job
+        // This might involve interrupting the sync process and performing cleanup
+    }
+
+    // Add additional methods as needed for your sync functionality
 }
