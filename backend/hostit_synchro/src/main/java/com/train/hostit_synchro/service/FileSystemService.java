@@ -13,5 +13,5 @@ public interface FileSystemService {
 
     void moveFile(String sourceFilePath, String destinationFilePath);
 
-    void watchDirectory(String directoryPath, DirectoryChangeListener listener);
+   // void watchDirectory(String directoryPath, DirectoryChangeListener listener);
 }

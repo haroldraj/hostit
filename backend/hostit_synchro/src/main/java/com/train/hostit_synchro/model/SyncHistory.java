@@ -1,6 +1,8 @@
 package com.train.hostit_synchro.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+
+//import javax.persistence.*;
 import java.util.Date;
 
 @Entity

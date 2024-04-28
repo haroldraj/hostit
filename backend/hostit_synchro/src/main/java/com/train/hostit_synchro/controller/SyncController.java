@@ -33,13 +33,15 @@ public class SyncController {
     @GetMapping("/status/{syncJobId}")
     public ResponseEntity<?> checkSynchronizationStatus(@PathVariable String syncJobId) {
         try {
-            FileSyncStatusDto status = syncService.getSyncStatus(syncJobId);
+            // Assuming getSyncStatus method is modified to return FileSyncStatusDto
+            String status = syncService.getSyncStatus(syncJobId);
             return ResponseEntity.ok(status);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Error retrieving synchronization status: " + e.getMessage());
         }
     }
+
 
     @PostMapping("/stop")
     public ResponseEntity<?> stopSynchronization(@RequestBody String syncJobId) {
@@ -51,6 +53,13 @@ public class SyncController {
             return ResponseEntity.status(500).body("Error stopping synchronization: " + e.getMessage());
         }
     }
+
+    public FileSyncStatusDto getSyncStatus(String syncJobId) {
+        // Logic to get the current status of the sync job
+        // This is just a placeholder. You would implement actual logic here.
+        return new FileSyncStatusDto(syncJobId, "In Progress", "The sync is currently being processed");
+    }
+
 
     // Additional controller methods for other synchronization operations can be added here.
 }

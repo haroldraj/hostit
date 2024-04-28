@@ -2,8 +2,17 @@ package com.train.hostit_synchro.service;
 
 import com.train.hostit_synchro.dto.SyncRequestDto;
 import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
+import io.minio.errors.MinioException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.WatchEvent;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 @Service
 public class SyncService {
@@ -15,22 +24,40 @@ public class SyncService {
         this.minioClient = minioClient;
     }
 
+    // This method assumes synchronization means uploading a file to Minio.
+    public void syncWithMinio(String bucketName) throws IOException, MinioException, NoSuchAlgorithmException, InvalidKeyException {
+        MultipartFile file = null; // Placeholder for file to be uploaded
+        minioClient.putObject(
+                PutObjectArgs.builder()
+                        .bucket(bucketName)
+                        .object(file.getOriginalFilename())
+                        .stream(file.getInputStream(), file.getSize(), -1)
+                        .contentType(file.getContentType())
+                        .build()
+        );
+        // Additional logic for synchronization could be added here
+    }
+
     public void startSynchronization(SyncRequestDto syncRequest) {
-        // Logic to start synchronization with Minio
-        // This could involve uploading, downloading, or syncing files
-        // For demonstration purposes, the details are not implemented
+        // Assume that synchronization involves uploading a file represented by the syncRequest.
+        // The MultipartFile should be part of the SyncRequestDto if you're uploading files.
+        // MultipartFile file = syncRequest.getFile();
+        // syncWithMinio(syncRequest.getBucketName(), file);
     }
 
     public String getSyncStatus(String syncJobId) {
-        // Logic to get the current status of the sync job
-        // You might check Minio for the sync status or a database that tracks sync jobs
-        return "Status of sync job " + syncJobId; // Placeholder status
+        // Here, you would implement the logic to check the synchronization status with Minio.
+        return "Status of sync job " + syncJobId; // Placeholder response
     }
 
     public void stopSynchronization(String syncJobId) {
-        // Logic to stop the sync job
-        // This might involve interrupting the sync process and performing cleanup
+        // Implement the logic to stop or interrupt the synchronization process.
     }
 
-    // Add additional methods as needed for your sync functionality
+    public void triggerSyncOperation(Path fileName, WatchEvent.Kind<?> kind) {
+        // Implement the logic to trigger synchronization based on the file event.
+
+    }
+
+    // Additional methods for synchronization logic can be implemented as needed.
 }
