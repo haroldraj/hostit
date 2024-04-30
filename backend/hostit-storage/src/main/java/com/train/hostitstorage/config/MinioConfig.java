@@ -11,17 +11,17 @@ import io.minio.MakeBucketArgs;
 public class MinioConfig {
 
     @Value("${minio.accessKey}")
-    public String accessKey = "Q3AM3UQ867SPQQA43P2F";
+    public String accessKey = "B7CvxeruN5dwA9oGJEGr";
 
 
     @Value("${minio.access.secret}")
-    public String accessSecret = "K1VIUWqUuLsD8pLcpP3yLUF2vFe6yzSQp9UXEbXM";
+    public String accessSecret = "dOzJqkAh80L6veSwog1jKUqm79tWcN152qBoB5Ez";
 
     @Value("${minio.url}")
-    public String minioUrl = "http://192.168.17.1:54711/api/v1/service-account-credentials";
+    public String minioUrl = "http://192.168.129.5:9090/api/v1/service-account-credentials";
 
     @Value("${minio.bucket.name}")
-    public String defaultBucketName = "hostit";
+    public String defaultBucketName = "minio-hostit-bucket";
 
     @Bean
     public MinioClient minioClient() {
