@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "41878663380",
+    "project_id": "hostit-995c1",
+    "storage_bucket": "hostit-995c1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:41878663380:android:5824e51f3754abaa934b41",
+        "android_client_info": {
+          "package_name": "com.example.hostit_ui"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjwyiwF4CveFlg6vtsrCSy48exKF7jnTU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
