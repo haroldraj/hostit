@@ -1,10 +1,14 @@
 // ignore_for_file: avoid_print
 
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
+import 'package:hostit_ui/models/dropped_file.dart';
 
 class DropzoneWidget extends StatefulWidget {
-  const DropzoneWidget({super.key});
+  final ValueChanged<DroppedFile> onDroppedFile;
+
+  const DropzoneWidget({super.key, required this.onDroppedFile});
 
   @override
   State<DropzoneWidget> createState() => _DropzoneWidgetState();
@@ -12,18 +16,25 @@ class DropzoneWidget extends StatefulWidget {
 
 class _DropzoneWidgetState extends State<DropzoneWidget> {
   late DropzoneViewController controller;
+  bool isHighlighted = false;
 
   @override
   Widget build(BuildContext context) {
-    //final colorButton = Colors.green.shade300;
+    final colorButton = isHighlighted ? Colors.blue : Colors.green.shade300;
 
-    return Container(
-      color: Colors.green,
+    return buildDecoration(
       child: Stack(
+        fit: StackFit.expand,
         children: [
           DropzoneView(
             onDrop: acceptFile,
             onCreated: (controller) => this.controller = controller,
+            onHover: () => setState(() {
+              isHighlighted = true;
+            }),
+            onLeave: () => setState(() {
+              isHighlighted = false;
+            }),
           ),
           Center(
             child: Column(
@@ -48,7 +59,7 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
                         horizontal: 64,
                         vertical: 15,
                       ),
-                      backgroundColor: Colors.blueAccent),
+                      backgroundColor: colorButton),
                   onPressed: () async {
                     final events = await controller.pickFiles();
                     if (events.isEmpty) return;
@@ -64,7 +75,7 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
                     'Choose Files',
                     style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -73,9 +84,30 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
     );
   }
 
+  Widget buildDecoration({required Widget child}) {
+    final colorBackground = isHighlighted ? Colors.blue : Colors.green;
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        color: colorBackground,
+        padding: const EdgeInsets.all(10),
+        child: DottedBorder(
+          borderType: BorderType.RRect,
+          color: Colors.white,
+          strokeWidth: 3,
+          padding: EdgeInsets.zero,
+          dashPattern: const [8, 4],
+          radius: const Radius.circular(10),
+          child: child,
+        ),
+      ),
+    );
+  }
+
   Future acceptFile(dynamic event) async {
     final name = event.name;
-    final mime = await controller.getFileMIME(event); //type of the fyle
+    final mime = await controller.getFileMIME(event); //type of the file
     final bytes = await controller.getFileSize(event);
     final url = await controller.createFileUrl(event);
 
@@ -83,5 +115,17 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
     print('Mime: $mime');
     print('Bytes: $bytes');
     print('Url: $url');
+
+    final droppedFile = DroppedFile(
+      url: url,
+      name: name,
+      mime: mime,
+      bytes: bytes,
+    );
+
+    widget.onDroppedFile(droppedFile);
+    setState(() {
+      isHighlighted = false;
+    });
   }
 }

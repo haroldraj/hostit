@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hostit_ui/constants/custom_color.dart';
-import 'package:hostit_ui/pages/home/home_page.dart';
+import 'package:hostit_ui/constants/custom_colors.dart';
 import 'package:hostit_ui/responsive.dart';
 import 'package:hostit_ui/widgets/navigation_menu/components/menu_info.dart';
 import 'package:hostit_ui/widgets/navigation_menu/components/menu_items.dart';
@@ -12,6 +11,13 @@ class CustomDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topRight: Responsive.isDesktop(context)
+              ? Radius.zero
+              : const Radius.circular(15),
+        ),
+      ),
       child: ListView.builder(
         itemCount: menuItems.length + 1,
         itemBuilder: (context, index) {
@@ -28,7 +34,7 @@ class CustomDrawer extends StatelessWidget {
             );
           } else {
             final currentMenuInfo = menuItems[index - 1];
-            return buildMenuButtons(currentMenuInfo);
+            return buildMenuButton(currentMenuInfo);
           }
         },
       ),

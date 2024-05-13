@@ -38,6 +38,7 @@ dependencies:
   firebase_core: ^2.30.1
   flutter_dropzone: ^4.0.0
   provider: ^6.1.2
+  dotted_border: ^2.1.0
 
 dev_dependencies:
   flutter_test:

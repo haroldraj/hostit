@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class SignInPage extends StatefulWidget {
+  const SignInPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<SignInPage> createState() => _SignInPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -18,7 +18,7 @@ class _HomePageState extends State<HomePage> {
         ),
         child: const Center(
           child: Text(
-            'HOME',
+            'SIGNIN',
             style: TextStyle(fontSize: 50),
           ),
         ),
