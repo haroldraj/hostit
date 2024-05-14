@@ -11,24 +11,24 @@ import io.minio.MakeBucketArgs;
 public class MinioConfig {
 
     @Value("${minio.accessKey}")
-    public String accessKey = "B7CvxeruN5dwA9oGJEGr";
+    public String accessKey ;
 
 
-    @Value("${minio.access.secret}")
-    public String accessSecret = "dOzJqkAh80L6veSwog1jKUqm79tWcN152qBoB5Ez";
+    @Value("${minio.secretKey}")
+    public String secretKey;
 
     @Value("${minio.url}")
-    public String minioUrl = "http://192.168.129.5:9090/api/v1/service-account-credentials";
+    public String minioUrl;
 
-    @Value("${minio.bucket.name}")
-    public String defaultBucketName = "minio-hostit-bucket";
+    @Value("${minio.bucketName}")
+    public String defaultBucketName;
 
     @Bean
     public MinioClient minioClient() {
         try {
             MinioClient minioClient = MinioClient.builder()
                     .endpoint(minioUrl)
-                    .credentials(accessKey, accessSecret)
+                    .credentials(accessKey, secretKey)
                     .build();
 
             // Check if the default bucket exists, and create it if it does not

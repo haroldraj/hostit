@@ -1,35 +1,36 @@
 package com.train.hostitstorage.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import jakarta.persistence.*;
+
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
+@Table(name = "file_metadata", schema = "hostit_storage", catalog = "")
 public class FileMetadata {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "file_name")
+    @Basic
     private String fileName;
+
+    @Column(name = "file_type")
+    @Basic
     private String fileType;
+
+    @Column(name = "file_download_uri")
+    @Basic
     private String fileDownloadUri;
+
+    @Column(name = "size")
+    @Basic
     private long size;
+
+    @Column(name = "upload_time")
+    @Basic
     private Date uploadTime;
-
-    // Constructors, getters, and setters
-
-    public FileMetadata() {
-    }
-
-    public FileMetadata(String fileName, String fileType, String fileDownloadUri, long size, Date uploadTime) {
-        this.fileName = fileName;
-        this.fileType = fileType;
-        this.fileDownloadUri = fileDownloadUri;
-        this.size = size;
-        this.uploadTime = uploadTime;
-    }
 
     public Long getId() {
         return id;
@@ -77,5 +78,17 @@ public class FileMetadata {
 
     public void setUploadTime(Date uploadTime) {
         this.uploadTime = uploadTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FileMetadata that)) return false;
+        return size == that.size && Objects.equals(id, that.id) && Objects.equals(fileName, that.fileName) && Objects.equals(fileType, that.fileType) && Objects.equals(fileDownloadUri, that.fileDownloadUri) && Objects.equals(uploadTime, that.uploadTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, fileName, fileType, fileDownloadUri, size, uploadTime);
     }
 }

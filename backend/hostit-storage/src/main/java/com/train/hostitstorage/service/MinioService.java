@@ -26,12 +26,10 @@ public class MinioService {
 
     private final MinioClient minioClient;
 
-    public MinioService() {
-        this.minioClient = MinioClient.builder()
-                .endpoint(minioUrl)
-                .credentials(accessKey, secretKey)
-                .build();
+    public MinioService(MinioClient minioClient) {
+        this.minioClient = minioClient;
     }
+
 
     public String uploadFile(MultipartFile file) {
         try {
