@@ -1,67 +1,83 @@
 package com.train.hostitstorage.service;
 
-import com.train.hostitstorage.dto.FileDownloadResponse;
-import com.train.hostitstorage.dto.FileUploadResponse;
+import com.train.hostitstorage.HostitStorageApplication;
+import com.train.hostitstorage.entity.File;
+import com.train.hostitstorage.model.FileDTO;
+import com.train.hostitstorage.model.FileUploadDTO;
+import com.train.hostitstorage.repository.FileRepository;
+import io.minio.DownloadObjectArgs;
+import io.minio.MinioClient;
+import io.minio.UploadObjectArgs;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class FileService {
+    private  final FileRepository fileRepository;
+    private final MinioClient minioClient;
+    private  final String bucketName = "hostit";
+    static Logger logger =  LoggerFactory.getLogger(HostitStorageApplication .class);
 
-    private final MinioService minioService;
-
-    public FileService(MinioService minioService) {
-        this.minioService = minioService;
+    public FileService(FileRepository fileRepository, MinioClient minioClient){
+        this.fileRepository = fileRepository;
+        this.minioClient = minioClient;
     }
 
-    public FileUploadResponse uploadFile(MultipartFile file) {
-        // Implement file upload logic using MinioService
-        // For example:
-        String fileName = file.getOriginalFilename();
-        String contentType = file.getContentType();
-        long fileSize = file.getSize(); // get the size of the file
-        // Upload file to MinIO
-        String fileUrl = minioService.uploadFile(file);
-        return new FileUploadResponse(fileName, contentType, fileUrl, fileSize);
-    }
+    public CompletableFuture<FileDTO> uploadFileAndSaveMetadata(FileUploadDTO fileUploadDTO) throws IOException {
+        Optional<File> optionalFile = fileRepository.findByObjectName(fileUploadDTO.objectName());
+        if(optionalFile.isEmpty()){
+        UploadObjectArgs uploadObjectArgs = UploadObjectArgs.builder()
+                .bucket(fileUploadDTO.bucketName())
+                .object(fileUploadDTO.objectName())
+                .filename(fileUploadDTO.fileName())
+                .contentType(fileUploadDTO.contentType())
+                .build();
 
-    public FileDownloadResponse downloadFile(String fileName) {
-        // Implement file download logic using MinioService
-        // For example:
-        byte[] fileContent = minioService.downloadFile(fileName);
-        String contentType = minioService.getFileContentType(fileName);
-        return new FileDownloadResponse(fileName, contentType, fileContent);
-    }
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return minioClient.uploadObject(uploadObjectArgs);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }).thenApply(response -> {
+            File newFile = new File();
+            newFile.setObjectName(response.object());
+            newFile.setObjectSize(fileUploadDTO.objectSize());
+            newFile.setContentType(fileUploadDTO.contentType());
+            newFile.setBucketName(response.bucket());
+            newFile.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+            File savedFile = fileRepository.save(newFile);
 
-    public boolean deleteFile(String fileName) {
-        // Implement file deletion logic using MinioService
-        // For example:
-        return minioService.deleteFile(fileName);
+            return new FileDTO(
+                    savedFile.getId(),
+                    savedFile.getObjectName(),
+                    savedFile.getContentType(),
+                    savedFile.getBucketName(),
+                    savedFile.getObjectSize(),
+                    savedFile.getCreatedAt());
+        }).exceptionally(e -> {
+            logger.error("Error occurred: ", e);
+            return null;
+        });
+    } else{
+            throw new RuntimeException("File already exists");
+        }
     }
-
-    public boolean fileExists(String fileName) {
-        // Implement logic to check if a file exists using MinioService
-        // For example:
-        return minioService.fileExists(fileName);
+    private static void downloadFile(MinioClient minioClient) throws Exception{
+        String bucketName = "create-bucket-test";
+        String objectName = "logo_hostit.png";
+        String fileName = "/home/harold/Pictures/logo_hostit.png";
+        DownloadObjectArgs downloadObjectArgs = DownloadObjectArgs.builder()
+                .bucket(bucketName)
+                .object(objectName)
+                .filename(fileName)
+                .build();
+        minioClient.downloadObject(downloadObjectArgs);
     }
-
-    public String getFileUrl(String fileName) {
-        // Implement logic to get the URL of a file using MinioService
-        // For example:
-        return minioService.getFileUrl(fileName);
-    }
-
-    public long getFileSize(String fileName) {
-        // Implement logic to get the size of a file using MinioService
-        // For example:
-        return minioService.getFileSize(fileName);
-    }
-
-    public String getFileContentType(String fileName) {
-        // Implement logic to get the content type of a file using MinioService
-        // For example:
-        return minioService.getFileContentType(fileName);
-    }
-
-    // You can add more methods here for additional file management operations
 }

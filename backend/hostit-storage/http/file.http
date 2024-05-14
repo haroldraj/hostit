@@ -1,0 +1,17 @@
+###
+GET http://localhost:8001/files
+###
+# curl "http://localhost:8080/files/"
+#     -H 'Cache-Control: no-cache'
+POST http://localhost:8001/files/upload
+Content-Type: application/json
+
+{
+  "bucketName" : "hostit",
+  "objectName" : "logo_hostit.png",
+  "fileName" : "/home/harold/Downloads/logo_hostit.png",
+  "contentType":  "image/png",
+  "objectSize": 104
+}
+###
+
