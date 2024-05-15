@@ -13,13 +13,14 @@ class StorageService {
 
     try {
       var request = http.MultipartRequest('POST', Uri.parse(fileUploadUrl));
+      request.fields['userId'] = '1';
       request.files.add(
         http.MultipartFile.fromBytes(
           'file',
           fileModel.bytes!,
           filename: fileModel.name,
-          contentType: MediaType(
-              fileModel.mime!.split('/').first, fileModel.mime!.split('/').last),
+          contentType: MediaType(fileModel.mime!.split('/').first,
+              fileModel.mime!.split('/').last),
         ),
       );
       var response = await request.send();
