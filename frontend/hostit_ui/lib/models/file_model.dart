@@ -2,12 +2,14 @@ class FileModel {
   final String? name;
   final String? mime;
   final int? size;
+  final DateTime? uploadDate;
   final List<int>? bytes;
 
   const FileModel({
     this.name,
     this.mime,
     this.size,
+    this.uploadDate,
     this.bytes,
   });
 
@@ -26,14 +28,17 @@ class FileModel {
     }
 
     return FileModel(
-        name: json['fileName'] as String?,
-        mime: json['contentType'] as String?,
-        size: json['fileSize'] as int?);
+      name: json['fileName'] as String?,
+      mime: json['contentType'] as String?,
+      size: json['fileSize'] as int?,
+      uploadDate: json['uploadDate'] as DateTime?,
+    );
   }
 
   FileModel.empty()
       : name = '',
         size = 0,
         mime = '',
+        uploadDate = DateTime.now(),
         bytes = [];
 }
