@@ -1,8 +1,10 @@
 package com.train.hostitstorage.service;
 
 import io.minio.*;
+import io.minio.http.Method;
 import io.minio.messages.Item;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -10,6 +12,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class MinioService {
@@ -20,23 +23,27 @@ public class MinioService {
     @Value("${minio.bucketName}")
     private String bucketName;
 
+    @Value("${metadata.uri.download.expiration}")
+    private int downloadUriExpiration;
+
     private final MinioClient minioClient;
 
     public MinioService(MinioClient minioClient) {
         this.minioClient = minioClient;
     }
 
-    public boolean uploadFile(MultipartFile file) {
+    @Async
+    public CompletableFuture<Boolean> uploadFile(MultipartFile file) {
         try {
             String fileName = file.getOriginalFilename();
             InputStream inputStream = new ByteArrayInputStream(file.getBytes());
             minioClient.putObject(
                     PutObjectArgs.builder().bucket(bucketName).object(fileName).stream(
                             inputStream, -1, 10485760).contentType(file.getContentType()).build());
-            return true;
+            return CompletableFuture.completedFuture(true);
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return CompletableFuture.completedFuture(false);
         }
     }
 
@@ -91,6 +98,23 @@ public class MinioService {
         try {
             return minioClient.statObject(
                     StatObjectArgs.builder().bucket(bucketName).object(fileName).build()).contentType();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public String generateDownloadUri(String fileName) {
+        try {
+            String downloadUri = minioClient.getPresignedObjectUrl(
+                    GetPresignedObjectUrlArgs.builder()
+                            .method(Method.GET)
+                            .bucket(bucketName)
+                            .object(fileName)
+                            .expiry(downloadUriExpiration)
+                            .build());
+            System.out.println("Generated URI: " + downloadUri); // Print the generated URI
+            return downloadUri;
         } catch (Exception e) {
             e.printStackTrace();
             return null;

@@ -26,8 +26,7 @@ public class FileController {
     @PostMapping("/upload")
     public ResponseEntity uploadFile(@RequestParam("file") MultipartFile file) {
         try {
-            FileUploadResponse response = fileService.uploadFile(file);
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(fileService.uploadFile(file));
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", e.getMessage());

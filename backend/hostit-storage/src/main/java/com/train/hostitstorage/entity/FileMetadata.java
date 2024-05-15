@@ -22,10 +22,6 @@ public class FileMetadata {
     @Basic
     private String contentType;
 
-    @Column(name = "download_uri")
-    @Basic
-    private String downloadUri;
-
     @Column(name = "size")
     @Basic
     private long size;
@@ -58,14 +54,6 @@ public class FileMetadata {
         this.contentType = contentType;
     }
 
-    public String getDownloadUri() {
-        return downloadUri;
-    }
-
-    public void setDownloadUri(String downloadUri) {
-        this.downloadUri = downloadUri;
-    }
-
     public long getSize() {
         return size;
     }
@@ -86,11 +74,14 @@ public class FileMetadata {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof FileMetadata that)) return false;
-        return size == that.size && Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(contentType, that.contentType) && Objects.equals(downloadUri, that.downloadUri) && Objects.equals(uploadDate, that.uploadDate);
+        return size == that.size && Objects.equals(id, that.id)
+                && Objects.equals(name, that.name)
+                && Objects.equals(contentType, that.contentType)
+                && Objects.equals(uploadDate, that.uploadDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, contentType, downloadUri, size, uploadDate);
+        return Objects.hash(id, name, contentType, size, uploadDate);
     }
 }
