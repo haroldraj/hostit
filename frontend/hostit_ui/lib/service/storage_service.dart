@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 class StorageService {
-  final String _baseUrl = UrlConfig.baseHostitStorageUrl;
+  final String _baseUrl = UrlConfig.baseStorageUrl;
 
   void uploadFile(DroppedFile droppedFile) {
     // Convertir le blob en fichier
