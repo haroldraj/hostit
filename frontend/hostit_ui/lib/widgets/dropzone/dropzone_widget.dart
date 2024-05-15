@@ -2,15 +2,18 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
-import 'package:hostit_ui/models/dropped_file.dart';
+import 'package:hostit_ui/models/file_model.dart';
 import 'package:hostit_ui/service/storage_service.dart';
 import 'package:logger/logger.dart';
 import 'package:mime/mime.dart';
 
 class DropzoneWidget extends StatefulWidget {
-  final ValueChanged<DroppedFile> onDroppedFile;
+  //final ValueChanged<DroppedFile> onDroppedFile;
 
-  const DropzoneWidget({super.key, required this.onDroppedFile});
+  const DropzoneWidget({
+    super.key,
+    //required this.onDroppedFile,
+  });
 
   @override
   State<DropzoneWidget> createState() => _DropzoneWidgetState();
@@ -65,20 +68,7 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
                         vertical: 15,
                       ),
                       backgroundColor: colorButton),
-                  onPressed: () async {
-                    _filePickerResult = await FilePicker.platform.pickFiles();
-                    if (_filePickerResult == null) {
-                      _logger.i("No file selected");
-                    } else {
-                      List<int> fileBytes =
-                          _filePickerResult!.files.first.bytes!;
-                      String filename = _filePickerResult!.files.first.name;
-                      String? mimeType = lookupMimeType(
-                          _filePickerResult!.files.first.extension!);
-                      await storageService.uploadBytes(
-                          fileBytes, filename, mimeType!);
-                    }
-                  },
+                  onPressed: () => uploadFile(),
                   icon: const Icon(
                     Icons.search,
                     size: 32,
@@ -119,23 +109,28 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
   }
 
   Future acceptFile(dynamic event) async {
-    final filename = event.name;
-    final mimeType = await controller.getFileMIME(event);
-    final bytes = await controller.getFileSize(event);
-    final url = await controller.createFileUrl(event);
-    final file = await controller.getFileData(event);
-
-    await storageService.uploadBytes(file, filename, mimeType);
-    final droppedFile = DroppedFile(
-      url: url,
-      name: filename,
-      mime: mimeType,
-      bytes: bytes,
+    FileModel fileModel = FileModel(
+      bytes: await controller.getFileData(event),
+      name: event.name,
+      mime: await controller.getFileMIME(event),
     );
-
-    widget.onDroppedFile(droppedFile);
+    await storageService.uploadBytes(fileModel);
     setState(() {
       isHighlighted = false;
     });
+  }
+
+  Future uploadFile() async {
+    _filePickerResult = await FilePicker.platform.pickFiles();
+    if (_filePickerResult == null) {
+      _logger.i("No file selected");
+    } else {
+      FileModel fileModel = FileModel(
+        bytes: _filePickerResult!.files.first.bytes,
+        name: _filePickerResult!.files.first.name,
+        mime: lookupMimeType(_filePickerResult!.files.first.extension!),
+      );
+      await storageService.uploadBytes(fileModel);
+    }
   }
 }

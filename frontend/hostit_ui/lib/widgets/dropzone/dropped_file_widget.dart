@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:hostit_ui/models/dropped_file.dart';
+/*import 'package:flutter/material.dart';
+import 'package:hostit_ui/models/file_model.dart';
 
 class DroppedFileWidget extends StatelessWidget {
   final DroppedFile? file;
@@ -61,3 +61,4 @@ class DroppedFileWidget extends StatelessWidget {
         ),
       );
 }
+*/

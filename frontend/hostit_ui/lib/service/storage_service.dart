@@ -1,4 +1,5 @@
 import 'package:hostit_ui/constants/url_config.dart';
+import 'package:hostit_ui/models/file_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:http_parser/http_parser.dart';
@@ -7,8 +8,7 @@ class StorageService {
   final String _baseUrl = UrlConfig.baseStorageUrl;
   final Logger _logger = Logger();
 
-  Future uploadBytes(
-      List<int> bytes, String filename, String contenType) async {
+  Future uploadBytes(FileModel fileModel) async {
     final String fileUploadUrl = "$_baseUrl/upload";
 
     try {
@@ -16,10 +16,10 @@ class StorageService {
       request.files.add(
         http.MultipartFile.fromBytes(
           'file',
-          bytes,
-          filename: filename,
+          fileModel.bytes!,
+          filename: fileModel.name,
           contentType: MediaType(
-              contenType.split('/').first, contenType.split('/').last),
+              fileModel.mime!.split('/').first, fileModel.mime!.split('/').last),
         ),
       );
       var response = await request.send();
