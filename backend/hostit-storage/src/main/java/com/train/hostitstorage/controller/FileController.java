@@ -52,7 +52,11 @@ public class FileController {
     }
 
     @GetMapping("/user-{userId}/files")
-    public List<FileMetadata> getUserFiles(@PathVariable String userId) {
-        return fileService.getUserFiles(userId);
+    public ResponseEntity<Map<String, Object>> getUserFiles(@PathVariable String userId) {
+        List<FileMetadata> files = fileService.getUserFiles(userId);
+        Map<String, Object> response = new HashMap<>();
+        response.put("result", files);
+        response.put("folderName",  "user-" + userId);
+        return ResponseEntity.ok(response);
     }
 }
