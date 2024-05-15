@@ -112,7 +112,7 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
     FileModel fileModel = FileModel(
       bytes: await controller.getFileData(event),
       name: event.name,
-      mime: await controller.getFileMIME(event),
+      contentType: await controller.getFileMIME(event),
     );
     await storageService.uploadBytes(fileModel);
     setState(() {
@@ -128,7 +128,7 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
       FileModel fileModel = FileModel(
         bytes: _filePickerResult!.files.first.bytes,
         name: _filePickerResult!.files.first.name,
-        mime: lookupMimeType(_filePickerResult!.files.first.extension!),
+        contentType: lookupMimeType(_filePickerResult!.files.first.extension!),
       );
       await storageService.uploadBytes(fileModel);
     }

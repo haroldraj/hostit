@@ -3,7 +3,6 @@ import 'package:hostit_ui/constants/custom_colors.dart';
 import 'package:hostit_ui/controllers/menu_app_controller.dart';
 import 'package:hostit_ui/pages/home/home_page.dart';
 import 'package:hostit_ui/pages/main/main_page.dart';
-import 'package:hostit_ui/pages/sign_in/sign_in_page.dart';
 import 'package:hostit_ui/responsive.dart';
 import 'package:hostit_ui/widgets/navigation_menu/components/custom_drawer.dart';
 import 'package:hostit_ui/widgets/navigation_menu/components/menu_info.dart';
@@ -103,9 +102,22 @@ Widget buildMenuRoutes() {
   return Consumer<MenuInfo>(
     builder: (BuildContext context, MenuInfo value, Widget? child) {
       if (value.menuType == MenuType.home) {
-        return const HomePage();
+        return Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Center(
+              child: Text(
+                'HOME',
+                style: TextStyle(fontSize: 50),
+              ),
+            ),
+          ),
+        );
       } else if (value.menuType == MenuType.signin) {
-        return const SignInPage();
+        return const HomePage();
       } else if (value.menuType == MenuType.addFiles) {
         return const Expanded(child: MainPage());
       } else if (value.menuType == MenuType.photos) {
