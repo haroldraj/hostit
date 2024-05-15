@@ -17,12 +17,17 @@ public class FileService {
     public FileUploadResponse uploadFile(MultipartFile file) {
         // Implement file upload logic using MinioService
         // For example:
+        FileUploadResponse response = new FileUploadResponse();
+        response.setMessage("File uploaded successfully");
+        response.setFileName(file.getOriginalFilename());
+        response.setFileSize(file.getSize());
+        response.setContentType(file.getContentType());
         String fileName = file.getOriginalFilename();
         String contentType = file.getContentType();
         long fileSize = file.getSize(); // get the size of the file
         // Upload file to MinIO
-        String fileUrl = minioService.uploadFile(file);
-        return new FileUploadResponse(fileName, contentType, fileUrl, fileSize);
+        minioService.uploadFile(file);
+        return response;
     }
 
     public FileDownloadResponse downloadFile(String fileName) {
