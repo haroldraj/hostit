@@ -1,7 +1,8 @@
-package com.train.hostitstorage.model;
+package com.train.hostitstorage.entity;
 
 import jakarta.persistence.*;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Objects;
 
@@ -16,9 +17,9 @@ public class FileMetadata {
     @Basic
     private String fileName;
 
-    @Column(name = "file_type")
+    @Column(name = "content_type")
     @Basic
-    private String fileType;
+    private String contentType;
 
     @Column(name = "file_download_uri")
     @Basic
@@ -26,11 +27,11 @@ public class FileMetadata {
 
     @Column(name = "size")
     @Basic
-    private long size;
+    private long file_size;
 
     @Column(name = "upload_time")
     @Basic
-    private Date uploadTime;
+    private Timestamp uploadDate;
 
     public Long getId() {
         return id;
@@ -48,12 +49,12 @@ public class FileMetadata {
         this.fileName = fileName;
     }
 
-    public String getFileType() {
-        return fileType;
+    public String getContentType() {
+        return contentType;
     }
 
-    public void setFileType(String fileType) {
-        this.fileType = fileType;
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
     public String getFileDownloadUri() {
@@ -64,31 +65,31 @@ public class FileMetadata {
         this.fileDownloadUri = fileDownloadUri;
     }
 
-    public long getSize() {
-        return size;
+    public long getFile_size() {
+        return file_size;
     }
 
-    public void setSize(long size) {
-        this.size = size;
+    public void setFile_size(long file_size) {
+        this.file_size = file_size;
     }
 
-    public Date getUploadTime() {
-        return uploadTime;
+    public Timestamp getUploadDate() {
+        return uploadDate;
     }
 
-    public void setUploadTime(Date uploadTime) {
-        this.uploadTime = uploadTime;
+    public void setUploadDate(Timestamp uploadDate) {
+        this.uploadDate = uploadDate;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof FileMetadata that)) return false;
-        return size == that.size && Objects.equals(id, that.id) && Objects.equals(fileName, that.fileName) && Objects.equals(fileType, that.fileType) && Objects.equals(fileDownloadUri, that.fileDownloadUri) && Objects.equals(uploadTime, that.uploadTime);
+        return file_size == that.file_size && Objects.equals(id, that.id) && Objects.equals(fileName, that.fileName) && Objects.equals(contentType, that.contentType) && Objects.equals(fileDownloadUri, that.fileDownloadUri) && Objects.equals(uploadDate, that.uploadDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, fileName, fileType, fileDownloadUri, size, uploadTime);
+        return Objects.hash(id, fileName, contentType, fileDownloadUri, file_size, uploadDate);
     }
 }
