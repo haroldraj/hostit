@@ -1,4 +1,4 @@
-package com.train.hostitstorage.dto;
+package com.train.hostitstorage.model;
 
 public class FileUploadResponse {
     private String message;

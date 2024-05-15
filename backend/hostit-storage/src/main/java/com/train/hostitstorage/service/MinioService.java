@@ -1,25 +1,21 @@
 package com.train.hostitstorage.service;
 
 import io.minio.*;
+import io.minio.messages.Item;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class MinioService {
 
     @Value("${minio.url}")
     private String minioUrl;
-
-    @Value("${minio.accessKey}")
-    private String accessKey;
-
-    @Value("${minio.secretKey}")
-    private String secretKey;
 
     @Value("${minio.bucketName}")
     private String bucketName;
@@ -30,18 +26,17 @@ public class MinioService {
         this.minioClient = minioClient;
     }
 
-
-    public String uploadFile(MultipartFile file) {
+    public boolean uploadFile(MultipartFile file) {
         try {
             String fileName = file.getOriginalFilename();
             InputStream inputStream = new ByteArrayInputStream(file.getBytes());
             minioClient.putObject(
                     PutObjectArgs.builder().bucket(bucketName).object(fileName).stream(
                             inputStream, -1, 10485760).contentType(file.getContentType()).build());
-            return minioUrl + "/" + bucketName + "/" + fileName;
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return false;
         }
     }
 
@@ -101,5 +96,4 @@ public class MinioService {
             return null;
         }
     }
-
 }

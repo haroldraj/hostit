@@ -1,9 +1,9 @@
 package com.train.hostitstorage.entity;
 
 import jakarta.persistence.*;
+import org.checkerframework.common.aliasing.qual.Unique;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -13,23 +13,24 @@ public class FileMetadata {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "file_name")
+    @Column(name = "name")
     @Basic
-    private String fileName;
+    @Unique
+    private String name;
 
     @Column(name = "content_type")
     @Basic
     private String contentType;
 
-    @Column(name = "file_download_uri")
+    @Column(name = "download_uri")
     @Basic
-    private String fileDownloadUri;
+    private String downloadUri;
 
     @Column(name = "size")
     @Basic
-    private long file_size;
+    private long size;
 
-    @Column(name = "upload_time")
+    @Column(name = "upload_date")
     @Basic
     private Timestamp uploadDate;
 
@@ -41,12 +42,12 @@ public class FileMetadata {
         this.id = id;
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getName() {
+        return name;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getContentType() {
@@ -57,20 +58,20 @@ public class FileMetadata {
         this.contentType = contentType;
     }
 
-    public String getFileDownloadUri() {
-        return fileDownloadUri;
+    public String getDownloadUri() {
+        return downloadUri;
     }
 
-    public void setFileDownloadUri(String fileDownloadUri) {
-        this.fileDownloadUri = fileDownloadUri;
+    public void setDownloadUri(String downloadUri) {
+        this.downloadUri = downloadUri;
     }
 
-    public long getFile_size() {
-        return file_size;
+    public long getSize() {
+        return size;
     }
 
-    public void setFile_size(long file_size) {
-        this.file_size = file_size;
+    public void setSize(long size) {
+        this.size = size;
     }
 
     public Timestamp getUploadDate() {
@@ -85,11 +86,11 @@ public class FileMetadata {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof FileMetadata that)) return false;
-        return file_size == that.file_size && Objects.equals(id, that.id) && Objects.equals(fileName, that.fileName) && Objects.equals(contentType, that.contentType) && Objects.equals(fileDownloadUri, that.fileDownloadUri) && Objects.equals(uploadDate, that.uploadDate);
+        return size == that.size && Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(contentType, that.contentType) && Objects.equals(downloadUri, that.downloadUri) && Objects.equals(uploadDate, that.uploadDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, fileName, contentType, fileDownloadUri, file_size, uploadDate);
+        return Objects.hash(id, name, contentType, downloadUri, size, uploadDate);
     }
 }
