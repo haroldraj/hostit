@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/files")
+@RequestMapping("/api/storage")
 public class FileController {
 
     private final FileService fileService;
@@ -23,10 +23,7 @@ public class FileController {
     @PostMapping("/upload")
     public ResponseEntity<FileUploadResponse> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
-            FileUploadResponse response = fileService.uploadFile(file);
-            String fileName = response.getFileName();
-            String fileDownloadUri = "/files/download/" + fileName;
-            return ResponseEntity.ok(new FileUploadResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize()));
+            return ResponseEntity.ok(fileService.uploadFile(file));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
