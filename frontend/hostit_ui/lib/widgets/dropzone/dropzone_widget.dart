@@ -61,10 +61,7 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
                       ),
                       backgroundColor: colorButton),
                   onPressed: () async {
-                    final events = await controller.pickFiles();
-                    if (events.isEmpty) return;
-
-                    acceptFile(events.first);
+                    
                   },
                   icon: const Icon(
                     Icons.search,

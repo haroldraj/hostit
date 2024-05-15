@@ -17,6 +17,6 @@ class DroppedFile {
 
     return mb > 1
         ? '${mb.toStringAsFixed(2)} MB'
-        : '${kb.toStringAsFixed(2)} BK';
+        : '${kb.toStringAsFixed(2)} KB';
   }
 }

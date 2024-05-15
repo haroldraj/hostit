@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:hostit_ui/models/dropped_file.dart';
+import 'package:hostit_ui/service/storage_service.dart';
 
 class DroppedFileWidget extends StatelessWidget {
   final DroppedFile? file;
 
-  const DroppedFileWidget({
+  DroppedFileWidget({
     super.key,
     required this.file,
   });
-
+  final StorageService _storageService = StorageService();
   @override
   Widget build(BuildContext context) => Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -16,6 +17,11 @@ class DroppedFileWidget extends StatelessWidget {
           buildImage(),
           const SizedBox(width: 10),
           if (file != null) buildFileDetails(file!),
+          TextButton(
+              onPressed: () {
+                _storageService.uploadFile(file!);
+              },
+              child: Text("Upload File"))
         ],
       );
 
