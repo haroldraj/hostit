@@ -33,9 +33,19 @@ public class MinioService {
     }
 
     @Async
-    public CompletableFuture<Boolean> uploadFile(MultipartFile file) {
+    public CompletableFuture<Boolean> uploadFile(MultipartFile file, String folderName) {
         try {
-            String fileName = file.getOriginalFilename();
+            Iterable<Result<Item>> results = minioClient.listObjects(
+                    ListObjectsArgs.builder().bucket(bucketName).prefix(folderName+"/").recursive(true).build());
+
+            if (!results.iterator().hasNext()) {
+                // If the folder doesn't exist, create it by uploading an empty file
+                minioClient.putObject(
+                        PutObjectArgs.builder().bucket(bucketName).object(folderName + "/.init").stream(
+                                new ByteArrayInputStream(new byte[0]), 0, -1).build());
+            }
+
+            String fileName = folderName+"/"+ file.getOriginalFilename();
             InputStream inputStream = new ByteArrayInputStream(file.getBytes());
             minioClient.putObject(
                     PutObjectArgs.builder().bucket(bucketName).object(fileName).stream(

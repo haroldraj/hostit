@@ -1,5 +1,6 @@
 package com.train.hostitstorage.controller;
 
+import com.train.hostitstorage.entity.FileMetadata;
 import com.train.hostitstorage.model.FileDownloadResponse;
 import com.train.hostitstorage.model.FileUploadResponse;
 import com.train.hostitstorage.service.FileService;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -24,9 +26,11 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity uploadFile(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("userId") String userId) {
         try {
-            return ResponseEntity.ok(fileService.uploadFile(file));
+            return ResponseEntity.ok(fileService.uploadFile(file, userId));
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", e.getMessage());
@@ -45,5 +49,10 @@ public class FileController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+    }
+
+    @GetMapping("/user-{userId}/files")
+    public List<FileMetadata> getUserFiles(@PathVariable String userId) {
+        return fileService.getUserFiles(userId);
     }
 }
