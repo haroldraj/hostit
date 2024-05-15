@@ -16,7 +16,7 @@ class DroppedFile {
     final mb = kb / 1024;
 
     return mb > 1
-        ? '${mb.toStringAsFixed(2)} MB'
-        : '${kb.toStringAsFixed(2)} KB';
+        ? '${mb.toStringAsFixed(2)} MiB'
+        : '${kb.toStringAsFixed(2)} KiB';
   }
 }
