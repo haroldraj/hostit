@@ -5,7 +5,6 @@ import com.train.hostitstorage.model.FileDownloadResponse;
 import com.train.hostitstorage.model.FileUploadResponse;
 import com.train.hostitstorage.repository.FileMetadataRepository;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,17 +24,19 @@ public class FileService {
         this.fileMetadataRepository = fileMetadataRepository;
     }
 
-    public FileUploadResponse uploadFile(MultipartFile file) throws FileUploadException, ExecutionException, InterruptedException {
+    public FileUploadResponse uploadFile(MultipartFile file, String userId) throws FileUploadException, ExecutionException, InterruptedException {
         FileUploadResponse response = new FileUploadResponse();
         String fileName = file.getOriginalFilename();
+        String folderName = "user-" + userId;
 
         if (minioService.fileExists(fileName)) {
             throw new FileUploadException("File already uploaded");
         }
+        /*
         if (fileMetadataRepository.existsByName(fileName)) {
             throw new FileUploadException("File metadata already exists in the database");
-        }
-        CompletableFuture<Boolean> isUploaded = minioService.uploadFile(file);
+        }*/
+        CompletableFuture<Boolean> isUploaded = minioService.uploadFile(file, folderName);
         if (!isUploaded.get()) {
             throw new FileUploadException("Failed to upload file");
         }
@@ -51,7 +52,7 @@ public class FileService {
         fileMetadata.setSize(file.getSize());
         fileMetadata.setContentType(file.getContentType());
         fileMetadata.setUploadDate(new Timestamp(System.currentTimeMillis()));
-        //fileMetadata.setDownloadUri(downloadUri);
+        fileMetadata.setFolderName(folderName);
         fileMetadataRepository.save(fileMetadata);
 
         return response;
@@ -79,9 +80,15 @@ public class FileService {
         return minioService.getFileContentType(fileName);
     }
 
-   public String getDownloadUri(String fileName) {
+    public String getDownloadUri(String fileName) {
         return minioService.generateDownloadUri(fileName);
     }
+
+    public List<FileMetadata> getUserFiles(String userId) {
+        String userFolderName = "user-" + userId;
+        return fileMetadataRepository.findByFolderName(userFolderName);
+    }
+
 
     /*@Scheduled(fixedRate = 3600000) // Run every hour
     public void regenerateDownloadUris() {
