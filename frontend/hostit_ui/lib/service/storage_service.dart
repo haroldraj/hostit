@@ -11,10 +11,10 @@ class StorageService {
   final Logger _logger = Logger();
 
   Future uploadBytes(FileModel fileModel) async {
-    final String fileUploadUrl = "$_baseUrl/upload";
+    final url = "$_baseUrl/upload";
 
     try {
-      var request = http.MultipartRequest('POST', Uri.parse(fileUploadUrl));
+      var request = http.MultipartRequest('POST', Uri.parse(url));
       request.fields['userId'] = '1';
       request.files.add(
         http.MultipartFile.fromBytes(
@@ -39,7 +39,7 @@ class StorageService {
   }
 
   Future<List<FileModel>>? getUserFiles(String userId) async {
-    final url = Uri.parse("$_baseUrl/user-$userId/files");
+    final url = Uri.parse("$_baseUrl/files?userId=$userId");
     final response = await http.get(url);
     if (response.statusCode == 200) {
       _logger.i("Data fetched");
@@ -48,9 +48,26 @@ class StorageService {
       _logger.i(userFiles);
       var mappedFiles =
           userFiles.map((file) => FileModel.fromJson(file)).toList();
-      print(mappedFiles);
       _logger.i(mappedFiles);
       return mappedFiles;
+    } else {
+      throw Exception('Failed on fetching the list of files');
+    }
+  }
+
+  Future getFileDownloadUri(String userId, String fileName) async {
+    final url =
+        Uri.parse("$_baseUrl/download?userId=$userId&fileName=$fileName");
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      _logger.i("Data fetched");
+      final String fileDownloadUri =
+          json.decode(utf8.decode(response.bodyBytes))["downloadUri"] as String;
+      _logger.i(fileDownloadUri);
+      if (fileDownloadUri.isEmpty) {
+        _logger.e("File does'nt exist");
+      }
+      return fileDownloadUri;
     } else {
       throw Exception('Failed on fetching the list of files');
     }

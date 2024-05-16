@@ -115,6 +115,7 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
       contentType: await controller.getFileMIME(event),
     );
     await storageService.uploadBytes(fileModel);
+    //goTo(context, const HomePage());
     setState(() {
       isHighlighted = false;
     });
@@ -131,6 +132,7 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
         contentType: lookupMimeType(_filePickerResult!.files.first.extension!),
       );
       await storageService.uploadBytes(fileModel);
+      //goTo(context, const HomePage());
     }
   }
 }

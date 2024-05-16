@@ -102,20 +102,7 @@ Widget buildMenuRoutes() {
   return Consumer<MenuInfo>(
     builder: (BuildContext context, MenuInfo value, Widget? child) {
       if (value.menuType == MenuType.home) {
-        return Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Center(
-              child: Text(
-                'HOME',
-                style: TextStyle(fontSize: 50),
-              ),
-            ),
-          ),
-        );
+        return const HomePage();
       } else if (value.menuType == MenuType.signin) {
         return const HomePage();
       } else if (value.menuType == MenuType.addFiles) {
