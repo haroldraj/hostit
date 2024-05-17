@@ -51,12 +51,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
                                 )
                               : const SizedBox(),
                           Expanded(
-                            child: Container(
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: Responsive.isDesktop(context)
-                                        ? 50
-                                        : 10),
-                                child: const SearchField()),
+                            child: Container(),
                           ),
                           SizedBox(
                             child: Row(

@@ -109,16 +109,9 @@ class _CustomDataTableState extends State<CustomDataTable> {
 
         cells.add(DataCell(
           ElevatedButton(
+            style: ButtonStyle().copyWith(),
             onPressed: () {
-              // Utilisez un switch pour déterminer quelle fonction exécuter
-              switch (widget.buttonName) {
-                case 'Edit':
-                  _handleDownloadFile(fileName);
-                  break;
-                // Ajoutez d'autres cas au besoin
-                default:
-                  _handleDownloadFile(fileName);
-              }
+              _handleDownloadFile(fileName);
             },
             child: Text(widget.buttonName),
           ),

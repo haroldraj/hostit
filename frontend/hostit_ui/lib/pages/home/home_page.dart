@@ -59,43 +59,74 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class FileListWidget extends StatelessWidget {
+class FileListWidget extends StatefulWidget {
   final List<FileModel>? files;
   const FileListWidget({super.key, required this.files});
 
   @override
+  State<FileListWidget> createState() => _FileListWidgetState();
+}
+
+class _FileListWidgetState extends State<FileListWidget> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: CustomDataTable(
-        fullScreen: true,
-        clickable: true,
-        showActionsColumn: true,
-        buttonName: "Download",
-        columns: Responsive.isMobile(context)
-            ? const ["Name"]
-            : Responsive.isTablet(context)
-                ? const ["Name", "Size", "Date"]
-                : const ["Name", "Type", "Size", "Date"],
-        data: files
-                ?.map((file) => Responsive.isMobile(context)
-                    ? [file.name]
-                    : Responsive.isTablet(context)
-                        ? [
-                            file.name,
-                            file.sizeToString,
-                            file.uploadDate.toString(),
-                          ]
-                        : [
-                            file.name,
-                            file.contentType,
-                            file.sizeToString,
-                            file.uploadDate.toString(),
-                          ])
-                .toList() ??
-            [],
-        context: context,
-      ),
+    return Column(
+      children: [
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 25),
+          child: TextField(
+            decoration: const InputDecoration(
+              hintText: "Search Files",
+              fillColor: Color.fromARGB(197, 244, 237, 248),
+              filled: true,
+              border: OutlineInputBorder(
+                borderSide: BorderSide.none,
+                borderRadius: BorderRadius.all(Radius.circular(25)),
+              ),
+              prefixIcon: Icon(Icons.search),
+            ),
+            controller: _searchController,
+            onChanged: (value) {
+              setState(() {});
+            },
+          ),
+        ),
+        Spacing.vertical,
+        CustomDataTable(
+          fullScreen: true,
+          clickable: true,
+          showActionsColumn: true,
+          buttonName: "Download",
+          columns: Responsive.isMobile(context)
+              ? const ["Name"]
+              : Responsive.isTablet(context)
+                  ? const ["Name", "Size", "Date"]
+                  : const ["Name", "Type", "Size", "Date"],
+          data: widget.files
+                  ?.where((file) => file.name!
+                      .toLowerCase()
+                      .contains(_searchController.text.toLowerCase()))
+                  .map((file) => Responsive.isMobile(context)
+                      ? [file.name]
+                      : Responsive.isTablet(context)
+                          ? [
+                              file.name,
+                              file.sizeToString,
+                              file.uploadDate.toString(),
+                            ]
+                          : [
+                              file.name,
+                              file.contentType,
+                              file.sizeToString,
+                              file.uploadDate.toString(),
+                            ])
+                  .toList() ??
+              [],
+          context: context,
+        ),
+      ],
     );
   }
 }
