@@ -3,5 +3,4 @@ enum MenuType {
   photos,
   folders,
   addFiles,
-  signin,
 }

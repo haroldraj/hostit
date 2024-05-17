@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hostit_ui/constants/card_size.dart';
 import 'package:hostit_ui/constants/screen_size.dart';
+import 'package:hostit_ui/service/storage_service.dart';
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
+import 'package:http/http.dart' as http;
 
 class CustomDataTable extends StatefulWidget {
   final List<String> columns;
@@ -47,7 +51,8 @@ class _CustomDataTableState extends State<CustomDataTable> {
   }
 
   Widget _buildDataTable(double width) {
-    return SizedBox(
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 15),
       width: width,
       child: DataTable(
         showCheckboxColumn: false,
@@ -68,6 +73,9 @@ class _CustomDataTableState extends State<CustomDataTable> {
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         onSort: (columnIndex, ascending) {
+          if (columnIndex == sortColumnIndex) {
+            ascending = !ascending;
+          }
           _sort(columnIndex, ascending);
         },
       );
@@ -109,7 +117,7 @@ class _CustomDataTableState extends State<CustomDataTable> {
                   break;
                 // Ajoutez d'autres cas au besoin
                 default:
-                  _handleGenericAction(fileName);
+                  _handleDownloadFile(fileName);
               }
             },
             child: Text(widget.buttonName),
@@ -121,12 +129,9 @@ class _CustomDataTableState extends State<CustomDataTable> {
           onSelectChanged: (bool? selected) {
             if (widget.clickable && selected!) {
               if (!widget.withReturnFunction) {
+                var fileName = rowData.isNotEmpty ? rowData[0] ?? '' : '';
                 debugPrint("Row tapped");
-                /*String playerId = widget.playerNameId[rowData[0]]!;
-                String playerName = widget.playerNameId.keys.firstWhere(
-                    (key) => widget.playerNameId[key] == playerId,
-                    orElse: () => "");
-                _handleViewProfile(playerId, playerName, widget.isFromApi);*/
+                _handleOpenInNewTab(fileName);
               }
             }
           },
@@ -147,13 +152,10 @@ class _CustomDataTableState extends State<CustomDataTable> {
       if (bValue == null) return ascending ? -1 : 1;
 
       // ignore: unnecessary_type_check
-      if (aValue is String && bValue is String) {
-        return ascending ? aValue.compareTo(bValue) : bValue.compareTo(aValue);
-      } else if (aValue is int && bValue is int) {
-        return ascending ? aValue.compareTo(bValue) : bValue.compareTo(aValue);
+      if (ascending) {
+        return Comparable.compare(aValue, bValue);
       } else {
-        // Gérer d'autres types de données si nécessaire
-        return 0;
+        return Comparable.compare(bValue, aValue);
       }
     });
     //Refresh la table
@@ -161,14 +163,38 @@ class _CustomDataTableState extends State<CustomDataTable> {
   }
 
   // Fonction pour gérer l'édition avec l'ID
-  void _handleDownloadFile(String fileName) {
-    debugPrint('Download file button pressed for player with ID: $fileName');
-    // Ajoutez le code pour l'édition ici
+  Future _handleDownloadFile(String fileName) async {
+    debugPrint('Download file: $fileName');
+    final url = Uri.parse(
+      await _getDownloadUri(fileName),
+    );
+    final response = await http.get(url);
+    final blob = html.Blob([response.bodyBytes]);
+    final anchorElement = html.AnchorElement(
+      href: html.Url.createObjectUrlFromBlob(blob).toString(),
+    )..setAttribute('download', fileName);
+    html.document.body!.children.add(anchorElement);
+    anchorElement.click();
+    html.document.body!.children.remove(anchorElement);
+    print(response.bodyBytes.length);
   }
 
   // Fonction générique avec l'ID
-  void _handleGenericAction(String fileName) {
-    debugPrint('Generic action button pressed for player with ID: $fileName');
-    // Ajoutez le code pour l'action générique ici
+  Future _handleOpenInNewTab(String fileName) async {
+    html.AnchorElement(
+      href: await _getDownloadUri(fileName),
+    )
+      ..target = 'blank' // to open a new tab/window
+      //..download = fileName // to force download
+      ..click();
+    debugPrint('Open file in new Tab: $fileName');
+  }
+
+  Future<String> _getDownloadUri(String fileName) async {
+    String userId = '1';
+    final StorageService storageService = StorageService();
+    String fileDownloadUri =
+        await storageService.getFileDownloadUri(userId, fileName);
+    return fileDownloadUri;
   }
 }

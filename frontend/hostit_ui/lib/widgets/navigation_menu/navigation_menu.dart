@@ -86,7 +86,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
                       width: 150,
                       color: Colors.red,
                     )*/
-                    buildMenuRoutes()
+                    _buildMenuRoutes()
                   ],
                 ),
               ),
@@ -98,12 +98,10 @@ class _NavigationMenuState extends State<NavigationMenu> {
   }
 }
 
-Widget buildMenuRoutes() {
+Widget _buildMenuRoutes() {
   return Consumer<MenuInfo>(
     builder: (BuildContext context, MenuInfo value, Widget? child) {
       if (value.menuType == MenuType.home) {
-        return const HomePage();
-      } else if (value.menuType == MenuType.signin) {
         return const HomePage();
       } else if (value.menuType == MenuType.addFiles) {
         return const Expanded(child: MainPage());
