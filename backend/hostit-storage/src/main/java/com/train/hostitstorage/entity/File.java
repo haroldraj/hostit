@@ -5,28 +5,29 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
-@Table(name = "files", schema = "hostit_storage", catalog = "")
+@Table(name = "files", schema = "hostit_storage")
 public class File {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private int id;
-    @Basic
-    @Column(name = "objectName")
+
+    @Column(name = "objectName", nullable = false)
     private String objectName;
-    @Basic
+
     @Column(name = "objectSize")
     private long objectSize;
-    @Basic
+
     @Column(name = "contentType")
     private String contentType;
-    @Basic
+
     @Column(name = "createdAt")
     private Timestamp createdAt;
-    @Basic
-    @Column(name = "bucketName")
+
+    @Column(name = "bucketName", nullable = false)
     private String bucketName;
 
+    // Standard getters and setters
     public int getId() {
         return id;
     }
@@ -78,12 +79,14 @@ public class File {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof File file)) return false;
-        return id == file.id && objectSize == file.objectSize
-                && Objects.equals(objectName, file.objectName)
-                && Objects.equals(contentType, file.contentType)
-                && Objects.equals(createdAt, file.createdAt)
-                && Objects.equals(bucketName, file.bucketName) ;
+        if (o == null || getClass() != o.getClass()) return false;
+        File file = (File) o;
+        return id == file.id &&
+                objectSize == file.objectSize &&
+                Objects.equals(objectName, file.objectName) &&
+                Objects.equals(contentType, file.contentType) &&
+                Objects.equals(createdAt, file.createdAt) &&
+                Objects.equals(bucketName, file.bucketName);
     }
 
     @Override

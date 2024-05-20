@@ -7,10 +7,10 @@ POST http://localhost:8001/files/upload
 Content-Type: application/json
 
 {
-  "bucketName" : "hostit",
-  "objectName" : "logo_hostit.png",
-  "fileName" : "/home/harold/Downloads/logo_hostit.png",
-  "contentType":  "image/png",
+  "bucketName" : "minio-hostit-bucket",
+  "objectName" : "aaaaa.jpg",
+  "fileName" : "C:/Users/takka/Downloads/aaaaa.jpg",
+  "contentType":  "image/jpg",
   "objectSize": 104
 }
 ###

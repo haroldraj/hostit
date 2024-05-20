@@ -29,6 +29,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
+    private boolean enabled;
 
     // Default constructor
     public User() {
@@ -69,6 +70,10 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public void setEmail(String email) {

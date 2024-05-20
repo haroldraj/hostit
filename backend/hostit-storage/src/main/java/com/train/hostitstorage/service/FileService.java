@@ -5,33 +5,37 @@ import com.train.hostitstorage.entity.File;
 import com.train.hostitstorage.model.FileDTO;
 import com.train.hostitstorage.model.FileUploadDTO;
 import com.train.hostitstorage.repository.FileRepository;
-import io.minio.DownloadObjectArgs;
-import io.minio.MinioClient;
-import io.minio.UploadObjectArgs;
+import io.minio.*;
+import io.minio.messages.Item;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class FileService {
-    private  final FileRepository fileRepository;
+    private final FileRepository fileRepository;
     private final MinioClient minioClient;
-    private  final String bucketName = "hostit";
-    static Logger logger =  LoggerFactory.getLogger(HostitStorageApplication .class);
+    private static final Logger logger = LoggerFactory.getLogger(HostitStorageApplication.class);
 
-    public FileService(FileRepository fileRepository, MinioClient minioClient){
+    public FileService(FileRepository fileRepository, MinioClient minioClient) {
         this.fileRepository = fileRepository;
         this.minioClient = minioClient;
     }
 
     public CompletableFuture<FileDTO> uploadFileAndSaveMetadata(FileUploadDTO fileUploadDTO) throws IOException {
         Optional<File> optionalFile = fileRepository.findByObjectName(fileUploadDTO.objectName());
-        if(optionalFile.isEmpty()){
+        if (optionalFile.isPresent()) {
+            throw new RuntimeException("File already exists");
+        }
+
         UploadObjectArgs uploadObjectArgs = UploadObjectArgs.builder()
                 .bucket(fileUploadDTO.bucketName())
                 .object(fileUploadDTO.objectName())
@@ -41,43 +45,66 @@ public class FileService {
 
         return CompletableFuture.supplyAsync(() -> {
             try {
-                return minioClient.uploadObject(uploadObjectArgs);
+                minioClient.uploadObject(uploadObjectArgs);
+                File newFile = new File();
+                newFile.setObjectName(fileUploadDTO.objectName());
+                newFile.setObjectSize(fileUploadDTO.objectSize());
+                newFile.setContentType(fileUploadDTO.contentType());
+                newFile.setBucketName(fileUploadDTO.bucketName());
+                newFile.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+                File savedFile = fileRepository.save(newFile);
+
+                return new FileDTO(
+                        savedFile.getId(),
+                        savedFile.getObjectName(),
+                        savedFile.getContentType(),
+                        savedFile.getBucketName(),
+                        savedFile.getObjectSize(),
+                        savedFile.getCreatedAt());
             } catch (Exception e) {
+                logger.error("Error during file upload and metadata saving: ", e);
                 throw new RuntimeException(e);
             }
-        }).thenApply(response -> {
-            File newFile = new File();
-            newFile.setObjectName(response.object());
-            newFile.setObjectSize(fileUploadDTO.objectSize());
-            newFile.setContentType(fileUploadDTO.contentType());
-            newFile.setBucketName(response.bucket());
-            newFile.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-            File savedFile = fileRepository.save(newFile);
-
-            return new FileDTO(
-                    savedFile.getId(),
-                    savedFile.getObjectName(),
-                    savedFile.getContentType(),
-                    savedFile.getBucketName(),
-                    savedFile.getObjectSize(),
-                    savedFile.getCreatedAt());
-        }).exceptionally(e -> {
-            logger.error("Error occurred: ", e);
-            return null;
         });
-    } else{
-            throw new RuntimeException("File already exists");
-        }
     }
-    private static void downloadFile(MinioClient minioClient) throws Exception{
-        String bucketName = "create-bucket-test";
-        String objectName = "logo_hostit.png";
-        String fileName = "/home/harold/Pictures/logo_hostit.png";
-        DownloadObjectArgs downloadObjectArgs = DownloadObjectArgs.builder()
-                .bucket(bucketName)
-                .object(objectName)
-                .filename(fileName)
-                .build();
-        minioClient.downloadObject(downloadObjectArgs);
+
+    public List<FileDTO> listFiles(String bucketName) throws Exception {
+        Iterable<Result<Item>> results = minioClient.listObjects(
+                ListObjectsArgs.builder().bucket(bucketName).build());
+        return StreamSupport.stream(results.spliterator(), false)
+                .map(result -> {
+                    try {
+                        Item item = result.get();
+                        return new FileDTO(null, item.objectName(), null, bucketName, item.size(), null);
+                    } catch (Exception e) {
+                        logger.error("Error reading item from Minio", e);
+                        return null;
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
+    public boolean deleteFile(int fileId) {
+        Optional<File> fileOptional = fileRepository.findById(fileId);
+        if (fileOptional.isPresent()) {
+            File file = fileOptional.get();
+            try {
+                minioClient.removeObject(
+                        RemoveObjectArgs.builder()
+                                .bucket(file.getBucketName())
+                                .object(file.getObjectName())
+                                .build());
+                fileRepository.delete(file);
+                return true;
+            } catch (Exception e) {
+                logger.error("Error deleting file from Minio: ", e);
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public void createDirectory(String directoryPath) {
+        // Note: Minio does not support creating empty directories; directories are "created" upon first file upload.
     }
 }

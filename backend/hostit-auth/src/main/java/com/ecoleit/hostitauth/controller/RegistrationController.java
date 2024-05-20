@@ -2,11 +2,14 @@ package com.ecoleit.hostitauth.controller;
 
 import com.ecoleit.hostitauth.dto.UserRegistrationDto;
 import com.ecoleit.hostitauth.entity.User;
+import com.ecoleit.hostitauth.service.EmailService;
 import com.ecoleit.hostitauth.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/auth/registerUser")
@@ -14,11 +17,13 @@ public class RegistrationController {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     @Autowired
-    public RegistrationController(UserService userService, PasswordEncoder passwordEncoder) {
+    public RegistrationController(UserService userService, PasswordEncoder passwordEncoder, EmailService emailService) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
     @PostMapping("/register")
@@ -43,13 +48,29 @@ public class RegistrationController {
         newUser.setUsername(registrationDto.getUsername());
         newUser.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
         newUser.setEmail(registrationDto.getEmail());
-        // You might want to set other properties or roles as well
+        newUser.setEnabled(false); // Initially, the user is not enabled
 
-        // Save the new user
         userService.saveUser(newUser);
 
-        return ResponseEntity.ok("User registered successfully");
+        // Generate verification token
+        String token = UUID.randomUUID().toString();
+        userService.createVerificationToken(newUser, token);
+
+        // Send verification email
+        String verificationUrl = "http://localhost:8000/auth/registerUser/verify?token=" + token;
+        String emailBody = "Thank you for registering. Please click the following link to verify your email address: " + verificationUrl;
+        emailService.sendSimpleMessage(newUser.getEmail(), "Email Verification", emailBody);
+
+        return ResponseEntity.ok("User registered successfully. Please check your email to verify your account.");
     }
 
-    // Add other endpoints if necessary, such as for email confirmation, etc.
+    @GetMapping("/verify")
+    public ResponseEntity<?> verifyEmail(@RequestParam String token) {
+        try {
+            userService.verifyUser(token);
+            return ResponseEntity.ok("Email verified successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
