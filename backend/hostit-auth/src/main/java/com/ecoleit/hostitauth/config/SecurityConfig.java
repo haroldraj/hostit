@@ -32,16 +32,9 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/auth/login", "/auth/registerUser/register").permitAll()
+                        .requestMatchers("/auth/login", "/auth/registerUser/register", "/auth/registerUser/verify").permitAll()
                         .anyRequest().authenticated()
                 )
-                // We don't need to use formLogin() for REST APIs, remove this if you're handling login in a REST controller
-                .logout(logout -> logout
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout"))
-                        .logoutSuccessUrl("/auth/login?logout")
-                        .permitAll()
-                )
-                // Since you're using a custom login endpoint, we don't configure formLogin here
                 .httpBasic(Customizer.withDefaults());
 
         return http.build();
