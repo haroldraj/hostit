@@ -88,5 +88,9 @@ public class User {
         this.roles = roles;
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
     // hashCode, equals, and toString methods can be overridden as needed
 }

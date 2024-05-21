@@ -28,7 +28,6 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody UserDto userDto) {
-        // Attempt to authenticate the user with the provided credentials
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(
                         userDto.getUsername(),
@@ -38,15 +37,9 @@ public class AuthenticationController {
         try {
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            // You can now return a custom response or JWT token if needed
-            // ...
-
             return ResponseEntity.ok("User logged in successfully!");
         } catch (Exception e) {
-            // Handle authentication failure
             return ResponseEntity.status(401).body("Authentication failed: " + e.getMessage());
         }
     }
-
-    // Additional endpoints such as change password, reset password, etc.
 }

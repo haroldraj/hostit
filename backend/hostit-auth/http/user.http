@@ -5,9 +5,9 @@ POST http://localhost:8000/auth/registerUser/register
 Content-Type: application/json
 
 {
-    "username": "pers2331333",
+    "username": "pers233155333",
     "password": "password",
-    "email": "dariosloiquetakam@gmail.com"
+    "email": "dariosloique@gmail.com"
 }
 
 
@@ -17,5 +17,5 @@ Content-Type: application/json
 
 {
   "username": "pers2331333",
-  "password": "dariosloiquetakam@gmail.com"
+  "password": "password"
 }

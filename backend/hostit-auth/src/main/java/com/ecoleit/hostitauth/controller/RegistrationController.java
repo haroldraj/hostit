@@ -57,7 +57,7 @@ public class RegistrationController {
         String emailBody = "<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;\">"
                 + "<h1 style=\"color: #333; text-align: center;\">Welcome to HostIT!</h1>"
                 + "<p style=\"color: #555;\">Hello " + registrationDto.getUsername() + ",</p>"
-                + "<p style=\"color: #555;\">I am named Loique Darios, the CEO of HOSTIT,  On behalf of  the entire HostIT team, we want to thank you for registering with us. We are excited to have you on board and look forward to providing you with the best service possible.</p>"
+                + "<p style=\"color: #555;\">I am named Loique Darios, the CEO of HOSTIT. On behalf of the entire HostIT team, we want to thank you for registering with us. We are excited to have you on board and look forward to providing you with the best service possible.</p>"
                 + "<p style=\"color: #555;\">Please click the button below to verify your email address and complete your registration:</p>"
                 + "<div style=\"text-align: center; margin: 20px 0;\">"
                 + "<a href=\"" + verificationUrl + "\" style=\"display: inline-block; padding: 10px 20px; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;\">Verify Email</a>"
