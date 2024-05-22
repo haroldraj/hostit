@@ -2,6 +2,8 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
+import 'package:hostit_ui/constants/custom_colors.dart';
+import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/models/file_model.dart';
 import 'package:hostit_ui/service/storage_service.dart';
 import 'package:logger/logger.dart';
@@ -25,6 +27,11 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
   bool isHighlighted = false;
   FilePickerResult? _filePickerResult;
   StorageService storageService = StorageService();
+  ValueNotifier<bool> isCancelHovered = ValueNotifier<bool>(false);
+
+  void _close() {
+    Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +86,38 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
                     style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                 ),
+                Spacing.vertical,
+                MouseRegion(
+                  onHover: (_) => isCancelHovered.value = true,
+                  onExit: (_) => isCancelHovered.value = false,
+                  child: SizedBox(
+                    width: 100,
+                    height: 35,
+                    child: FloatingActionButton(
+                      shape: RoundedRectangleBorder(
+                        side: const BorderSide(color: Colors.red),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      elevation: 0,
+                      backgroundColor: const Color.fromARGB(240, 248, 204, 204),
+                      hoverColor: CustomColors.primaryColor,
+                      onPressed: () {
+                        _close();
+                      },
+                      child: ValueListenableBuilder<bool>(
+                        valueListenable: isCancelHovered,
+                        builder: (context, value, child) {
+                          return Text(
+                            'Cancel',
+                            style: TextStyle(
+                                color: value ? Colors.white : Colors.red,
+                                fontSize: 18),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -115,7 +154,7 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
       contentType: await controller.getFileMIME(event),
     );
     await storageService.uploadBytes(fileModel);
-    //goTo(context, const HomePage());
+    _close();
     setState(() {
       isHighlighted = false;
     });
@@ -132,7 +171,7 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
         contentType: lookupMimeType(_filePickerResult!.files.first.extension!),
       );
       await storageService.uploadBytes(fileModel);
-      //goTo(context, const HomePage());
+      _close();
     }
   }
 }

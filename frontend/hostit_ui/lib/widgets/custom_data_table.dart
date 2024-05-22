@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hostit_ui/constants/card_size.dart';
+import 'package:hostit_ui/constants/custom_colors.dart';
+import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/constants/screen_size.dart';
 import 'package:hostit_ui/service/storage_service.dart';
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
-import 'package:http/http.dart' as http;
 
 class CustomDataTable extends StatefulWidget {
   final List<String> columns;
@@ -36,6 +35,8 @@ class _CustomDataTableState extends State<CustomDataTable> {
   List<bool> sortAscending = List.filled(5, false);
   int sortColumnIndex = 0;
   final _scrollController = ScrollController();
+  final StorageService _storageService = StorageService();
+  int userId = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +65,6 @@ class _CustomDataTableState extends State<CustomDataTable> {
 
   List<DataColumn> _buildColumns() {
     var result = widget.columns.asMap().entries.map((entry) {
-      //int columnIndex = entry.key;
       String column = entry.value;
 
       return DataColumn(
@@ -81,9 +81,15 @@ class _CustomDataTableState extends State<CustomDataTable> {
       );
     }).toList();
 
-    // Ajoutez la colonne d'actions si nécessaire
     if (widget.showActionsColumn) {
-      result.add(const DataColumn(label: Text("Actions")));
+      result.add(
+        const DataColumn(
+          label: Text(
+            "Actions",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      );
     }
 
     return result;
@@ -94,26 +100,69 @@ class _CustomDataTableState extends State<CustomDataTable> {
       var cells = rowData
           .map(
             (cellData) => DataCell(
-              Text(cellData ?? ''), // Utilisation de la valeur par défaut ''
+              Text(cellData ?? ''),
             ),
           )
           .toList();
-
-      // Ajoutez un bouton pour la colonne d'actions si nécessaire
-
       if (widget.showActionsColumn) {
-        var fileName = rowData.isNotEmpty
-            ? rowData[0] ??
-                '' // Supposons que l'ID du joueur est dans la première colonne
-            : '';
-
+        var fileName = rowData.isNotEmpty ? rowData[4] ?? '' : '';
+        var filePath = rowData.length > 1 ? rowData[4] ?? '' : '';
+        ValueNotifier<bool> isDeleteHovered = ValueNotifier<bool>(false);
+        ValueNotifier<bool> isDownloadHovered = ValueNotifier<bool>(false);
         cells.add(DataCell(
-          ElevatedButton(
-            style: ButtonStyle().copyWith(),
-            onPressed: () {
-              _handleDownloadFile(fileName);
-            },
-            child: Text(widget.buttonName),
+          Row(
+            children: [
+              MouseRegion(
+                onHover: (_) => isDownloadHovered.value = true,
+                onExit: (_) => isDownloadHovered.value = false,
+                child: SizedBox(
+                  width: 100,
+                  height: 35,
+                  child: FloatingActionButton(
+                    elevation: 0,
+                    hoverColor: Colors.blueAccent,
+                    onPressed: () {
+                      _handleDownloadFile(userId, filePath);
+                    },
+                    child: ValueListenableBuilder<bool>(
+                      valueListenable: isDownloadHovered,
+                      builder: (context, value, child) {
+                        return Text(
+                          'Download',
+                          style: TextStyle(color: value ? Colors.white : null),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              Spacing.horizontal,
+              MouseRegion(
+                onHover: (_) => isDeleteHovered.value = true,
+                onExit: (_) => isDeleteHovered.value = false,
+                child: SizedBox(
+                  width: 100,
+                  height: 35,
+                  child: FloatingActionButton(
+                    elevation: 0,
+                    hoverColor: CustomColors.primaryColor,
+                    onPressed: () {
+                      _handleDeleteFile(userId, filePath);
+                    },
+                    child: ValueListenableBuilder<bool>(
+                      valueListenable: isDeleteHovered,
+                      builder: (context, value, child) {
+                        return Text(
+                          'Delete',
+                          style: TextStyle(
+                              color: value ? Colors.white : Colors.red),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ));
       }
@@ -122,9 +171,9 @@ class _CustomDataTableState extends State<CustomDataTable> {
           onSelectChanged: (bool? selected) {
             if (widget.clickable && selected!) {
               if (!widget.withReturnFunction) {
-                var fileName = rowData.isNotEmpty ? rowData[0] ?? '' : '';
+                var filePath = rowData.isNotEmpty ? rowData[4] ?? '' : '';
                 debugPrint("Row tapped");
-                _handleOpenInNewTab(fileName);
+                _handleOpenInNewTab(userId, filePath);
               }
             }
           },
@@ -144,50 +193,24 @@ class _CustomDataTableState extends State<CustomDataTable> {
       if (aValue == null) return ascending ? 1 : -1;
       if (bValue == null) return ascending ? -1 : 1;
 
-      // ignore: unnecessary_type_check
       if (ascending) {
         return Comparable.compare(aValue, bValue);
       } else {
         return Comparable.compare(bValue, aValue);
       }
     });
-    //Refresh la table
     setState(() {});
   }
 
-  // Fonction pour gérer l'édition avec l'ID
-  Future _handleDownloadFile(String fileName) async {
-    debugPrint('Download file: $fileName');
-    final url = Uri.parse(
-      await _getDownloadUri(fileName),
-    );
-    final response = await http.get(url);
-    final blob = html.Blob([response.bodyBytes]);
-    final anchorElement = html.AnchorElement(
-      href: html.Url.createObjectUrlFromBlob(blob).toString(),
-    )..setAttribute('download', fileName);
-    html.document.body!.children.add(anchorElement);
-    anchorElement.click();
-    html.document.body!.children.remove(anchorElement);
-    print(response.bodyBytes.length);
+  Future _handleDownloadFile(int userId, String filePath) async {
+    await _storageService.downloadFile(userId, filePath);
   }
 
-  // Fonction générique avec l'ID
-  Future _handleOpenInNewTab(String fileName) async {
-    html.AnchorElement(
-      href: await _getDownloadUri(fileName),
-    )
-      ..target = 'blank' // to open a new tab/window
-      //..download = fileName // to force download
-      ..click();
-    debugPrint('Open file in new Tab: $fileName');
+  Future _handleDeleteFile(int userId, String filePath) async {
+    await _storageService.deleteFile(userId, filePath);
   }
 
-  Future<String> _getDownloadUri(String fileName) async {
-    String userId = '1';
-    final StorageService storageService = StorageService();
-    String fileDownloadUri =
-        await storageService.getFileDownloadUri(userId, fileName);
-    return fileDownloadUri;
+  Future _handleOpenInNewTab(int userId, String filePath) async {
+    await _storageService.openFile(userId, filePath);
   }
 }

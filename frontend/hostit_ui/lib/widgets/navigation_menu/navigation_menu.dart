@@ -51,7 +51,32 @@ class _NavigationMenuState extends State<NavigationMenu> {
                                 )
                               : const SizedBox(),
                           Expanded(
-                            child: Container(),
+                            child: SizedBox(
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 100,
+                                    height: 35,
+                                    child: FloatingActionButton(
+                                        elevation: 0,
+                                        onPressed: () => showDialog(
+                                              barrierDismissible: false,
+                                              context: context,
+                                              builder: (context) =>
+                                                  const MainPage(),
+                                            ),
+                                        child: const Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(Icons.add),
+                                            Text("Add Files  "),
+                                          ],
+                                        )),
+                                  )
+                                ],
+                              ),
+                            ),
                           ),
                           SizedBox(
                             child: Row(
@@ -98,8 +123,6 @@ Widget _buildMenuRoutes() {
     builder: (BuildContext context, MenuInfo value, Widget? child) {
       if (value.menuType == MenuType.home) {
         return const HomePage();
-      } else if (value.menuType == MenuType.addFiles) {
-        return const Expanded(child: MainPage());
       } else if (value.menuType == MenuType.photos) {
         return Expanded(
           child: Container(

@@ -11,7 +11,15 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return const AlertDialog(
+        content: SingleChildScrollView(
+      child: SizedBox(
+        width: 500,
+        height: 500,
+        child: DropzoneWidget(),
+      ),
+    ));
+    /*Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -29,6 +37,6 @@ class _MainPageState extends State<MainPage> {
           ],
         ),
       ),
-    );
+    );*/
   }
 }

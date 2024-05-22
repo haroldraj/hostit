@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
           borderRadius: BorderRadius.circular(20),
         ),
         child: FutureBuilder<List<FileModel>>(
-          future: _storageService.getUserFiles('1'),
+          future: _storageService.getUserFiles(1),
           builder: (context, snapshot) {
             try {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -98,12 +98,11 @@ class _FileListWidgetState extends State<FileListWidget> {
           fullScreen: true,
           clickable: true,
           showActionsColumn: true,
-          buttonName: "Download",
           columns: Responsive.isMobile(context)
               ? const ["Name"]
               : Responsive.isTablet(context)
                   ? const ["Name", "Size", "Date"]
-                  : const ["Name", "Type", "Size", "Date"],
+                  : const ["Name", "Type", "Size", "Date", "Path"],
           data: widget.files
                   ?.where((file) => file.name!
                       .toLowerCase()
@@ -114,13 +113,14 @@ class _FileListWidgetState extends State<FileListWidget> {
                           ? [
                               file.name,
                               file.sizeToString,
-                              file.uploadDate.toString(),
+                              file.uploadDateToString,
                             ]
                           : [
                               file.name,
                               file.contentType,
                               file.sizeToString,
-                              file.uploadDate.toString(),
+                              file.uploadDateToString,
+                              file.path
                             ])
                   .toList() ??
               [],

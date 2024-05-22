@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:hostit_ui/constants/custom_colors.dart';
 
 class ShowDialog {
   static void alertDialog(BuildContext context,
       {required String alertTitle,
       required String message,
       bool formValidation = false,
-      Color color = Colors.orange}) {
+      Color color = CustomColors.primaryColor}) {
     showDialog(
       context: context,
       barrierDismissible: false,
