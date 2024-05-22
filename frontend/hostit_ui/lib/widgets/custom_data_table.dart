@@ -105,7 +105,6 @@ class _CustomDataTableState extends State<CustomDataTable> {
           )
           .toList();
       if (widget.showActionsColumn) {
-        var fileName = rowData.isNotEmpty ? rowData[4] ?? '' : '';
         var filePath = rowData.length > 1 ? rowData[4] ?? '' : '';
         ValueNotifier<bool> isDeleteHovered = ValueNotifier<bool>(false);
         ValueNotifier<bool> isDownloadHovered = ValueNotifier<bool>(false);
