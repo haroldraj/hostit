@@ -1,22 +1,37 @@
-// ignore_for_file: avoid_print
-
 import 'package:dotted_border/dotted_border.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
-import 'package:hostit_ui/models/dropped_file.dart';
+import 'package:hostit_ui/constants/custom_colors.dart';
+import 'package:hostit_ui/constants/helpers.dart';
+import 'package:hostit_ui/models/file_model.dart';
+import 'package:hostit_ui/service/storage_service.dart';
+import 'package:logger/logger.dart';
+import 'package:mime/mime.dart';
 
 class DropzoneWidget extends StatefulWidget {
-  final ValueChanged<DroppedFile> onDroppedFile;
+  //final ValueChanged<DroppedFile> onDroppedFile;
 
-  const DropzoneWidget({super.key, required this.onDroppedFile});
+  const DropzoneWidget({
+    super.key,
+    //required this.onDroppedFile,
+  });
 
   @override
   State<DropzoneWidget> createState() => _DropzoneWidgetState();
 }
 
 class _DropzoneWidgetState extends State<DropzoneWidget> {
+  final Logger _logger = Logger();
   late DropzoneViewController controller;
   bool isHighlighted = false;
+  FilePickerResult? _filePickerResult;
+  StorageService storageService = StorageService();
+  ValueNotifier<bool> isCancelHovered = ValueNotifier<bool>(false);
+
+  void _close() {
+    Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,12 +75,7 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
                         vertical: 15,
                       ),
                       backgroundColor: colorButton),
-                  onPressed: () async {
-                    final events = await controller.pickFiles();
-                    if (events.isEmpty) return;
-
-                    acceptFile(events.first);
-                  },
+                  onPressed: () => uploadFile(),
                   icon: const Icon(
                     Icons.search,
                     size: 32,
@@ -74,6 +84,38 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
                   label: const Text(
                     'Choose Files',
                     style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                ),
+                Spacing.vertical,
+                MouseRegion(
+                  onHover: (_) => isCancelHovered.value = true,
+                  onExit: (_) => isCancelHovered.value = false,
+                  child: SizedBox(
+                    width: 100,
+                    height: 35,
+                    child: FloatingActionButton(
+                      shape: RoundedRectangleBorder(
+                        side: const BorderSide(color: Colors.red),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      elevation: 0,
+                      backgroundColor: const Color.fromARGB(240, 248, 204, 204),
+                      hoverColor: CustomColors.primaryColor,
+                      onPressed: () {
+                        _close();
+                      },
+                      child: ValueListenableBuilder<bool>(
+                        valueListenable: isCancelHovered,
+                        builder: (context, value, child) {
+                          return Text(
+                            'Cancel',
+                            style: TextStyle(
+                                color: value ? Colors.white : Colors.red,
+                                fontSize: 18),
+                          );
+                        },
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -106,26 +148,30 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
   }
 
   Future acceptFile(dynamic event) async {
-    final name = event.name;
-    final mime = await controller.getFileMIME(event); //type of the file
-    final bytes = await controller.getFileSize(event);
-    final url = await controller.createFileUrl(event);
-
-    print('Name: $name');
-    print('Mime: $mime');
-    print('Bytes: $bytes');
-    print('Url: $url');
-
-    final droppedFile = DroppedFile(
-      url: url,
-      name: name,
-      mime: mime,
-      bytes: bytes,
+    FileModel fileModel = FileModel(
+      bytes: await controller.getFileData(event),
+      name: event.name,
+      contentType: await controller.getFileMIME(event),
     );
-
-    widget.onDroppedFile(droppedFile);
+    await storageService.uploadBytes(fileModel);
+    _close();
     setState(() {
       isHighlighted = false;
     });
+  }
+
+  Future uploadFile() async {
+    _filePickerResult = await FilePicker.platform.pickFiles();
+    if (_filePickerResult == null) {
+      _logger.i("No file selected");
+    } else {
+      FileModel fileModel = FileModel(
+        bytes: _filePickerResult!.files.first.bytes,
+        name: _filePickerResult!.files.first.name,
+        contentType: lookupMimeType(_filePickerResult!.files.first.extension!),
+      );
+      await storageService.uploadBytes(fileModel);
+      _close();
+    }
   }
 }

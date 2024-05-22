@@ -39,6 +39,13 @@ dependencies:
   flutter_dropzone: ^4.0.0
   provider: ^6.1.2
   dotted_border: ^2.1.0
+  http: ^1.2.1
+  path_provider: ^2.1.3
+  file_picker: ^8.0.3
+  mime: ^1.0.5
+  logger: ^2.3.0
+  http_parser: ^4.0.2
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
