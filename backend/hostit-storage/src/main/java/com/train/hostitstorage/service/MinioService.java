@@ -3,6 +3,7 @@ package com.train.hostitstorage.service;
 import io.minio.*;
 import io.minio.http.Method;
 import io.minio.messages.Item;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -10,8 +11,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.net.http.HttpHeaders;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -33,45 +36,34 @@ public class MinioService {
     }
 
     @Async
-    public CompletableFuture<Boolean> uploadFile(MultipartFile file, String folderName) {
+    public CompletableFuture<String> uploadFile(MultipartFile file, String userFolder) {
         try {
             Iterable<Result<Item>> results = minioClient.listObjects(
-                    ListObjectsArgs.builder().bucket(bucketName).prefix(folderName+"/").recursive(true).build());
+                    ListObjectsArgs.builder().bucket(bucketName).prefix(userFolder+"/").recursive(true).build());
 
             if (!results.iterator().hasNext()) {
-                // If the folder doesn't exist, create it by uploading an empty file
                 minioClient.putObject(
-                        PutObjectArgs.builder().bucket(bucketName).object(folderName + "/.init").stream(
+                        PutObjectArgs.builder().bucket(bucketName).object(userFolder + "/.init").stream(
                                 new ByteArrayInputStream(new byte[0]), 0, -1).build());
             }
 
-            String fileName = folderName+"/"+ file.getOriginalFilename();
+           // String fileName = userFolder+"/"+ file.getOriginalFilename();
+            String fileName = userFolder+"/"+ file.getOriginalFilename();
             InputStream inputStream = new ByteArrayInputStream(file.getBytes());
             minioClient.putObject(
                     PutObjectArgs.builder().bucket(bucketName).object(fileName).stream(
                             inputStream, -1, 10485760).contentType(file.getContentType()).build());
-            return CompletableFuture.completedFuture(true);
+            return CompletableFuture.completedFuture(file.getOriginalFilename());
         } catch (Exception e) {
             e.printStackTrace();
-            return CompletableFuture.completedFuture(false);
+            return CompletableFuture.completedFuture(null);
         }
     }
 
-    public byte[] downloadFile(String fileName) {
-        try {
-            InputStream stream = minioClient.getObject(
-                    GetObjectArgs.builder().bucket(bucketName).object(fileName).build());
-            return stream.readAllBytes();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public boolean deleteFile(String fileName) {
+    public boolean deleteFile(String filePath) {
         try {
             minioClient.removeObject(
-                    RemoveObjectArgs.builder().bucket(bucketName).object(fileName).build());
+                    RemoveObjectArgs.builder().bucket(bucketName).object(filePath).build());
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -114,13 +106,16 @@ public class MinioService {
         }
     }
 
-    public String generateDownloadUri(String fileName) {
+    public String generateDownloadUri(String filepath) {
         try {
+            if (!fileExists(filepath)) {
+                throw new Exception("File with name "+ filepath +" doesn't exist");
+            }
             String downloadUri = minioClient.getPresignedObjectUrl(
                     GetPresignedObjectUrlArgs.builder()
                             .method(Method.GET)
                             .bucket(bucketName)
-                            .object(fileName)
+                            .object(filepath)
                             .expiry(downloadUriExpiration)
                             .build());
             System.out.println("Generated URI: " + downloadUri); // Print the generated URI

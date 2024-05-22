@@ -1,8 +1,6 @@
 package com.train.hostitstorage.controller;
 
 import com.train.hostitstorage.entity.FileMetadata;
-import com.train.hostitstorage.model.FileDownloadResponse;
-import com.train.hostitstorage.model.FileUploadResponse;
 import com.train.hostitstorage.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,9 +24,9 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity uploadFile(
+    public ResponseEntity  uploadFile(
             @RequestParam("file") MultipartFile file,
-            @RequestParam("userId") String userId) {
+            @RequestParam("userId") Long userId) {
         try {
             return ResponseEntity.ok(fileService.uploadFile(file, userId));
         } catch (Exception e) {
@@ -38,21 +36,40 @@ public class FileController {
         }
     }
 
-    @GetMapping("/download/{fileName:.+}")
-    public ResponseEntity<byte[]> downloadFile(@PathVariable String fileName) {
+    @DeleteMapping("/delete")
+    public ResponseEntity deleteFile(
+            @RequestParam("filePath") String filePath,
+            @RequestParam("userId") Long userId){
         try {
-            FileDownloadResponse response = fileService.downloadFile(fileName);
-            byte[] fileData = response.getFileData();
-            return ResponseEntity.ok()
-                    .header("Content-Disposition", "attachment; filename=\"" + fileName + "\"")
-                    .body(fileData);
+            boolean isFileDeleted = fileService.deleteFile(userId, filePath);
+            if (isFileDeleted) {
+                return ResponseEntity.ok("File deleted successfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found");
+            }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 
-    @GetMapping("/user-{userId}/files")
-    public ResponseEntity<Map<String, Object>> getUserFiles(@PathVariable String userId) {
+    @GetMapping("/download")
+    public ResponseEntity downloadFile(
+            @RequestParam("filePath") String filePath,
+            @RequestParam("userId") Long userId){
+        try {
+            return ResponseEntity.ok(fileService.getFileDownloadUri(userId, filePath));
+        } catch (Exception e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @GetMapping("/files")
+    public ResponseEntity<Map<String, Object>> getUserFiles(
+            @RequestParam("userId") Long userId) {
         List<FileMetadata> files = fileService.getUserFiles(userId);
         Map<String, Object> response = new HashMap<>();
         response.put("result", files);

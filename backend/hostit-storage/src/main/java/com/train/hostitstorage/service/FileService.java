@@ -1,17 +1,17 @@
 package com.train.hostitstorage.service;
 
 import com.train.hostitstorage.entity.FileMetadata;
-import com.train.hostitstorage.model.FileDownloadResponse;
 import com.train.hostitstorage.model.FileUploadResponse;
+import com.train.hostitstorage.model.FileDownloadUri;
 import com.train.hostitstorage.repository.FileMetadataRepository;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+
 
 @Service
 public class FileService {
@@ -24,10 +24,10 @@ public class FileService {
         this.fileMetadataRepository = fileMetadataRepository;
     }
 
-    public FileUploadResponse uploadFile(MultipartFile file, String userId) throws FileUploadException, ExecutionException, InterruptedException {
+    public FileUploadResponse uploadFile(MultipartFile file, Long userId) throws FileUploadException, ExecutionException, InterruptedException {
         FileUploadResponse response = new FileUploadResponse();
         String fileName = file.getOriginalFilename();
-        String folderName = "user-" + userId;
+        String userFolder = "user-" + userId.toString();
 
         if (minioService.fileExists(fileName)) {
             throw new FileUploadException("File already uploaded");
@@ -36,8 +36,8 @@ public class FileService {
         if (fileMetadataRepository.existsByName(fileName)) {
             throw new FileUploadException("File metadata already exists in the database");
         }*/
-        CompletableFuture<Boolean> isUploaded = minioService.uploadFile(file, folderName);
-        if (!isUploaded.get()) {
+        CompletableFuture<String> fileUploadedPath = minioService.uploadFile(file, userFolder);
+        if (fileUploadedPath== null) {
             throw new FileUploadException("Failed to upload file");
         }
         //String downloadUri = minioService.generateDownloadUri(file.getOriginalFilename());
@@ -52,20 +52,32 @@ public class FileService {
         fileMetadata.setSize(file.getSize());
         fileMetadata.setContentType(file.getContentType());
         fileMetadata.setUploadDate(new Timestamp(System.currentTimeMillis()));
-        fileMetadata.setFolderName(folderName);
+        fileMetadata.setPath(fileUploadedPath.get());
+        fileMetadata.setUserId(userId);
         fileMetadataRepository.save(fileMetadata);
 
         return response;
     }
 
-    public FileDownloadResponse downloadFile(String fileName) {
-        byte[] fileContent = minioService.downloadFile(fileName);
-        String contentType = minioService.getFileContentType(fileName);
-        return new FileDownloadResponse(fileName, contentType, fileContent);
+    public Long getUserId(Long userId, String filePath) {
+       return fileMetadataRepository.findByUserIdAndPath(userId, filePath).getId();
     }
 
-    public boolean deleteFile(String fileName) {
-        return minioService.deleteFile(fileName);
+    public boolean deleteFile(Long userId, String filePath) {
+        try{
+            String userFolder = "user-" + userId.toString();
+            String fileName = userFolder + "/" + filePath;
+            boolean isFileDeleted = minioService.deleteFile(fileName);
+            Long fileId = getUserId(userId, filePath);
+            if (isFileDeleted) {
+                fileMetadataRepository.deleteById(fileId);
+                return true;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return false;
     }
 
     public String getFileUrl(String fileName) {
@@ -80,13 +92,20 @@ public class FileService {
         return minioService.getFileContentType(fileName);
     }
 
-    public String getDownloadUri(String fileName) {
-        return minioService.generateDownloadUri(fileName);
+    public FileDownloadUri getFileDownloadUri(Long userId, String filePath) throws Exception {
+        FileDownloadUri response = new FileDownloadUri();
+        String userFolder = "user-" + userId.toString();
+        String fileName = userFolder + "/" + filePath;
+        response.setDownloadUri(minioService.generateDownloadUri(fileName));
+        response.setFileName(fileName);
+        if(response.getDownloadUri() ==null){
+            throw new Exception("File path '"+ filePath+"' doesn't exit");
+        }
+        return response;
     }
 
-    public List<FileMetadata> getUserFiles(String userId) {
-        String userFolderName = "user-" + userId;
-        return fileMetadataRepository.findByFolderName(userFolderName);
+    public List<FileMetadata> getUserFiles(Long userId) {
+        return fileMetadataRepository.findByUserId(userId);
     }
 
 
