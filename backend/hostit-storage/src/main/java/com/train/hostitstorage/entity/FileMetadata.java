@@ -30,17 +30,13 @@ public class FileMetadata {
     @Basic
     private Timestamp uploadDate;
 
-    @Column(name="folder_name")
+    @Column(name="path")
     @Basic
-    private String folderName;
+    private String path;
 
-    public String getFolderName() {
-        return folderName;
-    }
-
-    public void setFolderName(String folderName) {
-        this.folderName = folderName;
-    }
+    @Column(name="user_id")
+    @Basic
+    private long userId;
 
     public Long getId() {
         return id;
@@ -50,11 +46,11 @@ public class FileMetadata {
         this.id = id;
     }
 
-    public String getName() {
+    public @Unique String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@Unique String name) {
         this.name = name;
     }
 
@@ -82,15 +78,31 @@ public class FileMetadata {
         this.uploadDate = uploadDate;
     }
 
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof FileMetadata that)) return false;
-        return size == that.size && Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(contentType, that.contentType) && Objects.equals(uploadDate, that.uploadDate) && Objects.equals(folderName, that.folderName);
+        return size == that.size && userId == that.userId && Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(contentType, that.contentType) && Objects.equals(uploadDate, that.uploadDate) && Objects.equals(path, that.path);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, contentType, size, uploadDate, folderName);
+        return Objects.hash(id, name, contentType, size, uploadDate, path, userId);
     }
 }
