@@ -9,7 +9,9 @@ CREATE TABLE users (
                        username VARCHAR(255) NOT NULL UNIQUE,
                        password VARCHAR(255) NOT NULL,
                        email VARCHAR(255) UNIQUE,
-                       enabled BOOLEAN DEFAULT FALSE
+                       enabled BOOLEAN DEFAULT FALSE,
+                       secret VARCHAR(255) NOT NULL, -- For 2FA secret key
+                       is2FAEnabled BOOLEAN DEFAULT FALSE -- For 2FA status
 );
 
 -- Create the roles table

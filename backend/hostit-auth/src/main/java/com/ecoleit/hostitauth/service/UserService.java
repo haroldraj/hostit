@@ -19,7 +19,6 @@ public class UserService {
     private final VerificationTokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
 
-
     @Autowired
     public UserService(UserRepository userRepository, VerificationTokenRepository tokenRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -59,7 +58,6 @@ public class UserService {
         tokenRepository.save(verificationToken);
     }
 
-
     public VerificationToken getVerificationToken(String token) {
         return tokenRepository.findByToken(token);
     }
@@ -85,6 +83,4 @@ public class UserService {
         final Calendar calendar = Calendar.getInstance();
         return token.getExpiryDate().before(calendar.getTime());
     }
-
-
 }

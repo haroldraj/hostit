@@ -19,14 +19,13 @@ public class MailConfig {
         mailSender.setUsername("takkamdarios@gmail.com"); // Replace with your email
         mailSender.setPassword("lpgq eexu spsr sowr"); // Replace with your app-specific password
 
-
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
-        props.put("mail.from", "noreply@gmail.com");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.smtp.starttls.required", "true");
         props.put("mail.debug", "true");
+        props.put("mail.from", "noreply@hostit.com"); // Set the 'from' address
 
         return mailSender;
     }

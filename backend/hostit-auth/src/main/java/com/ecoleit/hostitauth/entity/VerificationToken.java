@@ -1,8 +1,6 @@
 package com.ecoleit.hostitauth.entity;
 
 import jakarta.persistence.*;
-
-//import javax.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -20,7 +18,19 @@ public class VerificationToken {
 
     private Date expiryDate;
 
+    // Default constructor
+    public VerificationToken() {
+    }
+
+    // Constructor with fields
+    public VerificationToken(String token, User user, Date expiryDate) {
+        this.token = token;
+        this.user = user;
+        this.expiryDate = expiryDate;
+    }
+
     // Getters and setters
+
     public Long getId() {
         return id;
     }

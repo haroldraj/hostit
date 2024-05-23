@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+
 @Service
 public class EmailServiceImpl implements EmailService {
 
@@ -43,7 +45,8 @@ public class EmailServiceImpl implements EmailService {
         helper.setSubject(subject);
         helper.setText(text);
 
-        //helper.addAttachment("Attachment", new File(pathToAttachment));
+        File file = new File(pathToAttachment);
+        helper.addAttachment("Attachment", file);
 
         emailSender.send(message);
     }
