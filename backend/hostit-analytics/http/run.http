@@ -1,0 +1,45 @@
+### Retrieve All File Metadata
+# This request fetches all file metadata entries from the database.
+# You should expect a JSON array of file metadata objects.
+GET http://localhost:8000/api/files
+Accept: application/json
+
+### Download File Metadata as CSV
+# This request downloads all file metadata in CSV format.
+# You should expect a CSV file download containing all file metadata.
+GET http://localhost:8000/api/files/csv
+Accept: text/csv
+Content-Disposition: attachment; filename="file_metadata.csv"
+
+### Add New File Metadata
+# This request adds a new file metadata entry to the database.
+# You should expect a confirmation of creation (e.g., a returned JSON of the created object).
+POST http://localhost:8000/api/files
+Content-Type: application/json
+
+{
+  "userId": 4,
+  "fileType": "txt",
+  "fileSize": 123456,
+  "uploadDate": "2024-06-01T12:00:00",
+  "directoryId": 2
+}
+
+### Update File Metadata
+# This request updates an existing file metadata entry. Replace ':id' with an actual ID from your database.
+# You should expect a confirmation of the update (e.g., a returned JSON of the updated object).
+PUT http://localhost:8000/api/files/:id
+Content-Type: application/json
+
+{
+  "userId": 4,
+  "fileType": "txt",
+  "fileSize": 234567,
+  "uploadDate": "2024-06-02T12:00:00",
+  "directoryId": 2
+}
+
+### Delete File Metadata
+# This request deletes an existing file metadata entry. Replace ':id' with an actual ID from your database.
+# You should expect a status confirmation of the deletion.
+DELETE http://localhost:8000/api/files/:id

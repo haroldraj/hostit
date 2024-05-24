@@ -1,104 +1,104 @@
 package com.ecoleit.hostitanalytics.entitie;
 
-// Importation des classes nécessaires pour la gestion de la persistance et des entités
 import jakarta.persistence.*;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
-// Annotation pour indiquer que cette classe est une entité JPA
 @Entity
-// Annotation pour spécifier le nom de la table dans la base de données
 @Table(name = "file_metadata")
 public class FileMetadata {
-    // Annotation pour indiquer que ce champ est la clé primaire
+
     @Id
-    private Long Id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    // Champ pour stocker l'identifiant de l'utilisateur
-    private String userId;
+    @Column(name = "user_id")
+    private Integer userId;
 
-    // Champ pour stocker le nom
-    private String Name;
+    @Column(name = "file_type")
+    private String fileType;
 
-    // Champ pour stocker le type de contenu
-    private String contentType;
+    @Column(name = "file_size")
+    private Long fileSize;
 
-    // Champ pour stocker la date de téléchargement
-    private Timestamp uploadDate;
+    @Column(name = "upload_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date uploadDate;
 
-    // Champ pour stocker la taille du fichier
-    private String size;
+    @Column(name = "directory_id")
+    private Integer directoryId;
 
-    // Champ pour stocker le nom du fichier
-    private String filename;
+    // Constructors
+    public FileMetadata() {
+    }
 
-    // Getter pour le champ userId
-    public String getUserId() {
+    public FileMetadata(Integer userId, String fileType, Long fileSize, Date uploadDate, Integer directoryId) {
+        this.userId = userId;
+        this.fileType = fileType;
+        this.fileSize = fileSize;
+        this.uploadDate = uploadDate;
+        this.directoryId = directoryId;
+    }
+
+    // Getters and setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Integer getUserId() {
         return userId;
     }
 
-    // Setter pour le champ userId
-    public void setUserId(String userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 
-    // Getter pour le champ Id
-    public Long getId() {
-        return Id;
+    public String getFileType() {
+        return fileType;
     }
 
-    // Setter pour le champ Id
-    public void setId(Long id) {
-        Id = id;
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
     }
 
-    // Getter pour le champ Name
-    public String getName() {
-        return Name;
+    public Long getFileSize() {
+        return fileSize;
     }
 
-    // Setter pour le champ Name
-    public void setName(String name) {
-        Name = name;
+    public void setFileSize(Long fileSize) {
+        this.fileSize = fileSize;
     }
 
-    // Getter pour le champ contentType
-    public String getContentType() {
-        return contentType;
-    }
-
-    // Setter pour le champ contentType
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
-
-    // Getter pour le champ uploadDate
-    public Timestamp getUploadDate() {
+    public Date getUploadDate() {
         return uploadDate;
     }
 
-    // Setter pour le champ uploadDate
-    public void setUploadDate(Timestamp uploadDate) {
+    public void setUploadDate(Date uploadDate) {
         this.uploadDate = uploadDate;
     }
 
-    // Getter pour le champ size
-    public String getSize() {
-        return size;
+    public Integer getDirectoryId() {
+        return directoryId;
     }
 
-    // Setter pour le champ size
-    public void setSize(String size) {
-        this.size = size;
+    public void setDirectoryId(Integer directoryId) {
+        this.directoryId = directoryId;
     }
 
-    // Getter pour le champ filename
-    public String getFilename() {
-        return filename;
-    }
-
-    // Setter pour le champ filename
-    public void setFilename(String filename) {
-        this.filename = filename;
+    // toString method for debugging
+    @Override
+    public String toString() {
+        return "FileMetadata{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", fileType='" + fileType + '\'' +
+                ", fileSize=" + fileSize +
+                ", uploadDate=" + uploadDate +
+                ", directoryId=" + directoryId +
+                '}';
     }
 }

@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="schema.sql" type="DatabaseScript" editBeforeRun="true" nameIsGenerated="true">
+    <script-file value="$PROJECT_DIR$/src/main/resources/schema.sql" />
+    <script-mode>FILE</script-mode>
+    <method v="2">
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="schema.sql (1)" run_configuration_type="DatabaseScript" />
+    </method>
+  </configuration>
+</component>
