@@ -1,12 +1,16 @@
 package com.train.hostitstorage.service;
 
 import com.train.hostitstorage.entity.FileMetadata;
+import com.train.hostitstorage.handler.FileUpdateHandler;
 import com.train.hostitstorage.model.FileUploadResponse;
 import com.train.hostitstorage.model.FileDownloadUri;
 import com.train.hostitstorage.repository.FileMetadataRepository;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -16,10 +20,13 @@ import java.util.concurrent.ExecutionException;
 @Service
 public class FileService {
 
+    //@Autowired
+    //private FileUpdateHandler fileUpdateHandler;
+
     private final MinioService minioService;
     private final FileMetadataRepository fileMetadataRepository;
 
-    public FileService(MinioService minioService, FileMetadataRepository fileMetadataRepository) {
+    public FileService( MinioService minioService, FileMetadataRepository fileMetadataRepository) {
         this.minioService = minioService;
         this.fileMetadataRepository = fileMetadataRepository;
     }
@@ -56,12 +63,15 @@ public class FileService {
         fileMetadata.setUserId(userId);
         fileMetadataRepository.save(fileMetadata);
 
+      /*  try {
+            fileUpdateHandler.sendMessageToAll("File uploaded: " + file.getOriginalFilename());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
         return response;
     }
 
-    public Long getUserId(Long userId, String filePath) {
-       return fileMetadataRepository.findByUserIdAndPath(userId, filePath).getId();
-    }
+
 
     public boolean deleteFile(Long userId, String filePath) {
         try{
@@ -71,6 +81,11 @@ public class FileService {
             Long fileId = getUserId(userId, filePath);
             if (isFileDeleted) {
                 fileMetadataRepository.deleteById(fileId);
+            /*    try {
+                    fileUpdateHandler.sendMessageToAll("File deleted: " + filePath);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }*/
                 return true;
             }
         }catch (Exception e){
@@ -108,6 +123,13 @@ public class FileService {
         return fileMetadataRepository.findByUserId(userId);
     }
 
+    public List<FileMetadata> getAllUserFiles() {
+        return fileMetadataRepository.findAll();
+    }
+
+    public Long getUserId(Long userId, String filePath) {
+        return fileMetadataRepository.findByUserIdAndPath(userId, filePath).getId();
+    }
 
     /*@Scheduled(fixedRate = 3600000) // Run every hour
     public void regenerateDownloadUris() {

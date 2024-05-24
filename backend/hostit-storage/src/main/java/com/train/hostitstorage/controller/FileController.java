@@ -28,13 +28,14 @@ public class FileController {
             @RequestParam("file") MultipartFile file,
             @RequestParam("userId") Long userId) {
         try {
-            return ResponseEntity.ok(fileService.uploadFile(file, userId));
+             return ResponseEntity.ok(fileService.uploadFile(file, userId));
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
+
 
     @DeleteMapping("/delete")
     public ResponseEntity deleteFile(
@@ -76,4 +77,13 @@ public class FileController {
         response.put("folderName",  "user-" + userId);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/all/files")
+    public ResponseEntity<Map<String, Object>> getAllUserFiles() {
+        List<FileMetadata> files = fileService.getAllUserFiles();
+        Map<String, Object> response = new HashMap<>();
+        response.put("result", files);
+        return ResponseEntity.ok(response);
+    }
+
 }
