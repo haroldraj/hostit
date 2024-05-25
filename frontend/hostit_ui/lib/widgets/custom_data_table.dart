@@ -14,6 +14,7 @@ class CustomDataTable extends StatefulWidget {
   final bool clickable;
   final bool fullScreen;
   final bool withReturnFunction;
+ // final WebSocketChannel channel;
 
   const CustomDataTable({
     super.key,
@@ -25,6 +26,7 @@ class CustomDataTable extends StatefulWidget {
     this.clickable = false,
     this.fullScreen = false,
     this.withReturnFunction = false,
+   // required this.channel,
   });
 
   @override
@@ -36,8 +38,36 @@ class _CustomDataTableState extends State<CustomDataTable> {
   int sortColumnIndex = 0;
   final _scrollController = ScrollController();
   final StorageService _storageService = StorageService();
+  List<List<String>> data = [];
   int userId = 1;
+/*
+  @override
+  void initState() {
+    super.initState();
+    widget.channel.stream.listen((message) {
+     setState(() {
+        // Split the message into parts
+        List<String> parts = message.split(': ');
+        // Check if the message has the expected format
+        if (parts.length == 2) {
+          if (parts[0] == 'File uploaded') {
+            // Add the filename to the data
+            data.add([parts[1]]);
+          } else if (parts[0] == 'File deleted') {
+            // Remove the filepath from the data
+            data.removeWhere((element) => element.contains(parts[1]));
+          }
+        }
+      });
+    });
+  }
 
+  @override
+  void dispose() {
+    widget.channel.sink.close();
+    super.dispose();
+  }
+*/
   @override
   Widget build(BuildContext context) {
     return Scrollbar(
