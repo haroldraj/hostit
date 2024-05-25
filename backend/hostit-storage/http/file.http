@@ -1,0 +1,17 @@
+###
+GET http://localhost:8001/files
+###
+# curl "http://localhost:8080/files/"
+#     -H 'Cache-Control: no-cache'
+POST http://localhost:8001/files/upload
+Content-Type: application/json
+
+{
+  "bucketName" : "minio-hostit-bucket",
+  "objectName" : "aaaaa.jpg",
+  "fileName" : "C:/Users/takka/Downloads/aaaaa.jpg",
+  "contentType":  "image/jpg",
+  "objectSize": 104
+}
+###
+

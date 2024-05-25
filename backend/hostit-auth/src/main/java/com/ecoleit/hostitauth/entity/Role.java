@@ -3,6 +3,7 @@ package com.ecoleit.hostitauth.entity;
 import jakarta.persistence.*;
 
 import java.util.Collection;
+import java.util.Objects;
 
 @Entity
 @Table(name = "roles")
@@ -16,11 +17,11 @@ public class Role {
     private String name;
 
     // Relation with User entity if necessary, e.g., ManyToMany or OneToMany
+    // Uncomment if needed
     // @ManyToMany(mappedBy = "roles")
     // private Collection<User> users;
 
-    // Constructors, getters, and setters
-
+    // Constructors
     public Role() {
     }
 
@@ -28,6 +29,7 @@ public class Role {
         this.name = name;
     }
 
+    // Getters and setters
     public Long getId() {
         return id;
     }
@@ -57,15 +59,13 @@ public class Role {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Role)) return false;
-
         Role role = (Role) o;
-
-        return id != null ? id.equals(role.id) : role.id == null;
+        return Objects.equals(id, role.id);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return Objects.hash(id);
     }
 
     @Override

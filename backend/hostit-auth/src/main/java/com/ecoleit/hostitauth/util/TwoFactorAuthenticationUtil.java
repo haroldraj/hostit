@@ -12,7 +12,12 @@ import dev.samstevens.totp.secret.DefaultSecretGenerator;
 import dev.samstevens.totp.secret.SecretGenerator;
 import dev.samstevens.totp.time.SystemTimeProvider;
 import dev.samstevens.totp.time.TimeProvider;
+import dev.samstevens.totp.code.HashingAlgorithm;
+import org.springframework.stereotype.Component;
 
+import static dev.samstevens.totp.util.Utils.getDataUriForImage;
+
+@Component // Add this annotation
 public class TwoFactorAuthenticationUtil {
 
     private final SecretGenerator secretGenerator;
@@ -38,7 +43,7 @@ public class TwoFactorAuthenticationUtil {
                 .label(account)
                 .secret(secretKey)
                 .issuer(issuer)
-                //.algorithm(QrData.Algorithm.SHA1) // or the one you chose
+                .algorithm(HashingAlgorithm.SHA1) // Use the HashingAlgorithm enum
                 .digits(6)
                 .period(30)
                 .build();
@@ -47,16 +52,25 @@ public class TwoFactorAuthenticationUtil {
                 issuer, account, secretKey, issuer);
     }
 
-    public byte[] generateQrCode(String totpUrl, int width, int height) throws QrGenerationException {
+    public byte[] generateQrCode(String secretKey, String account, String issuer) throws QrGenerationException {
         QrData data = new QrData.Builder()
-                .label(totpUrl)
+                .label(account)
+                .secret(secretKey)
+                .issuer(issuer)
+                .algorithm(HashingAlgorithm.SHA1) // Use the HashingAlgorithm enum
+                .digits(6)
+                .period(30)
                 .build();
+
         return qrGenerator.generate(data);
+    }
+
+    public String generateQrCodeDataUri(String secretKey, String account, String issuer) throws QrGenerationException {
+        byte[] qrCodeImage = generateQrCode(secretKey, account, issuer);
+        return getDataUriForImage(qrCodeImage, qrGenerator.getImageMimeType());
     }
 
     public boolean verifyCode(String secret, String code) {
         return verifier.isValidCode(secret, code);
     }
-
-    // You can add more utility methods if needed.
 }
