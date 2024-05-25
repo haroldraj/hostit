@@ -17,7 +17,7 @@ class StorageService {
     final url = "$_baseUrl/upload";
     try {
       var request = http.MultipartRequest('POST', Uri.parse(url));
-      request.fields['userId'] = '1';
+      request.fields['userId'] = '2';
       request.files.add(
         http.MultipartFile.fromBytes(
           'file',

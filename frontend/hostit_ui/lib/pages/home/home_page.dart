@@ -69,6 +69,15 @@ class FileListWidget extends StatefulWidget {
 
 class _FileListWidgetState extends State<FileListWidget> {
   final TextEditingController _searchController = TextEditingController();
+   /*WebSocketChannel? _channel;
+
+    @override
+  void initState() {
+    super.initState();
+    _channel = WebSocketChannel.connect(
+      Uri.parse("${UrlConfig.baseApiUrl}/file-updates"),
+    );
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -95,6 +104,7 @@ class _FileListWidgetState extends State<FileListWidget> {
         ),
         Spacing.vertical,
         CustomDataTable(
+         // channel: _channel!,
           fullScreen: true,
           clickable: true,
           showActionsColumn: true,
