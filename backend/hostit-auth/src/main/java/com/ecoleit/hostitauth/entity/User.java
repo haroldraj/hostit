@@ -1,6 +1,7 @@
 package com.ecoleit.hostitauth.entity;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import jakarta.persistence.*;
 
@@ -118,19 +119,17 @@ public class User {
 
     // Overriding hashCode, equals, and toString methods
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof User)) return false;
-
-        User user = (User) o;
-
-        return getId() != null ? getId().equals(user.getId()) : user.getId() == null;
+        if (!(o instanceof User user)) return false;
+        return enabled == user.enabled && is2FAEnabled == user.is2FAEnabled && Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(email, user.email) && Objects.equals(roles, user.roles) && Objects.equals(secret, user.secret);
     }
 
     @Override
     public int hashCode() {
-        return getId() != null ? getId().hashCode() : 0;
+        return Objects.hash(id, username, password, email, roles, enabled, secret, is2FAEnabled);
     }
 
     @Override

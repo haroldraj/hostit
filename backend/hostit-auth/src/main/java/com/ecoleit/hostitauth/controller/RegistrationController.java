@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/auth/registerUser")
+@RequestMapping("/api/auth")
 public class RegistrationController {
 
     private final UserService userService;
@@ -61,9 +61,9 @@ public class RegistrationController {
         String token = UUID.randomUUID().toString();
         userService.createVerificationToken(newUser, token);
 
-        String verificationUrl = "http://localhost:8000/auth/registerUser/verify?token=" + token;
+        String verificationUrl = "http://localhost:8000/auth/verify?token=" + token;
         String qrCodeUri = twoFactorAuthUtil.getTotpUrl(secret, newUser.getUsername(), "HostIT");
-        String qrCodeUrl = "http://localhost:8000/auth/registerUser/verify?token=" + qrCodeUri;
+        String qrCodeUrl = "http://localhost:8000/auth/verify?token=" + qrCodeUri;
 
         String qrCodeDataUri;
         String qrCodeDataUrl;

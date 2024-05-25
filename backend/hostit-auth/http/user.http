@@ -1,18 +1,18 @@
 
 
 #create user
-POST http://localhost:8000/auth/registerUser/register
+POST http://localhost:8000/api/auth/register
 Content-Type: application/json
 
 {
-    "username": "pers233155333",
+    "username": "pers",
     "password": "password",
-    "email": "dariosloique@gmail.com"
+    "email": "haroldrajaonarison@gmail.com"
 }
 
 
 ###
-POST http://localhost:8000/auth/login
+POST http://localhost:8000/api/auth/login
 Content-Type: application/json
 
 {
