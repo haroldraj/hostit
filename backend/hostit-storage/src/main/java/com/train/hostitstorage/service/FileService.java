@@ -1,16 +1,12 @@
 package com.train.hostitstorage.service;
 
 import com.train.hostitstorage.entity.FileMetadata;
-import com.train.hostitstorage.handler.FileUpdateHandler;
 import com.train.hostitstorage.model.FileUploadResponse;
 import com.train.hostitstorage.model.FileDownloadUri;
 import com.train.hostitstorage.repository.FileMetadataRepository;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
