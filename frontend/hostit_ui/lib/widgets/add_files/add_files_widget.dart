@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hostit_ui/widgets/dropzone/dropzone_widget.dart';
 
-class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+class AddFiles extends StatefulWidget {
+  const AddFiles({super.key});
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  State<AddFiles> createState() => _AddFilesState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _AddFilesState extends State<AddFiles> {
   @override
   Widget build(BuildContext context) {
     return const AlertDialog(

@@ -1,0 +1,34 @@
+class User {
+  int? id;
+  String? name;
+  String? email;
+  String? password;
+
+  User({
+    this.email,
+    this.password,
+  });
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    User user = User();
+    user.id = json['user']['id'];
+    user.name = json['user']['name'];
+    user.email = json['user']['email'];
+    return user;
+  }
+
+  Map<String, String> toJsonLogin() {
+    return {
+      'email': email!,
+      'password': password!,
+    };
+  }
+
+  Map<String, String> toJsonSignup() {
+    return {
+      'name': name!,
+      'email': email!,
+      'password': password!,
+    };
+  }
+}

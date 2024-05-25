@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hostit_ui/constants/custom_colors.dart';
 import 'package:hostit_ui/controllers/menu_app_controller.dart';
 import 'package:hostit_ui/pages/home/home_page.dart';
-import 'package:hostit_ui/pages/main/main_page.dart';
 import 'package:hostit_ui/responsive.dart';
+import 'package:hostit_ui/widgets/add_files/add_files_widget.dart';
 import 'package:hostit_ui/widgets/navigation_menu/components/custom_drawer.dart';
 import 'package:hostit_ui/widgets/navigation_menu/components/menu_info.dart';
 import 'package:hostit_ui/widgets/navigation_menu/components/menu_types.dart';
@@ -63,7 +63,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
                                               barrierDismissible: false,
                                               context: context,
                                               builder: (context) =>
-                                                  const MainPage(),
+                                                  const AddFiles(),
                                             ),
                                         child: const Row(
                                           mainAxisAlignment:
