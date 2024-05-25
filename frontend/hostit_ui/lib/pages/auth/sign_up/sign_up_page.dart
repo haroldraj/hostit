@@ -75,7 +75,7 @@ class SignUpPage extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      //backgroundColor: CustomColors.bgColor,
+      backgroundColor: Colors.white,
       content: SizedBox(
         width: 500,
         height: 500,

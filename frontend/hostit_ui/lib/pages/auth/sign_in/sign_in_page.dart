@@ -93,7 +93,8 @@ class SignInPage extends StatelessWidget {
                       Spacing.vertical,
                       OutlinedButton(
                         onPressed: () {
-                          onLogInPressed();
+                          //onLogInPressed();
+                          goTo(context, const MainMenu(), isReplaced: true);
                         },
                         child: const SizedBox(
                           width: double.maxFinite,
@@ -102,7 +103,7 @@ class SignInPage extends StatelessWidget {
                             child: Text(
                               "Sign In ",
                               style: TextStyle(
-                                  color: CustomColors.orangeColor,
+                                  color: CustomColors.primaryColor,
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold),
                             ),

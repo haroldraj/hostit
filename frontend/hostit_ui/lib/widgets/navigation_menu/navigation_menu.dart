@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hostit_ui/constants/custom_colors.dart';
+import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/controllers/menu_app_controller.dart';
+import 'package:hostit_ui/pages/auth/sign_in/sign_in_page.dart';
 import 'package:hostit_ui/pages/home/home_page.dart';
 import 'package:hostit_ui/responsive.dart';
 import 'package:hostit_ui/widgets/add_files/add_files_widget.dart';
@@ -92,8 +94,11 @@ class _NavigationMenuState extends State<NavigationMenu> {
                                   icon: const Icon(Icons.help),
                                 ),
                                 IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(Icons.settings),
+                                  onPressed: () {
+                                    goTo(context, const SignInPage(),
+                                        isReplaced: true);
+                                  },
+                                  icon: const Icon(Icons.logout_outlined),
                                 )
                               ],
                             ),
