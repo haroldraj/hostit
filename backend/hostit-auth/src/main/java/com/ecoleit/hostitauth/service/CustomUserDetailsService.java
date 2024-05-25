@@ -1,5 +1,6 @@
 package com.ecoleit.hostitauth.service;
 
+
 import com.ecoleit.hostitauth.entity.User;
 import com.ecoleit.hostitauth.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.ArrayList; // Import ArrayList class
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -27,8 +28,8 @@ public class CustomUserDetailsService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
-                user.isEnabled(), true, true, true,
-                new ArrayList<>()
+                true, true, true, true,
+                new ArrayList<>() // You should define authorities based on the user's roles.
         );
     }
 }

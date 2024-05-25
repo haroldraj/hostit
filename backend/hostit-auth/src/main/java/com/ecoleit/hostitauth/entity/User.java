@@ -1,6 +1,7 @@
 package com.ecoleit.hostitauth.entity;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import jakarta.persistence.*;
 
@@ -22,22 +23,13 @@ public class User {
     private String email;
 
     // For roles, if you have them implemented
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+ /*   @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Role> roles = new HashSet<>();
-
-    @Column(nullable = false)
-    private boolean enabled;
-
-    @Column(nullable = false)
-    private String secret; // New field for 2FA secret key
-
-    @Column(nullable = false)
-    private boolean is2FAEnabled; // New field for 2FA status
+    private Set<Role> roles = new HashSet<>();*/
 
     // Default constructor
     public User() {
@@ -84,63 +76,23 @@ public class User {
         this.email = email;
     }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public String getSecret() {
-        return secret;
-    }
-
-    public void setSecret(String secret) {
-        this.secret = secret;
-    }
-
-    public boolean is2FAEnabled() {
-        return is2FAEnabled;
-    }
-
-    public void setIs2FAEnabled(boolean is2FAEnabled) {
-        this.is2FAEnabled = is2FAEnabled;
-    }
-
-    public Set<Role> getRoles() {
+    /*public Set<Role> getRoles() {
         return roles;
     }
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
-    }
-
-    // Overriding hashCode, equals, and toString methods
+    }*/
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof User)) return false;
-
-        User user = (User) o;
-
-        return getId() != null ? getId().equals(user.getId()) : user.getId() == null;
+        if (!(o instanceof User user)) return false;
+        return Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(email, user.email) ;
     }
 
     @Override
     public int hashCode() {
-        return getId() != null ? getId().hashCode() : 0;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", enabled=" + enabled +
-                ", is2FAEnabled=" + is2FAEnabled +
-                '}';
+        return Objects.hash(id, username, password, email);
     }
 }
