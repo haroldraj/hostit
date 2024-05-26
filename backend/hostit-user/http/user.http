@@ -1,0 +1,19 @@
+
+#create user
+POST http://localhost:8002/api/auth/register
+Content-Type: application/json
+
+{
+    "username": "haroldraj",
+    "password": "password",
+    "email": "haroldraj@email.com"
+}
+
+###
+POST http://localhost:8002/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "haroldraj",
+  "password": "password"
+}

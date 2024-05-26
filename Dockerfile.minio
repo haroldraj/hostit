@@ -1,0 +1,7 @@
+FROM quay.io/minio/minio:RELEASE.2024-05-10T01-41-38Z
+
+COPY init.sh /usr/bin/
+
+RUN chmod +x /usr/bin/init.sh
+
+ENTRYPOINT ["/bin/sh", "/usr/bin/init.sh"]

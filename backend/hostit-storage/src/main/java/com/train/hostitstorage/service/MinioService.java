@@ -20,9 +20,6 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class MinioService {
 
-    @Value("${minio.url}")
-    private String minioUrl;
-
     @Value("${minio.bucketName}")
     private String bucketName;
 
@@ -80,10 +77,6 @@ public class MinioService {
             e.printStackTrace();
             return false;
         }
-    }
-
-    public String getFileUrl(String fileName) {
-        return minioUrl + "/" + bucketName + "/" + fileName;
     }
 
     public long getFileSize(String fileName) {

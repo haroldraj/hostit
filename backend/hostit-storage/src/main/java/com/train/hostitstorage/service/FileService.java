@@ -91,9 +91,6 @@ public class FileService {
         return false;
     }
 
-    public String getFileUrl(String fileName) {
-        return minioService.getFileUrl(fileName);
-    }
 
     public long getFileSize(String fileName) {
         return minioService.getFileSize(fileName);
