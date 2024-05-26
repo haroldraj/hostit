@@ -5,6 +5,7 @@ import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/constants/screen_size.dart';
 import 'package:hostit_ui/pages/main/main_menu_page.dart';
 import 'package:hostit_ui/service/storage_service.dart';
+import 'package:hostit_ui/service/user_service.dart';
 
 class CustomDataTable extends StatefulWidget {
   final List<String> columns;
@@ -40,7 +41,7 @@ class _CustomDataTableState extends State<CustomDataTable> {
   final _scrollController = ScrollController();
   final StorageService _storageService = StorageService();
   List<List<String>> data = [];
-  int userId = 1;
+  int userId = UserService().getUserId();
 /*
   @override
   void initState() {

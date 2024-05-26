@@ -13,11 +13,11 @@ class StorageService {
   final String _baseUrl = UrlConfig.baseStorageUrl;
   final Logger _logger = Logger();
 
-  Future uploadBytes(FileModel fileModel) async {
+  Future uploadBytes(int userId, FileModel fileModel) async {
     final url = "$_baseUrl/upload";
     try {
       var request = http.MultipartRequest('POST', Uri.parse(url));
-      request.fields['userId'] = '1';
+      request.fields['userId'] = userId.toString();
       request.files.add(
         http.MultipartFile.fromBytes(
           'file',

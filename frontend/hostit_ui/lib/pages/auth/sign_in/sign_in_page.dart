@@ -80,7 +80,7 @@ class SignInPage extends StatelessWidget {
                             "Username",
                             "Please enter your username",
                             emailController,
-                            isAnEmail: true,
+                            //isAnEmail: true,
                           ),
                           PasswordFormField(
                             labelText: "Password",
@@ -93,8 +93,7 @@ class SignInPage extends StatelessWidget {
                       Spacing.vertical,
                       OutlinedButton(
                         onPressed: () {
-                          //onLogInPressed();
-                          goTo(context, const MainMenu(), isReplaced: true);
+                          onLogInPressed();
                         },
                         child: const SizedBox(
                           width: double.maxFinite,

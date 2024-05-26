@@ -7,6 +7,7 @@ import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/models/file_model.dart';
 import 'package:hostit_ui/pages/main/main_menu_page.dart';
 import 'package:hostit_ui/service/storage_service.dart';
+import 'package:hostit_ui/service/user_service.dart';
 import 'package:logger/logger.dart';
 import 'package:mime/mime.dart';
 
@@ -29,7 +30,7 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
   FilePickerResult? _filePickerResult;
   StorageService storageService = StorageService();
   ValueNotifier<bool> isCancelHovered = ValueNotifier<bool>(false);
-
+  int userId = UserService().getUserId();
   void _close() {
     Navigator.pop(context);
   }
@@ -95,7 +96,6 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
                     width: 100,
                     height: 35,
                     child: FloatingActionButton(
-                      heroTag: 'unitqueTag2',
                       shape: RoundedRectangleBorder(
                         side: const BorderSide(color: Colors.red),
                         borderRadius: BorderRadius.circular(30),
@@ -155,7 +155,7 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
       name: event.name,
       contentType: await controller.getFileMIME(event),
     );
-    await storageService.uploadBytes(fileModel);
+    await storageService.uploadBytes(userId, fileModel);
     _close();
     setState(() {
       isHighlighted = false;
@@ -172,7 +172,7 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
         name: _filePickerResult!.files.first.name,
         contentType: lookupMimeType(_filePickerResult!.files.first.extension!),
       );
-      await storageService.uploadBytes(fileModel);
+      await storageService.uploadBytes(userId, fileModel);
       _close();
       if (mounted) {
         goTo(context, const MainMenu(), isReplaced: true);
