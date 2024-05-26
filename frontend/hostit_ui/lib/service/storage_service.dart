@@ -17,7 +17,7 @@ class StorageService {
     final url = "$_baseUrl/upload";
     try {
       var request = http.MultipartRequest('POST', Uri.parse(url));
-      request.fields['userId'] = '2';
+      request.fields['userId'] = '1';
       request.files.add(
         http.MultipartFile.fromBytes(
           'file',
@@ -57,19 +57,22 @@ class StorageService {
     }
   }
 
-  Future deleteFile(int userId, String filePath) async {
+  Future<bool> deleteFile(int userId, String filePath) async {
     try {
       final url =
           Uri.parse("$_baseUrl/delete?userId=$userId&filePath=$filePath");
       final response = await http.delete(url);
       if (response.statusCode == 200) {
         _logger.i("File deleted");
-        //return 'File deleted';
+        return true;
       } else {
-        throw Exception('Failed to delete the file');
+        return false;
+        //throw Exception('Failed to delete the file');
       }
     } catch (e) {
-      _logger.e('Exception while deleting file: $e');
+      return false;
+      //throw Exception('Failed to delete the file');
+      //_logger.e('Exception while deleting file: $e');
     }
   }
 

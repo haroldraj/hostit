@@ -5,6 +5,7 @@ import 'package:flutter_dropzone/flutter_dropzone.dart';
 import 'package:hostit_ui/constants/custom_colors.dart';
 import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/models/file_model.dart';
+import 'package:hostit_ui/pages/main/main_menu_page.dart';
 import 'package:hostit_ui/service/storage_service.dart';
 import 'package:logger/logger.dart';
 import 'package:mime/mime.dart';
@@ -94,6 +95,7 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
                     width: 100,
                     height: 35,
                     child: FloatingActionButton(
+                      heroTag: 'unitqueTag2',
                       shape: RoundedRectangleBorder(
                         side: const BorderSide(color: Colors.red),
                         borderRadius: BorderRadius.circular(30),
@@ -172,6 +174,9 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
       );
       await storageService.uploadBytes(fileModel);
       _close();
+      if (mounted) {
+        goTo(context, const MainMenu(), isReplaced: true);
+      }
     }
   }
 }
