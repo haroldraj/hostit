@@ -3,7 +3,9 @@ import 'package:hostit_ui/constants/card_size.dart';
 import 'package:hostit_ui/constants/custom_colors.dart';
 import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/constants/screen_size.dart';
+import 'package:hostit_ui/pages/main/main_menu_page.dart';
 import 'package:hostit_ui/service/storage_service.dart';
+import 'package:hostit_ui/service/user_service.dart';
 
 class CustomDataTable extends StatefulWidget {
   final List<String> columns;
@@ -14,7 +16,7 @@ class CustomDataTable extends StatefulWidget {
   final bool clickable;
   final bool fullScreen;
   final bool withReturnFunction;
- // final WebSocketChannel channel;
+  // final WebSocketChannel channel;
 
   const CustomDataTable({
     super.key,
@@ -26,7 +28,7 @@ class CustomDataTable extends StatefulWidget {
     this.clickable = false,
     this.fullScreen = false,
     this.withReturnFunction = false,
-   // required this.channel,
+    // required this.channel,
   });
 
   @override
@@ -39,7 +41,7 @@ class _CustomDataTableState extends State<CustomDataTable> {
   final _scrollController = ScrollController();
   final StorageService _storageService = StorageService();
   List<List<String>> data = [];
-  int userId = 1;
+  int userId = UserService().getUserId();
 /*
   @override
   void initState() {
@@ -236,7 +238,11 @@ class _CustomDataTableState extends State<CustomDataTable> {
   }
 
   Future _handleDeleteFile(int userId, String filePath) async {
-    await _storageService.deleteFile(userId, filePath);
+    bool isDeleted = await _storageService.deleteFile(userId, filePath);
+    if (isDeleted) {
+      // ignore: use_build_context_synchronously
+      goTo(context, const MainMenu(), isReplaced: true);
+    }
   }
 
   Future _handleOpenInNewTab(int userId, String filePath) async {

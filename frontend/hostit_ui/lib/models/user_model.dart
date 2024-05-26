@@ -19,14 +19,14 @@ class User {
 
   Map<String, String> toJsonLogin() {
     return {
-      'email': email!,
+      'username': email!,
       'password': password!,
     };
   }
 
   Map<String, String> toJsonSignup() {
     return {
-      'name': name!,
+      'username': name!,
       'email': email!,
       'password': password!,
     };

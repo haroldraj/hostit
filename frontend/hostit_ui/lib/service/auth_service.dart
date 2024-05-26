@@ -30,25 +30,31 @@ class AuthService {
   }
 
   Future<String> logIn(User user) async {
-    Map<String, String> jsonUser = user.toJsonLogin();
-    final urlBackend = '$_baseUrl/login';
+    try {
+      Map<String, String> jsonUser = user.toJsonLogin();
+      final urlBackend = '$_baseUrl/login';
 
-    final response = await http.post(
-      Uri.parse(urlBackend),
-      body: jsonUser,
-    );
-    if (response.statusCode == 200) {
-      final jsonResponse = json.decode(response.body);
-      final authToken = jsonResponse['authorisation']['token'];
-      html.window.localStorage['authToken'] = authToken;
-      _logger.i('response:200 user logged in, body: ${response.body}');
-      return '';
-    } else {
-      //500 if no email or password data
-      //401 if wrong data error
-      final jsonResponse = json.decode(response.body);
-      final errorMessage = jsonResponse['message'];
-      return errorMessage ?? 'Unknown error';
+      final response = await http.post(
+        Uri.parse(urlBackend),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(jsonUser),
+      );
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        final authToken = jsonResponse['token'];
+        html.window.localStorage['authToken'] = authToken;
+        _logger.i('response:200 user logged in, body: ${response.body}');
+        return '';
+      } else {
+        const errorMessage = 'Failed to sign in. Please check you credentials';
+        _logger.e('Failed to sign in. Status code: ${response.statusCode}');
+        return errorMessage;
+      }
+    } catch (e) {
+      _logger.e('Error signing up user: $e');
+      return 'An error occurred while signing in. Please try again.';
     }
   }
 
@@ -58,7 +64,10 @@ class AuthService {
 
       final response = await http.post(
         Uri.parse(urlBackend),
-        body: user.toJsonSignup(),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(user.toJsonSignup()),
       );
 
       if (response.statusCode == 200) {

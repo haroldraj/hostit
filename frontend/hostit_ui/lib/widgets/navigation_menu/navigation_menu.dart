@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:hostit_ui/constants/custom_colors.dart';
 import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/controllers/menu_app_controller.dart';
-import 'package:hostit_ui/pages/auth/sign_in/sign_in_page.dart';
+import 'package:hostit_ui/pages/auth/sign%20out/sign_out_page.dart';
 import 'package:hostit_ui/pages/home/home_page.dart';
 import 'package:hostit_ui/responsive.dart';
+import 'package:hostit_ui/service/user_service.dart';
 import 'package:hostit_ui/widgets/add_files/add_files_widget.dart';
 import 'package:hostit_ui/widgets/navigation_menu/components/custom_drawer.dart';
 import 'package:hostit_ui/widgets/navigation_menu/components/menu_info.dart';
@@ -60,21 +61,21 @@ class _NavigationMenuState extends State<NavigationMenu> {
                                     width: 100,
                                     height: 35,
                                     child: FloatingActionButton(
-                                        elevation: 0,
-                                        onPressed: () => showDialog(
-                                              barrierDismissible: false,
-                                              context: context,
-                                              builder: (context) =>
-                                                  const AddFiles(),
-                                            ),
-                                        child: const Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Icon(Icons.add),
-                                            Text("Add Files  "),
-                                          ],
-                                        )),
+                                      elevation: 0,
+                                      onPressed: () => showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (context) => const AddFiles(),
+                                      ),
+                                      child: const Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.add),
+                                          Text("Add Files  "),
+                                        ],
+                                      ),
+                                    ),
                                   )
                                 ],
                               ),
@@ -86,20 +87,19 @@ class _NavigationMenuState extends State<NavigationMenu> {
                               children: [
                                 IconButton(
                                   onPressed: () {},
-                                  icon: const Icon(
-                                      Icons.check_circle_outline_outlined),
+                                  icon: const Icon(Icons.person),
                                 ),
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(Icons.help),
+                                Text(
+                                  UserService().getUsername(),
+                                  style: const TextStyle(fontSize: 20),
                                 ),
                                 IconButton(
                                   onPressed: () {
-                                    goTo(context, const SignInPage(),
-                                        isReplaced: true);
+                                    SignOutPage.confirmation(context);
                                   },
                                   icon: const Icon(Icons.logout_outlined),
-                                )
+                                ),
+                                Spacing.horizontal
                               ],
                             ),
                           )
