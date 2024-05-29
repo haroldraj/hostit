@@ -20,26 +20,27 @@ public class FileService {
     //private FileUpdateHandler fileUpdateHandler;
 
     private final MinioService minioService;
+    private final FolderService folderService;
     private final FileMetadataRepository fileMetadataRepository;
 
-    public FileService( MinioService minioService, FileMetadataRepository fileMetadataRepository) {
+    public FileService(MinioService minioService, FolderService folderService, FileMetadataRepository fileMetadataRepository) {
         this.minioService = minioService;
+        this.folderService = folderService;
         this.fileMetadataRepository = fileMetadataRepository;
     }
 
-    public FileUploadResponse uploadFile(MultipartFile file, Long userId) throws FileUploadException, ExecutionException, InterruptedException {
+    public FileUploadResponse uploadFile(MultipartFile file, Long userId, String filepath) throws FileUploadException, ExecutionException, InterruptedException {
         FileUploadResponse response = new FileUploadResponse();
-        String fileName = file.getOriginalFilename();
-        String userFolder = "user-" + userId.toString();
+        String filePath = folderService.getUserFolder(userId)  + filepath + "/" + file.getOriginalFilename();
 
-        if (minioService.fileExists(fileName)) {
+        if (minioService.fileExists(filePath)) {
             throw new FileUploadException("File already uploaded");
         }
         /*
         if (fileMetadataRepository.existsByName(fileName)) {
             throw new FileUploadException("File metadata already exists in the database");
         }*/
-        CompletableFuture<String> fileUploadedPath = minioService.uploadFile(file, userFolder);
+        CompletableFuture<String> fileUploadedPath = minioService.uploadFile(file, filePath);
         if (fileUploadedPath== null) {
             throw new FileUploadException("Failed to upload file");
         }
@@ -71,8 +72,7 @@ public class FileService {
 
     public boolean deleteFile(Long userId, String filePath) {
         try{
-            String userFolder = "user-" + userId.toString();
-            String fileName = userFolder + "/" + filePath;
+            String fileName = folderService.getUserFolder(userId) + "/" + filePath;
             boolean isFileDeleted = minioService.deleteFile(fileName);
             Long fileId = getUserId(userId, filePath);
             if (isFileDeleted) {
@@ -91,18 +91,9 @@ public class FileService {
         return false;
     }
 
-
-    public long getFileSize(String fileName) {
-        return minioService.getFileSize(fileName);
-    }
-
-    public String getFileContentType(String fileName) {
-        return minioService.getFileContentType(fileName);
-    }
-
     public FileDownloadUri getFileDownloadUri(Long userId, String filePath) throws Exception {
         FileDownloadUri response = new FileDownloadUri();
-        String userFolder = "user-" + userId.toString();
+        String userFolder = folderService.getUserFolder(userId);
         String fileName = userFolder + "/" + filePath;
         response.setDownloadUri(minioService.generateDownloadUri(fileName));
         response.setFileName(fileName);

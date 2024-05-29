@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/storage")
+@RequestMapping("/api/storage/file")
 public class FileController {
     private final FileService fileService;
     private final CsvService csvService;  // Add a reference to the CSV service
@@ -31,9 +31,10 @@ public class FileController {
     @PostMapping("/upload")
     public ResponseEntity uploadFile(
             @RequestParam("file") MultipartFile file,
-            @RequestParam("userId") Long userId) {
+            @RequestParam("userId") Long userId,
+            @RequestParam("filepath") String filepath) {
         try {
-            return ResponseEntity.ok(fileService.uploadFile(file, userId));
+            return ResponseEntity.ok(fileService.uploadFile(file, userId, filepath));
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", e.getMessage());
