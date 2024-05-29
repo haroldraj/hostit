@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>2FA Authentication</title>
+    <script>
+        function show2FAModal() {
+            document.getElementById('2faModal').style.display = 'block';
+        }
+
+        function submit2FA() {
+            var code = document.getElementById('2faCode').value;
+            var form = document.getElementById('loginForm');
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'code';
+            input.value = code;
+            form.appendChild(input);
+            form.submit();
+        }
+    </script>
+</head>
+<body>
+<form id="loginForm" action="/login" method="post" onsubmit="show2FAModal()">
+    <input type="text" name="username" placeholder="Username">
+    <input type="password" name="password" placeholder="Password">
+    <button type="submit">Login</button>
+</form>
+
+<div id="2faModal" style="display:none;">
+    <h2>Enter 2FA Code</h2>
+    <input type="text" id="2faCode" placeholder="2FA Code">
+    <button onclick="submit2FA()">Submit</button>
+</div>
+</body>
+</html>
+
+
+je l'ajout où?
