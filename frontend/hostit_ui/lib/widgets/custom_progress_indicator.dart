@@ -8,9 +8,6 @@ Widget customCircularProgressIndicator(String action) => Row(
             //color: CustomColor.orangeColor,
             ),
         Spacing.horizontal,
-        Text(
-          action,
-          style: const TextStyle(color: Colors.black),
-        )
+        Text(action)
       ],
     );

@@ -169,7 +169,7 @@ class _CustomDataTableState extends State<CustomDataTable> {
                             height: 25,
                             width: 25,
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 15),
                           Text(cellData ?? ''),
                         ],
                       )

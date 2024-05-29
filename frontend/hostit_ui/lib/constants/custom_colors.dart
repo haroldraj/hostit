@@ -14,4 +14,8 @@ class CustomColors {
   static const cardBgColor = Color.fromARGB(255, 255, 255, 255);
   static const bgMenuColor = Colors.black26;
   static const redColor = Color.fromARGB(255, 248, 96, 85);
+  static const appBgColor = Color.fromARGB(31, 87, 87, 87);
+  static const pageBgColor = Color.fromARGB(31, 110, 110, 110);
+  static final searchFeldColor = Colors.deepPurple.withOpacity(0.2);
+  static final buttonBgColor = Colors.deepPurple.withOpacity(0.3);
 }

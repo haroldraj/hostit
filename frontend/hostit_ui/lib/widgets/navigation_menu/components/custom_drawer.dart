@@ -48,12 +48,12 @@ Widget buildMenuButton(MenuInfo currentMenuInfo) {
       return Container(
         margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         child: ListTile(
-          hoverColor: CustomColors.primaryColor.withOpacity(0.1),
+          hoverColor: Colors.deepPurple.withOpacity(0.1),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25),
           ),
           tileColor: currentMenuInfo.menuType == value.menuType
-              ? CustomColors.primaryColor.withOpacity(0.6)
+              ? CustomColors.buttonBgColor
               : null,
           onTap: () {
             var menuInfo = Provider.of<MenuInfo>(context, listen: false);

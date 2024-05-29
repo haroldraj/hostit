@@ -68,7 +68,7 @@ class NavigationMenu extends StatelessWidget {
             Expanded(
               flex: 6,
               child: Container(
-                color: CustomColors.backgroundgColor,
+                color: CustomColors.appBgColor,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -93,6 +93,8 @@ class NavigationMenu extends StatelessWidget {
                                     width: 100,
                                     height: 35,
                                     child: FloatingActionButton(
+                                      backgroundColor:
+                                          CustomColors.buttonBgColor,
                                       elevation: 0,
                                       onPressed: () => showDialog(
                                         barrierDismissible: false,
@@ -114,6 +116,8 @@ class NavigationMenu extends StatelessWidget {
                                     width: 150,
                                     height: 35,
                                     child: FloatingActionButton(
+                                      backgroundColor:
+                                          CustomColors.buttonBgColor,
                                       elevation: 0,
                                       onPressed: () {
                                         showDialog(
@@ -173,7 +177,10 @@ class NavigationMenu extends StatelessWidget {
                                   onPressed: () {
                                     SignOutPage.confirmation(context);
                                   },
-                                  icon: const Icon(Icons.logout_outlined),
+                                  icon: const Icon(
+                                    Icons.logout_outlined,
+                                    color: Colors.red,
+                                  ),
                                 ),
                                 Spacing.horizontal
                               ],
@@ -203,7 +210,7 @@ Widget _buildMenuRoutes() {
         return Expanded(
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: CustomColors.pageBgColor,
               borderRadius: BorderRadius.circular(20),
             ),
             child: const Center(
@@ -218,7 +225,7 @@ Widget _buildMenuRoutes() {
         return Expanded(
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: CustomColors.pageBgColor,
               borderRadius: BorderRadius.circular(20),
             ),
             child: const Center(

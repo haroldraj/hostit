@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hostit_ui/constants/custom_colors.dart';
 import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/models/file_model.dart';
 import 'package:hostit_ui/responsive.dart';
@@ -23,7 +24,7 @@ class _HomePageState extends State<HomePage> {
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: CustomColors.pageBgColor,
           borderRadius: BorderRadius.circular(20),
         ),
         child: FutureBuilder<List<FileModel>>(
@@ -88,11 +89,11 @@ class _FileListWidgetState extends State<FileListWidget> {
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 25),
           child: TextField(
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               hintText: "Search Files",
-              fillColor: Color.fromARGB(197, 244, 237, 248),
+              fillColor: CustomColors.searchFeldColor,
               filled: true,
-              border: OutlineInputBorder(
+              border: const OutlineInputBorder(
                 borderSide: BorderSide.none,
                 borderRadius: BorderRadius.all(Radius.circular(25)),
               ),
