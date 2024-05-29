@@ -3,7 +3,6 @@ package com.train.hostitstorage.service;
 import io.minio.*;
 import io.minio.http.Method;
 import io.minio.messages.Item;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -11,10 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.net.http.HttpHeaders;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -33,24 +28,25 @@ public class MinioService {
     }
 
     @Async
-    public CompletableFuture<String> uploadFile(MultipartFile file, String userFolder) {
+    public CompletableFuture<String> uploadFile(MultipartFile file, String filePath) {
+        String baseFolderName = filePath.split("/")[0];
         try {
             Iterable<Result<Item>> results = minioClient.listObjects(
-                    ListObjectsArgs.builder().bucket(bucketName).prefix(userFolder+"/").recursive(true).build());
+                    ListObjectsArgs.builder().bucket(bucketName).prefix(baseFolderName+"/").recursive(true).build());
 
             if (!results.iterator().hasNext()) {
                 minioClient.putObject(
-                        PutObjectArgs.builder().bucket(bucketName).object(userFolder + "/.init").stream(
+                        PutObjectArgs.builder().bucket(bucketName).object(baseFolderName + "/.init").stream(
                                 new ByteArrayInputStream(new byte[0]), 0, -1).build());
             }
 
-           // String fileName = userFolder+"/"+ file.getOriginalFilename();
-            String fileName = userFolder+"/"+ file.getOriginalFilename();
+            //String fileName = userFolder+"/"+ file.getOriginalFilename();
             InputStream inputStream = new ByteArrayInputStream(file.getBytes());
             minioClient.putObject(
-                    PutObjectArgs.builder().bucket(bucketName).object(fileName).stream(
+                    PutObjectArgs.builder().bucket(bucketName).object(filePath).stream(
                             inputStream, -1, 10485760).contentType(file.getContentType()).build());
-            return CompletableFuture.completedFuture(file.getOriginalFilename());
+            String filepath = filePath.replaceFirst(baseFolderName + "/", "");
+            return CompletableFuture.completedFuture(filepath);
         } catch (Exception e) {
             e.printStackTrace();
             return CompletableFuture.completedFuture(null);
@@ -79,26 +75,6 @@ public class MinioService {
         }
     }
 
-    public long getFileSize(String fileName) {
-        try {
-            return minioClient.statObject(
-                    StatObjectArgs.builder().bucket(bucketName).object(fileName).build()).size();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1;
-        }
-    }
-
-    public String getFileContentType(String fileName) {
-        try {
-            return minioClient.statObject(
-                    StatObjectArgs.builder().bucket(bucketName).object(fileName).build()).contentType();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     public String generateDownloadUri(String filepath) {
         try {
             if (!fileExists(filepath)) {
@@ -118,4 +94,32 @@ public class MinioService {
             return null;
         }
     }
+
+    public boolean createFolder(String folderName) throws Exception {
+        // Extract the base folder name (e.g., "user-1") from the folderName
+        try {
+            String baseFolderName = folderName.split("/")[0];
+
+            // Check if the base folder exists
+            Iterable<Result<Item>> results = minioClient.listObjects(
+                    ListObjectsArgs.builder().bucket(bucketName).prefix(baseFolderName + "/").recursive(true).build());
+
+            // If the base folder does not exist, create it
+            if (!results.iterator().hasNext()) {
+                minioClient.putObject(
+                        PutObjectArgs.builder().bucket(bucketName).object(baseFolderName + "/.init").stream(
+                                new ByteArrayInputStream(new byte[0]), 0, -1).build());
+            }
+
+            // Create the specified folder (this could be a subfolder)
+            minioClient.putObject(
+                    PutObjectArgs.builder().bucket(bucketName).object(folderName + "/").stream(
+                            new ByteArrayInputStream(new byte[0]), 0, -1).build());
+            return true;
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }
