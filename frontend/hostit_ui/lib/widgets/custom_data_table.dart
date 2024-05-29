@@ -101,16 +101,32 @@ class _CustomDataTableState extends State<CustomDataTable> {
 
   List<DataColumn> _buildColumns() {
     var result = widget.columns.asMap().entries.map((entry) {
+      int columnIndex = entry.key;
       String column = entry.value;
 
       return DataColumn(
-        label: Text(
-          column,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+        label: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              column,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Spacing.horizontal,
+            if (columnIndex == sortColumnIndex)
+              Icon(
+                sortAscending[columnIndex]
+                    ? Icons.arrow_upward
+                    : Icons.arrow_downward,
+                size: 18,
+              ),
+          ],
         ),
         onSort: (columnIndex, ascending) {
           if (columnIndex == sortColumnIndex) {
-            ascending = !ascending;
+            ascending = !sortAscending[columnIndex];
+          } else {
+            ascending = true;
           }
           _sort(columnIndex, ascending);
         },
