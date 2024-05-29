@@ -114,7 +114,7 @@ class _FileListWidgetState extends State<FileListWidget> {
               ? const ["Name"]
               : Responsive.isTablet(context)
                   ? const ["Name", "Size", "Path"]
-                  : const ["Name", "Type", "Size", "Date", "Path"],
+                  : const ["Name", "Size", "Date", "Path"],
           data: widget.files
                   ?.where((file) => file.name!
                       .toLowerCase()
@@ -130,7 +130,6 @@ class _FileListWidgetState extends State<FileListWidget> {
                               ]
                             : [
                                 file.name,
-                                file.contentType,
                                 file.sizeToString,
                                 file.uploadDateToString,
                                 file.path,

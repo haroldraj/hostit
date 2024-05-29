@@ -31,8 +31,7 @@ class FileModel {
   }
 
   String get uploadDateToString {
-    return DateFormat('dd MMM yyyy').format(uploadDate!);
-    //return DateFormat('dd MMM yyyy • h:mma').format(uploadDate!);
+    return DateFormat('dd MMM yyyy • h:mma').format(uploadDate!);
   }
 
   factory FileModel.fromJson(Map<String, dynamic>? json) {

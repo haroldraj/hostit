@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:hostit_ui/constants/card_size.dart';
 import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/constants/screen_size.dart';
+import 'package:hostit_ui/constants/svg_file_type.dart';
 import 'package:hostit_ui/pages/main/main_menu_page.dart';
 import 'package:hostit_ui/service/file_service.dart';
 import 'package:hostit_ui/service/user_service.dart';
+import 'package:path/path.dart' as path;
+import 'package:flutter_svg/flutter_svg.dart';
 
 class CustomDataTable extends StatefulWidget {
   final List<String> columns;
@@ -84,9 +87,11 @@ class _CustomDataTableState extends State<CustomDataTable> {
 
   Widget _buildDataTable(double width) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 15),
+      margin: const EdgeInsets.symmetric(horizontal: 1),
       width: width,
       child: DataTable(
+        columnSpacing: 0,
+        horizontalMargin: 10,
         showCheckboxColumn: false,
         columns: _buildColumns(),
         rows: _buildRows(),
@@ -115,9 +120,13 @@ class _CustomDataTableState extends State<CustomDataTable> {
     if (widget.showActionsColumn) {
       result.add(
         const DataColumn(
-          label: Text(
-            "Actions",
-            style: TextStyle(fontWeight: FontWeight.bold),
+          label: Flexible(
+            child: Center(
+              child: Text(
+                "Actions",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
           ),
         ),
       );
@@ -129,17 +138,36 @@ class _CustomDataTableState extends State<CustomDataTable> {
   List<DataRow> _buildRows() {
     return widget.data.map((rowData) {
       var cells = rowData
+          .asMap()
           .map(
-            (cellData) => DataCell(
-              Text(cellData ?? ''),
+            (index, cellData) => MapEntry(
+              index,
+              DataCell(
+                index == 0
+                    ? Row(
+                        children: [
+                          SvgPicture.asset(
+                            fileTypeToSvg.putIfAbsent(
+                                path.extension(cellData).substring(1),
+                                () => unknownFileType),
+                            height: 25,
+                            width: 25,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(cellData ?? ''),
+                        ],
+                      )
+                    : Text(cellData ?? ''),
+              ),
             ),
           )
+          .values
           .toList();
       var filePath = rowData.last;
       if (widget.showActionsColumn) {
-        //rowData.length > 1 ? rowData[4] ?? '' : '';
         cells.add(DataCell(
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               IconButton(
                 icon: const Icon(

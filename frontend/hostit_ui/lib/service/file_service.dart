@@ -18,7 +18,7 @@ class FileService {
     try {
       var request = http.MultipartRequest('POST', Uri.parse(url));
       request.fields['userId'] = userId.toString();
-      request.fields['filepath'] = '';
+      request.fields['filepath'] = 'images';
       request.files.add(
         http.MultipartFile.fromBytes(
           'file',
