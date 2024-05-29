@@ -9,8 +9,8 @@ import 'package:http_parser/http_parser.dart';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 
-class StorageService {
-  final String _baseUrl = UrlConfig.baseStorageUrl;
+class FileService {
+  final String _baseUrl = UrlConfig.baseFileStorageUrl;
   final Logger _logger = Logger();
 
   Future uploadBytes(int userId, FileModel fileModel) async {
@@ -18,6 +18,7 @@ class StorageService {
     try {
       var request = http.MultipartRequest('POST', Uri.parse(url));
       request.fields['userId'] = userId.toString();
+      request.fields['filepath'] = '/check';
       request.files.add(
         http.MultipartFile.fromBytes(
           'file',
