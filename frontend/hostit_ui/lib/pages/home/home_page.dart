@@ -71,7 +71,7 @@ class FileListWidget extends StatefulWidget {
 
 class _FileListWidgetState extends State<FileListWidget> {
   final TextEditingController _searchController = TextEditingController();
-   /*WebSocketChannel? _channel;
+  /*WebSocketChannel? _channel;
 
     @override
   void initState() {
@@ -106,37 +106,41 @@ class _FileListWidgetState extends State<FileListWidget> {
         ),
         Spacing.vertical,
         CustomDataTable(
-         // channel: _channel!,
+          // channel: _channel!,
           fullScreen: true,
           clickable: true,
           showActionsColumn: true,
           columns: Responsive.isMobile(context)
               ? const ["Name"]
               : Responsive.isTablet(context)
-                  ? const ["Name", "Size", "Date"]
+                  ? const ["Name", "Size", "Path"]
                   : const ["Name", "Type", "Size", "Date", "Path"],
           data: widget.files
                   ?.where((file) => file.name!
                       .toLowerCase()
                       .contains(_searchController.text.toLowerCase()))
-                  .map((file) => Responsive.isMobile(context)
-                      ? [file.name]
-                      : Responsive.isTablet(context)
-                          ? [
-                              file.name,
-                              file.sizeToString,
-                              file.uploadDateToString,
-                            ]
-                          : [
-                              file.name,
-                              file.contentType,
-                              file.sizeToString,
-                              file.uploadDateToString,
-                              file.path
-                            ])
+                  .map(
+                    (file) => Responsive.isMobile(context)
+                        ? [file.path]
+                        : Responsive.isTablet(context)
+                            ? [
+                                file.name,
+                                file.sizeToString,
+                                file.path,
+                              ]
+                            : [
+                                file.name,
+                                file.contentType,
+                                file.sizeToString,
+                                file.uploadDateToString,
+                                file.path,
+                              ],
+                  )
                   .toList() ??
               [],
+
           context: context,
+          //onRowClicked: (rowData)
         ),
       ],
     );

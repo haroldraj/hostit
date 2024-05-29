@@ -135,8 +135,9 @@ class _CustomDataTableState extends State<CustomDataTable> {
             ),
           )
           .toList();
+      var filePath = rowData.last;
       if (widget.showActionsColumn) {
-        var filePath = rowData.length > 1 ? rowData[4] ?? '' : '';
+        //rowData.length > 1 ? rowData[4] ?? '' : '';
         cells.add(DataCell(
           Row(
             children: [
@@ -167,7 +168,7 @@ class _CustomDataTableState extends State<CustomDataTable> {
           onSelectChanged: (bool? selected) {
             if (widget.clickable && selected!) {
               if (!widget.withReturnFunction) {
-                var filePath = rowData.isNotEmpty ? rowData[4] ?? '' : '';
+                // var filePath = rowData.isNotEmpty ? rowData[4] ?? '' : '';
                 debugPrint("Row tapped");
                 _handleOpenInNewTab(userId, filePath);
               }

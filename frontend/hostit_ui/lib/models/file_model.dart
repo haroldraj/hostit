@@ -8,6 +8,7 @@ class FileModel {
   final List<int>? bytes;
   final String? path;
   final int? userId;
+  final String? folderName;
 
   const FileModel({
     this.path,
@@ -17,6 +18,7 @@ class FileModel {
     this.uploadDate,
     this.bytes,
     this.userId,
+    this.folderName,
   });
 
   String get sizeToString {
@@ -29,7 +31,8 @@ class FileModel {
   }
 
   String get uploadDateToString {
-    return DateFormat('dd MMM yyyy • h:mma').format(uploadDate!);
+    return DateFormat('dd MMM yyyy').format(uploadDate!);
+    //return DateFormat('dd MMM yyyy • h:mma').format(uploadDate!);
   }
 
   factory FileModel.fromJson(Map<String, dynamic>? json) {
@@ -43,6 +46,7 @@ class FileModel {
       size: json['size'] as int?,
       userId: json['userId'] as int?,
       path: json['path'] as String?,
+      folderName: json['folderName'] as String?,
       uploadDate: json['uploadDate'] != null
           ? DateTime.parse(json['uploadDate'])
           : null,
@@ -56,5 +60,6 @@ class FileModel {
         uploadDate = DateTime.now(),
         bytes = [],
         path = "",
+        folderName = "",
         userId = 0;
 }
