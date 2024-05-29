@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -32,12 +33,11 @@ public class FileService {
     public FileUploadResponse uploadFile(MultipartFile file, Long userId, String filepath) throws FileUploadException, ExecutionException, InterruptedException {
         FileUploadResponse response = new FileUploadResponse();
         String filePath;
-        if(file.isEmpty()){
+        if(Objects.equals(filepath, "")){
              filePath = folderService.getUserFolder(userId)  + "/" + file.getOriginalFilename();
         } else{
              filePath = folderService.getUserFolder(userId)  + "/" + filepath + "/" + file.getOriginalFilename();
         }
-
         if (minioService.fileExists(filePath)) {
             throw new FileUploadException("File already uploaded");
         }
