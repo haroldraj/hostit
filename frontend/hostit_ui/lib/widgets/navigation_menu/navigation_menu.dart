@@ -4,24 +4,56 @@ import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/controllers/menu_app_controller.dart';
 import 'package:hostit_ui/pages/auth/sign%20out/sign_out_page.dart';
 import 'package:hostit_ui/pages/home/home_page.dart';
+import 'package:hostit_ui/pages/main/main_menu_page.dart';
 import 'package:hostit_ui/responsive.dart';
+import 'package:hostit_ui/service/folder_service.dart';
 import 'package:hostit_ui/service/user_service.dart';
 import 'package:hostit_ui/widgets/add_files/add_files_widget.dart';
+import 'package:hostit_ui/widgets/custom_box_dialog.dart';
+import 'package:hostit_ui/widgets/custom_text_form_field.dart';
 import 'package:hostit_ui/widgets/navigation_menu/components/custom_drawer.dart';
 import 'package:hostit_ui/widgets/navigation_menu/components/menu_info.dart';
 import 'package:hostit_ui/widgets/navigation_menu/components/menu_types.dart';
 import 'package:provider/provider.dart';
 
-class NavigationMenu extends StatefulWidget {
+class NavigationMenu extends StatelessWidget {
   const NavigationMenu({super.key});
 
   @override
-  State<NavigationMenu> createState() => _NavigationMenuState();
-}
-
-class _NavigationMenuState extends State<NavigationMenu> {
-  @override
   Widget build(BuildContext context) {
+    final TextEditingController folderController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+    FolderService folderService = FolderService();
+    int userId = UserService().getUserId();
+
+    Future<void> onCreatePressed() async {
+      try {
+        if (formKey.currentState!.validate()) {
+          debugPrint("Creating new folder");
+          String folderName = folderController.text.trim();
+          bool isFolderCrated =
+              await folderService.createFolder(userId, folderName);
+          if (isFolderCrated) {
+            Future.delayed(
+              const Duration(seconds: 0),
+              () {
+                goTo(context, const MainMenu(), isReplaced: true);
+              },
+            );
+          } else {
+            Future.delayed(
+              const Duration(seconds: 0),
+              () {
+                ShowDialog.error(context, 'Error');
+              },
+            );
+          }
+        }
+      } catch (error) {
+        debugPrint("Error $error");
+      }
+    }
+
     return Scaffold(
       key: context.read<MenuAppController>().scaffoldKey,
       drawer: const CustomDrawer(),
@@ -76,6 +108,50 @@ class _NavigationMenuState extends State<NavigationMenu> {
                                         ],
                                       ),
                                     ),
+                                  ),
+                                  Spacing.horizontal,
+                                  SizedBox(
+                                    width: 150,
+                                    height: 35,
+                                    child: FloatingActionButton(
+                                      elevation: 0,
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (context) => AlertDialog(
+                                            title: const Text("New folder"),
+                                            content: Form(
+                                              key: formKey,
+                                              child: textFormField(
+                                                  "Folder's name",
+                                                  folderController),
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.pop(context),
+                                                child: const Text("Cancel"),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  onCreatePressed();
+                                                },
+                                                child: const Text("Create"),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                      child: const Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.add),
+                                          Text("Create Folder"),
+                                        ],
+                                      ),
+                                    ),
                                   )
                                 ],
                               ),
@@ -106,11 +182,6 @@ class _NavigationMenuState extends State<NavigationMenu> {
                         ],
                       ),
                     ),
-                    /*Container(
-                      height: 150,
-                      width: 150,
-                      color: Colors.red,
-                    )*/
                     _buildMenuRoutes()
                   ],
                 ),
@@ -161,24 +232,4 @@ Widget _buildMenuRoutes() {
       }
     },
   );
-}
-
-class SearchField extends StatelessWidget {
-  const SearchField({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const TextField(
-      decoration: InputDecoration(
-        hintText: "Search Files",
-        fillColor: Color.fromARGB(197, 226, 219, 230),
-        filled: true,
-        border: OutlineInputBorder(
-          borderSide: BorderSide.none,
-          borderRadius: BorderRadius.all(Radius.circular(25)),
-        ),
-        prefixIcon: Icon(Icons.search),
-      ),
-    );
-  }
 }

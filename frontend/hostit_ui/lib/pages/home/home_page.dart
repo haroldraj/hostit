@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/models/file_model.dart';
 import 'package:hostit_ui/responsive.dart';
-import 'package:hostit_ui/service/storage_service.dart';
+import 'package:hostit_ui/service/file_service.dart';
+import 'package:hostit_ui/service/user_service.dart';
 import 'package:hostit_ui/widgets/custom_data_table.dart';
 import 'package:hostit_ui/widgets/custom_progress_indicator.dart';
 
@@ -14,7 +15,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final StorageService _storageService = StorageService();
+  final FileService _fileService = FileService();
+  int userId = UserService().getUserId();
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,7 @@ class _HomePageState extends State<HomePage> {
           borderRadius: BorderRadius.circular(20),
         ),
         child: FutureBuilder<List<FileModel>>(
-          future: _storageService.getUserFiles(1),
+          future: _fileService.getUserFiles(userId),
           builder: (context, snapshot) {
             try {
               if (snapshot.connectionState == ConnectionState.waiting) {

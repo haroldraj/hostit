@@ -86,12 +86,10 @@ class SignUpPage extends StatelessWidget {
             children: [
               textFormField(
                 "Name",
-                "Please enter your name",
                 nameController,
               ),
               textFormField(
                 "Email address",
-                "Please enter your email address",
                 emailController,
                 isAnEmail: true,
               ),

@@ -4,7 +4,7 @@ import 'package:hostit_ui/constants/custom_colors.dart';
 import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/constants/screen_size.dart';
 import 'package:hostit_ui/pages/main/main_menu_page.dart';
-import 'package:hostit_ui/service/storage_service.dart';
+import 'package:hostit_ui/service/file_service.dart';
 import 'package:hostit_ui/service/user_service.dart';
 
 class CustomDataTable extends StatefulWidget {
@@ -39,7 +39,7 @@ class _CustomDataTableState extends State<CustomDataTable> {
   List<bool> sortAscending = List.filled(5, false);
   int sortColumnIndex = 0;
   final _scrollController = ScrollController();
-  final StorageService _storageService = StorageService();
+  final FileService _fileService = FileService();
   List<List<String>> data = [];
   int userId = UserService().getUserId();
 /*
@@ -234,11 +234,11 @@ class _CustomDataTableState extends State<CustomDataTable> {
   }
 
   Future _handleDownloadFile(int userId, String filePath) async {
-    await _storageService.downloadFile(userId, filePath);
+    await _fileService.downloadFile(userId, filePath);
   }
 
   Future _handleDeleteFile(int userId, String filePath) async {
-    bool isDeleted = await _storageService.deleteFile(userId, filePath);
+    bool isDeleted = await _fileService.deleteFile(userId, filePath);
     if (isDeleted) {
       // ignore: use_build_context_synchronously
       goTo(context, const MainMenu(), isReplaced: true);
@@ -246,6 +246,6 @@ class _CustomDataTableState extends State<CustomDataTable> {
   }
 
   Future _handleOpenInNewTab(int userId, String filePath) async {
-    await _storageService.openFile(userId, filePath);
+    await _fileService.openFile(userId, filePath);
   }
 }

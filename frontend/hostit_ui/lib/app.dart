@@ -27,7 +27,7 @@ class _HostitAppState extends State<HostitApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: _isTokenValid ? const MainMenu() : const SignInPage(),
+      home:  const MainMenu() //_isTokenValid ? const MainMenu() : const SignInPage(),
     );
   }
 }
