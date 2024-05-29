@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hostit_ui/constants/card_size.dart';
-import 'package:hostit_ui/constants/custom_colors.dart';
 import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/constants/screen_size.dart';
 import 'package:hostit_ui/pages/main/main_menu_page.dart';
@@ -138,60 +137,26 @@ class _CustomDataTableState extends State<CustomDataTable> {
           .toList();
       if (widget.showActionsColumn) {
         var filePath = rowData.length > 1 ? rowData[4] ?? '' : '';
-        ValueNotifier<bool> isDeleteHovered = ValueNotifier<bool>(false);
-        ValueNotifier<bool> isDownloadHovered = ValueNotifier<bool>(false);
         cells.add(DataCell(
           Row(
             children: [
-              MouseRegion(
-                onHover: (_) => isDownloadHovered.value = true,
-                onExit: (_) => isDownloadHovered.value = false,
-                child: SizedBox(
-                  width: 100,
-                  height: 35,
-                  child: FloatingActionButton(
-                    elevation: 0,
-                    hoverColor: Colors.blueAccent,
-                    onPressed: () {
-                      _handleDownloadFile(userId, filePath);
-                    },
-                    child: ValueListenableBuilder<bool>(
-                      valueListenable: isDownloadHovered,
-                      builder: (context, value, child) {
-                        return Text(
-                          'Download',
-                          style: TextStyle(color: value ? Colors.white : null),
-                        );
-                      },
-                    ),
-                  ),
+              IconButton(
+                icon: const Icon(
+                  Icons.download_sharp,
+                  color: Colors.deepPurple,
                 ),
+                onPressed: () {
+                  _handleDownloadFile(userId, filePath);
+                },
               ),
-              Spacing.horizontal,
-              MouseRegion(
-                onHover: (_) => isDeleteHovered.value = true,
-                onExit: (_) => isDeleteHovered.value = false,
-                child: SizedBox(
-                  width: 100,
-                  height: 35,
-                  child: FloatingActionButton(
-                    elevation: 0,
-                    hoverColor: CustomColors.primaryColor,
-                    onPressed: () {
-                      _handleDeleteFile(userId, filePath);
-                    },
-                    child: ValueListenableBuilder<bool>(
-                      valueListenable: isDeleteHovered,
-                      builder: (context, value, child) {
-                        return Text(
-                          'Delete',
-                          style: TextStyle(
-                              color: value ? Colors.white : Colors.red),
-                        );
-                      },
-                    ),
-                  ),
+              IconButton(
+                icon: const Icon(
+                  Icons.delete_sharp,
+                  color: Colors.red,
                 ),
+                onPressed: () {
+                  _handleDeleteFile(userId, filePath);
+                },
               ),
             ],
           ),

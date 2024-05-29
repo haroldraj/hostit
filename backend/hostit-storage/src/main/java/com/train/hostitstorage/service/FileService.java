@@ -31,7 +31,12 @@ public class FileService {
 
     public FileUploadResponse uploadFile(MultipartFile file, Long userId, String filepath) throws FileUploadException, ExecutionException, InterruptedException {
         FileUploadResponse response = new FileUploadResponse();
-        String filePath = folderService.getUserFolder(userId)  + filepath + "/" + file.getOriginalFilename();
+        String filePath;
+        if(file.isEmpty()){
+             filePath = folderService.getUserFolder(userId)  + "/" + file.getOriginalFilename();
+        } else{
+             filePath = folderService.getUserFolder(userId)  + "/" + filepath + "/" + file.getOriginalFilename();
+        }
 
         if (minioService.fileExists(filePath)) {
             throw new FileUploadException("File already uploaded");
@@ -58,6 +63,7 @@ public class FileService {
         fileMetadata.setUploadDate(new Timestamp(System.currentTimeMillis()));
         fileMetadata.setPath(fileUploadedPath.get());
         fileMetadata.setUserId(userId);
+        fileMetadata.setFolderName(filepath);
         fileMetadataRepository.save(fileMetadata);
 
       /*  try {
