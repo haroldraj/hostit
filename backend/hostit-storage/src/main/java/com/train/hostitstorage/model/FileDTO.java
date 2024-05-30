@@ -14,7 +14,7 @@ public class FileDTO {
 
     public FileDTO(Item item, String userFolder) {
         this.setName(item.objectName(), userFolder);
-        this.size= item.size();
+        this.size = item.size();
         this.setType(item.isDir());
         if (Objects.equals(this.type, "Folder") ){
             this.lastModified = null;

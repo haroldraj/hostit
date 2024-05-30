@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:hostit_ui/constants/card_size.dart';
+import 'package:hostit_ui/constants/custom_colors.dart';
 import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/constants/screen_size.dart';
 import 'package:hostit_ui/constants/svg_file_type.dart';
@@ -20,6 +21,7 @@ class CustomDataTable extends StatefulWidget {
   final bool clickable;
   final bool fullScreen;
   final bool withReturnFunction;
+  final bool folderNavigation;
   // final WebSocketChannel channel;
 
   const CustomDataTable({
@@ -31,6 +33,7 @@ class CustomDataTable extends StatefulWidget {
     this.clickable = false,
     this.fullScreen = false,
     this.withReturnFunction = false,
+    this.folderNavigation = false,
     // required this.channel,
   });
 
@@ -178,13 +181,19 @@ class _CustomDataTableState extends State<CustomDataTable> {
                 index == 0
                     ? Row(
                         children: [
-                          SvgPicture.asset(
-                            fileTypeToSvg.putIfAbsent(
-                                path.extension(cellData).substring(1),
-                                () => unknownFileType),
-                            height: 20,
-                            width: 20,
-                          ),
+                          path.extension(cellData).isNotEmpty
+                              ? SvgPicture.asset(
+                                  fileTypeToSvg.putIfAbsent(
+                                      path.extension(cellData).substring(1),
+                                      () => unknownFileType),
+                                  height: 20,
+                                  width: 20,
+                                )
+                              : SvgPicture.asset(
+                                  folderSvg,
+                                  height: 20,
+                                  width: 20,
+                                ),
                           const SizedBox(width: 15),
                           Text(cellData ?? ''),
                         ],
@@ -195,7 +204,7 @@ class _CustomDataTableState extends State<CustomDataTable> {
           )
           .values
           .toList();
-      var filePath = rowData.last;
+      var filePath = widget.folderNavigation ? rowData.first : rowData.last;
       if (widget.showActionsColumn) {
         cells.add(DataCell(
           Row(
@@ -282,11 +291,33 @@ class _CustomDataTableState extends State<CustomDataTable> {
   }
 
   Future _handleDeleteFile(int userId, String filePath) async {
-    bool isDeleted = await _fileService.deleteFile(userId, filePath);
-    if (isDeleted) {
-      // ignore: use_build_context_synchronously
-      goTo(context, const MainMenu(), isReplaced: true);
-    }
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          "Confirmation",
+          style: TextStyle(color: CustomColors.redColor),
+        ),
+        content: Text("Do you really want to delete : $filePath ?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("NO"),
+          ),
+          TextButton(
+            onPressed: () async {
+              bool isDeleted = await _fileService.deleteFile(userId, filePath);
+              if (isDeleted) {
+                // ignore: use_build_context_synchronously
+                goTo(context, const MainMenu(), isReplaced: true);
+              }
+            },
+            child: const Text("YES"),
+          ),
+        ],
+      ),
+    );
   }
 
   Future _handleOpenInNewTab(int userId, String filePath) async {

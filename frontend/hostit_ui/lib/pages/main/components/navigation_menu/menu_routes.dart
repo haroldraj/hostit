@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hostit_ui/constants/custom_colors.dart';
+import 'package:hostit_ui/pages/folder_navigation/folder_navigation_page.dart';
 import 'package:hostit_ui/pages/home/home_page.dart';
 import 'package:hostit_ui/pages/main/components/navigation_menu/menu_info.dart';
 import 'package:hostit_ui/pages/main/components/navigation_menu/menu_types.dart';
@@ -11,20 +11,7 @@ Widget buildMenuRoutes() {
       if (value.menuType == MenuType.home) {
         return const HomePage();
       } else {
-        return Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              color: CustomColors.pageBgColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Center(
-              child: Text(
-                'FOLDERS',
-                style: TextStyle(fontSize: 50),
-              ),
-            ),
-          ),
-        );
+        return const FolderNavigationPage();
       }
     },
   );

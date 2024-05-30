@@ -43,7 +43,7 @@ public class FolderService {
     public List<FileDTO> getFilesAndFoldersInFolder(Long userId, String folderName) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         String userFolder ="user-" + userId.toString();
         String folder;
-        if(Objects.equals(folderName, "root")){
+        if(Objects.equals(folderName, ".root")){
             folder = userFolder;
         }else{
             folder = userFolder+ "/" + folderName;

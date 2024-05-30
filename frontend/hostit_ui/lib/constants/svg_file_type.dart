@@ -23,3 +23,5 @@ final Map<String, String> fileTypeToSvg = {
 };
 
 const String unknownFileType = '$svgFileUri/unknown.svg';
+
+const String folderSvg = 'assets/folder_svg/folder.svg';
