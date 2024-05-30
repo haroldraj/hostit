@@ -47,18 +47,6 @@ public class FileMetadata {
         this.folderName = folderName;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof FileMetadata that)) return false;
-        return size == that.size && userId == that.userId && Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(contentType, that.contentType) && Objects.equals(uploadDate, that.uploadDate) && Objects.equals(path, that.path) && Objects.equals(folderName, that.folderName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, contentType, size, uploadDate, path, folderName, userId);
-    }
-
     @Column(name="user_id")
     @Basic
     private long userId;
@@ -119,4 +107,15 @@ public class FileMetadata {
         this.userId = userId;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FileMetadata that)) return false;
+        return size == that.size && userId == that.userId && Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(contentType, that.contentType) && Objects.equals(uploadDate, that.uploadDate) && Objects.equals(path, that.path) && Objects.equals(folderName, that.folderName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, contentType, size, uploadDate, path, folderName, userId);
+    }
 }

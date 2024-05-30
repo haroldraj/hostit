@@ -2,3 +2,4 @@
 GET http://localhost:8001/api/storage/file/all/files
 
 ###
+GET http://localhost:8001/api/storage/folder/foldercontents?folderName=root&userId=1

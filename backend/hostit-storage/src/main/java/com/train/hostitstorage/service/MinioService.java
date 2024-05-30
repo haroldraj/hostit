@@ -1,6 +1,7 @@
 package com.train.hostitstorage.service;
 
 import io.minio.*;
+import io.minio.errors.*;
 import io.minio.http.Method;
 import io.minio.messages.Item;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,7 +10,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -120,6 +126,19 @@ public class MinioService {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public Iterable<Result<Item>> listObjectsInFolder(String folderPath) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+        List<String> objects = new ArrayList<>();
+        Iterable<Result<Item>> results = minioClient.listObjects(
+                ListObjectsArgs.builder().bucket(bucketName).prefix(folderPath+"/").recursive(false).build());
+
+     /*   for (Result<Item> result : results) {
+            Item item = result.get();
+            objects.add(item.objectName());
+        }*/
+
+        return results;
     }
 
 }
