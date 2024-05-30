@@ -43,11 +43,12 @@ public class FolderService {
     public List<FileDTO> getFilesAndFoldersInFolder(Long userId, String folderName) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         String userFolder ="user-" + userId.toString();
         String folder;
-        if(Objects.equals(folderName, ".root")){
+        folder = userFolder+ "/" + folderName;
+      /*  if(Objects.equals(folderName, ".root")){
             folder = userFolder;
         }else{
             folder = userFolder+ "/" + folderName;
-        }
+        }*/
         Iterable<Result<Item>> objects = minioService.listObjectsInFolder(folder);
         List<Result<Item>> filteredObjects = StreamSupport.stream(objects.spliterator(), false)
                 .filter(result -> {

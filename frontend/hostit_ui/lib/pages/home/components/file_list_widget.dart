@@ -29,9 +29,10 @@ class _FileListWidgetState extends State<FileListWidget> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Column(
       children: [
-        Container(
+         Container(
           margin: const EdgeInsets.only(bottom: 15),
           child: Center(
             child: Text(
@@ -40,6 +41,7 @@ class _FileListWidgetState extends State<FileListWidget> {
             ),
           ),
         ),
+       
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: TextField(
@@ -93,7 +95,6 @@ class _FileListWidgetState extends State<FileListWidget> {
               [],
 
           context: context,
-          //onRowClicked: (rowData)
         ),
       ],
     );

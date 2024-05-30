@@ -13,12 +13,12 @@ class FileService {
   final String _baseUrl = UrlConfig.baseFileStorageUrl;
   final Logger _logger = Logger();
 
-  Future uploadBytes(int userId, FileModel fileModel) async {
+  Future uploadBytes(int userId, FileModel fileModel, String folderName) async {
     final url = "$_baseUrl/upload";
     try {
       var request = http.MultipartRequest('POST', Uri.parse(url));
       request.fields['userId'] = userId.toString();
-      request.fields['filepath'] = '';
+      request.fields['filepath'] = folderName;
       request.files.add(
         http.MultipartFile.fromBytes(
           'file',

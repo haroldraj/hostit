@@ -15,9 +15,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final FileService _fileService = FileService();
-  int userId = UserService().getUserId();
-
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -26,38 +23,50 @@ class _HomePageState extends State<HomePage> {
           color: CustomColors.pageBgColor,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: FutureBuilder<List<FileModel>>(
-          future: _fileService.getUserFiles(userId),
-          builder: (context, snapshot) {
-            try {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child:
-                      customCircularProgressIndicator("Loading file list..."),
-                );
-              } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                var files = snapshot.data;
-                return SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Column(
-                    children: [
-                      Spacing.vertical,
-                      FileListWidget(files: files),
-                    ],
-                  ),
-                );
-              } else {
-                return const Center(child: Text("No files found"));
-              }
-            } on Exception catch (error) {
-              return Center(
-                child: Text("Error: $error"),
-              );
-            }
-          },
-        ),
+        child: const MyHostitPage(),
       ),
     );
   }
 }
 
+class MyHostitPage extends StatelessWidget {
+  const MyHostitPage({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final FileService fileService = FileService();
+    int userId = UserService().getUserId();
+
+    return FutureBuilder<List<FileModel>>(
+      future: fileService.getUserFiles(userId),
+      builder: (context, snapshot) {
+        try {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: customCircularProgressIndicator("Loading file list..."),
+            );
+          } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+            var files = snapshot.data;
+            return SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(
+                children: [
+                  Spacing.vertical,
+                  FileListWidget(files: files),
+                ],
+              ),
+            );
+          } else {
+            return const Center(child: Text("No files found"));
+          }
+        } on Exception catch (error) {
+          return Center(
+            child: Text("Error: $error"),
+          );
+        }
+      },
+    );
+  }
+}

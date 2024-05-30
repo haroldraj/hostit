@@ -36,15 +36,9 @@ public class MinioService {
     @Async
     public CompletableFuture<String> uploadFile(MultipartFile file, String filePath) {
         String baseFolderName = filePath.split("/")[0];
-        try {
-            Iterable<Result<Item>> results = minioClient.listObjects(
-                    ListObjectsArgs.builder().bucket(bucketName).prefix(baseFolderName+"/").recursive(true).build());
 
-            if (!results.iterator().hasNext()) {
-                minioClient.putObject(
-                        PutObjectArgs.builder().bucket(bucketName).object(baseFolderName + "/.init").stream(
-                                new ByteArrayInputStream(new byte[0]), 0, -1).build());
-            }
+        try {
+            createBaseFolder(baseFolderName);
 
             //String fileName = userFolder+"/"+ file.getOriginalFilename();
             InputStream inputStream = new ByteArrayInputStream(file.getBytes());
@@ -56,6 +50,19 @@ public class MinioService {
         } catch (Exception e) {
             e.printStackTrace();
             return CompletableFuture.completedFuture(null);
+        }
+    }
+
+    private void createBaseFolder(String baseFolderName) throws Exception {
+        String defaultSubfolderName = baseFolderName + "/My Hostit";
+        Iterable<Result<Item>> results = minioClient.listObjects(
+                ListObjectsArgs.builder().bucket(bucketName).prefix(baseFolderName+"/").recursive(true).build());
+
+        if (!results.iterator().hasNext()) {
+            minioClient.putObject(
+                    PutObjectArgs.builder().bucket(bucketName).object(baseFolderName + "/.init").stream(
+                            new ByteArrayInputStream(new byte[0]), 0, -1).build());
+            createFolder(defaultSubfolderName);
         }
     }
 
@@ -102,22 +109,10 @@ public class MinioService {
     }
 
     public boolean createFolder(String folderName) throws Exception {
-        // Extract the base folder name (e.g., "user-1") from the folderName
         try {
             String baseFolderName = folderName.split("/")[0];
+            createBaseFolder(baseFolderName);
 
-            // Check if the base folder exists
-            Iterable<Result<Item>> results = minioClient.listObjects(
-                    ListObjectsArgs.builder().bucket(bucketName).prefix(baseFolderName + "/").recursive(true).build());
-
-            // If the base folder does not exist, create it
-            if (!results.iterator().hasNext()) {
-                minioClient.putObject(
-                        PutObjectArgs.builder().bucket(bucketName).object(baseFolderName + "/.init").stream(
-                                new ByteArrayInputStream(new byte[0]), 0, -1).build());
-            }
-
-            // Create the specified folder (this could be a subfolder)
             minioClient.putObject(
                     PutObjectArgs.builder().bucket(bucketName).object(folderName + "/").stream(
                             new ByteArrayInputStream(new byte[0]), 0, -1).build());
