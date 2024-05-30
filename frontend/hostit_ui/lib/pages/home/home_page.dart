@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hostit_ui/constants/custom_colors.dart';
 import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/models/file_model.dart';
-import 'package:hostit_ui/responsive.dart';
+import 'package:hostit_ui/pages/home/components/file_list_widget.dart';
 import 'package:hostit_ui/service/file_service.dart';
 import 'package:hostit_ui/service/user_service.dart';
-import 'package:hostit_ui/widgets/custom_data_table.dart';
 import 'package:hostit_ui/widgets/custom_progress_indicator.dart';
 
 class HomePage extends StatefulWidget {
@@ -62,87 +61,3 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class FileListWidget extends StatefulWidget {
-  final List<FileModel>? files;
-  const FileListWidget({super.key, required this.files});
-
-  @override
-  State<FileListWidget> createState() => _FileListWidgetState();
-}
-
-class _FileListWidgetState extends State<FileListWidget> {
-  final TextEditingController _searchController = TextEditingController();
-  /*WebSocketChannel? _channel;
-
-    @override
-  void initState() {
-    super.initState();
-    _channel = WebSocketChannel.connect(
-      Uri.parse("${UrlConfig.baseApiUrl}/file-updates"),
-    );
-  }*/
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 25),
-          child: TextField(
-            decoration: InputDecoration(
-              hintText: "Search Files",
-              fillColor: CustomColors.searchFeldColor,
-              filled: true,
-              border: const OutlineInputBorder(
-                borderSide: BorderSide.none,
-                borderRadius: BorderRadius.all(Radius.circular(25)),
-              ),
-              prefixIcon: Icon(Icons.search),
-            ),
-            controller: _searchController,
-            onChanged: (value) {
-              setState(() {});
-            },
-          ),
-        ),
-        Spacing.vertical,
-        CustomDataTable(
-          // channel: _channel!,
-          fullScreen: true,
-          clickable: true,
-          showActionsColumn: true,
-          columns: Responsive.isMobile(context)
-              ? const ["Name"]
-              : Responsive.isTablet(context)
-                  ? const ["Name", "Size", "Path"]
-                  : const ["Name", "Size", "Date", "Path"],
-          data: widget.files
-                  ?.where((file) => file.name!
-                      .toLowerCase()
-                      .contains(_searchController.text.toLowerCase()))
-                  .map(
-                    (file) => Responsive.isMobile(context)
-                        ? [file.path]
-                        : Responsive.isTablet(context)
-                            ? [
-                                file.name,
-                                file.sizeToString,
-                                file.path,
-                              ]
-                            : [
-                                file.name,
-                                file.sizeToString,
-                                file.uploadDateToString,
-                                file.path,
-                              ],
-                  )
-                  .toList() ??
-              [],
-
-          context: context,
-          //onRowClicked: (rowData)
-        ),
-      ],
-    );
-  }
-}

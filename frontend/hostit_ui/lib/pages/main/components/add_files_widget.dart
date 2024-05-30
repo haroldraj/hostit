@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hostit_ui/widgets/dropzone/dropzone_widget.dart';
+import 'package:hostit_ui/pages/main/components/dropzone/dropzone_widget.dart';
 
 class AddFiles extends StatefulWidget {
   const AddFiles({super.key});

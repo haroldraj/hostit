@@ -1,9 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:hostit_ui/constants/card_size.dart';
 import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/constants/screen_size.dart';
 import 'package:hostit_ui/constants/svg_file_type.dart';
 import 'package:hostit_ui/pages/main/main_menu_page.dart';
+import 'package:hostit_ui/responsive.dart';
 import 'package:hostit_ui/service/file_service.dart';
 import 'package:hostit_ui/service/user_service.dart';
 import 'package:path/path.dart' as path;
@@ -13,7 +16,6 @@ class CustomDataTable extends StatefulWidget {
   final List<String> columns;
   final List<List<dynamic>> data;
   final bool showActionsColumn;
-  final String buttonName;
   final BuildContext context;
   final bool clickable;
   final bool fullScreen;
@@ -26,7 +28,6 @@ class CustomDataTable extends StatefulWidget {
     required this.data,
     required this.context,
     this.showActionsColumn = false,
-    this.buttonName = "",
     this.clickable = false,
     this.fullScreen = false,
     this.withReturnFunction = false,
@@ -44,6 +45,14 @@ class _CustomDataTableState extends State<CustomDataTable> {
   final FileService _fileService = FileService();
   List<List<String>> data = [];
   int userId = UserService().getUserId();
+  List<bool> selectedRows = [];
+
+  @override
+  void initState() {
+    super.initState();
+    selectedRows = List<bool>.filled(widget.data.length, false);
+  }
+
 /*
   @override
   void initState() {
@@ -87,12 +96,16 @@ class _CustomDataTableState extends State<CustomDataTable> {
 
   Widget _buildDataTable(double width) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 1),
-      width: width,
+      margin: const EdgeInsets.symmetric(horizontal: 15),
+      width: Responsive.isMobile(context)
+          ? max(width, MediaQuery.of(context).size.width)
+          : Responsive.isTablet(context)
+              ? width
+              : min(width, MediaQuery.of(context).size.width),
       child: DataTable(
         columnSpacing: 0,
         horizontalMargin: 10,
-        showCheckboxColumn: false,
+        showCheckboxColumn: true,
         columns: _buildColumns(),
         rows: _buildRows(),
       ),
@@ -152,7 +165,10 @@ class _CustomDataTableState extends State<CustomDataTable> {
   }
 
   List<DataRow> _buildRows() {
-    return widget.data.map((rowData) {
+    return widget.data.asMap().entries.map((entry) {
+      int index = entry.key;
+      List<dynamic> rowData = entry.value;
+
       var cells = rowData
           .asMap()
           .map(
@@ -166,8 +182,8 @@ class _CustomDataTableState extends State<CustomDataTable> {
                             fileTypeToSvg.putIfAbsent(
                                 path.extension(cellData).substring(1),
                                 () => unknownFileType),
-                            height: 25,
-                            width: 25,
+                            height: 20,
+                            width: 20,
                           ),
                           const SizedBox(width: 15),
                           Text(cellData ?? ''),
@@ -185,23 +201,41 @@ class _CustomDataTableState extends State<CustomDataTable> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              IconButton(
-                icon: const Icon(
-                  Icons.download_sharp,
-                  color: Colors.deepPurple,
+              Tooltip(
+                message: "View",
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.visibility,
+                    color: Colors.deepPurple,
+                  ),
+                  onPressed: () {
+                    _handleOpenInNewTab(userId, filePath);
+                  },
                 ),
-                onPressed: () {
-                  _handleDownloadFile(userId, filePath);
-                },
               ),
-              IconButton(
-                icon: const Icon(
-                  Icons.delete_sharp,
-                  color: Colors.red,
+              Tooltip(
+                message: "Download",
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.download_sharp,
+                    color: Colors.deepPurple,
+                  ),
+                  onPressed: () {
+                    _handleDownloadFile(userId, filePath);
+                  },
                 ),
-                onPressed: () {
-                  _handleDeleteFile(userId, filePath);
-                },
+              ),
+              Tooltip(
+                message: "Delete",
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.delete_sharp,
+                    color: Colors.red,
+                  ),
+                  onPressed: () {
+                    _handleDeleteFile(userId, filePath);
+                  },
+                ),
               ),
             ],
           ),
@@ -209,16 +243,16 @@ class _CustomDataTableState extends State<CustomDataTable> {
       }
 
       return DataRow(
-          onSelectChanged: (bool? selected) {
-            if (widget.clickable && selected!) {
-              if (!widget.withReturnFunction) {
-                // var filePath = rowData.isNotEmpty ? rowData[4] ?? '' : '';
-                debugPrint("Row tapped");
-                _handleOpenInNewTab(userId, filePath);
-              }
-            }
-          },
-          cells: cells);
+        selected: selectedRows[index],
+        onSelectChanged: (bool? value) {
+          if (widget.clickable) {
+            setState(() {
+              selectedRows[index] = value!;
+            });
+          }
+        },
+        cells: cells,
+      );
     }).toList();
   }
 
