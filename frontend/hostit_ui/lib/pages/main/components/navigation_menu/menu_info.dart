@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hostit_ui/widgets/navigation_menu/components/menu_types.dart';
+import 'package:hostit_ui/pages/main/components/navigation_menu/menu_types.dart';
 
 class MenuInfo extends ChangeNotifier {
   MenuType menuType;

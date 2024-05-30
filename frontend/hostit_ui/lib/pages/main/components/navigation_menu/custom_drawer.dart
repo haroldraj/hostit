@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hostit_ui/constants/custom_colors.dart';
 import 'package:hostit_ui/responsive.dart';
-import 'package:hostit_ui/widgets/navigation_menu/components/menu_info.dart';
-import 'package:hostit_ui/widgets/navigation_menu/components/menu_items.dart';
+import 'package:hostit_ui/pages/main/components/navigation_menu/menu_info.dart';
+import 'package:hostit_ui/pages/main/components/navigation_menu/menu_items.dart';
 import 'package:provider/provider.dart';
 
 class CustomDrawer extends StatelessWidget {

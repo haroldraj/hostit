@@ -8,12 +8,12 @@ import 'package:hostit_ui/pages/main/main_menu_page.dart';
 import 'package:hostit_ui/responsive.dart';
 import 'package:hostit_ui/service/folder_service.dart';
 import 'package:hostit_ui/service/user_service.dart';
-import 'package:hostit_ui/widgets/add_files/add_files_widget.dart';
+import 'package:hostit_ui/pages/main/components/add_files_widget.dart';
 import 'package:hostit_ui/widgets/custom_box_dialog.dart';
 import 'package:hostit_ui/widgets/custom_text_form_field.dart';
-import 'package:hostit_ui/widgets/navigation_menu/components/custom_drawer.dart';
-import 'package:hostit_ui/widgets/navigation_menu/components/menu_info.dart';
-import 'package:hostit_ui/widgets/navigation_menu/components/menu_types.dart';
+import 'package:hostit_ui/pages/main/components/navigation_menu/custom_drawer.dart';
+import 'package:hostit_ui/pages/main/components/navigation_menu/menu_info.dart';
+import 'package:hostit_ui/pages/main/components/navigation_menu/menu_types.dart';
 import 'package:provider/provider.dart';
 
 class NavigationMenu extends StatelessWidget {
@@ -206,21 +206,6 @@ Widget _buildMenuRoutes() {
     builder: (BuildContext context, MenuInfo value, Widget? child) {
       if (value.menuType == MenuType.home) {
         return const HomePage();
-      } else if (value.menuType == MenuType.photos) {
-        return Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              color: CustomColors.pageBgColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Center(
-              child: Text(
-                'PHOTOS',
-                style: TextStyle(fontSize: 50),
-              ),
-            ),
-          ),
-        );
       } else {
         return Expanded(
           child: Container(
