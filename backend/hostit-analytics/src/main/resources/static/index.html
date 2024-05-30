@@ -42,7 +42,7 @@
     <tr>
         <th>Name</th>
         <th>Content Type</th>
-        <th>Size (MB)</th>
+        <th>Size</th>
         <th>Download</th>
     </tr>
 </table>
@@ -99,6 +99,14 @@
     </tr>
 </table>
 
+<h1>User Classification</h1>
+<table id="userClassificationTable">
+    <tr>
+        <th>User ID</th>
+        <th>Classification</th>
+    </tr>
+</table>
+
 <script>
     function bytesToMB(bytes) {
         return (bytes / (1024 * 1024)).toFixed(2);
@@ -113,7 +121,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Content Type</th>
-                        <th>Size (MB)</th>
+                        <th>Size</th>
                         <th>Download</th>
                     </tr>`;
                 files.forEach(file => {
@@ -125,7 +133,7 @@
 
                     name.innerHTML = file.name;
                     contentType.innerHTML = file.contentType;
-                    size.innerHTML = bytesToMB(file.size);
+                    size.innerHTML = bytesToMB(file.size) + ' MB';
                     download.innerHTML = `<a href="${file.downloadUri}">Download</a>`;
                 });
             })
@@ -259,6 +267,25 @@
             .catch(error => console.error('Error fetching file quantity by user:', error));
     }
 
+    function fetchUserClassification() {
+        fetch('/api/files/classify-users')
+            .then(response => response.json())
+            .then(data => {
+                const table = document.getElementById('userClassificationTable');
+                table.innerHTML = `
+                    <tr>
+                        <th>User ID</th>
+                        <th>Classification</th>
+                    </tr>`;
+                for (const [userId, classification] of Object.entries(data)) {
+                    const row = table.insertRow(-1);
+                    row.insertCell(0).innerHTML = userId;
+                    row.insertCell(1).innerHTML = classification;
+                }
+            })
+            .catch(error => console.error('Error fetching user classification:', error));
+    }
+
     // Initial fetch of files and statistics
     fetchFiles();
     fetchFileSizePercentagePerUser();
@@ -268,6 +295,7 @@
     fetchOverallFileTypePercentage();
     fetchFileQuantityByDirectory();
     fetchFileQuantityByUser();
+    fetchUserClassification();
 </script>
 </body>
 </html>
