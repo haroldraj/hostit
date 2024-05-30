@@ -47,6 +47,23 @@
     </tr>
 </table>
 
+<h1>File Size Percentage Per User</h1>
+<table id="sizePercentagePerUserTable">
+    <tr>
+        <th>User ID</th>
+        <th>Percentage</th>
+    </tr>
+</table>
+
+<h1>File Type Percentage Per User</h1>
+<table id="typePercentagePerUserTable">
+    <tr>
+        <th>User ID</th>
+        <th>Type</th>
+        <th>Percentage</th>
+    </tr>
+</table>
+
 <script>
     function fetchFiles() {
         fetch('/api/files')
@@ -54,12 +71,12 @@
             .then(files => {
                 const table = document.getElementById('filesTable');
                 table.innerHTML = `
-                        <tr>
-                            <th>Name</th>
-                            <th>Content Type</th>
-                            <th>Size</th>
-                            <th>Download</th>
-                        </tr>`;
+                    <tr>
+                        <th>Name</th>
+                        <th>Content Type</th>
+                        <th>Size</th>
+                        <th>Download</th>
+                    </tr>`;
                 files.forEach(file => {
                     const row = table.insertRow(-1);
                     const name = row.insertCell(0);
@@ -76,8 +93,52 @@
             .catch(error => console.error('Error fetching files:', error));
     }
 
-    // Initial fetch of files
+    function fetchFileSizePercentagePerUser() {
+        fetch('/api/files/size-percentage-per-user')
+            .then(response => response.json())
+            .then(data => {
+                const table = document.getElementById('sizePercentagePerUserTable');
+                table.innerHTML = `
+                    <tr>
+                        <th>User ID</th>
+                        <th>Percentage</th>
+                    </tr>`;
+                for (const [userId, percentage] of Object.entries(data)) {
+                    const row = table.insertRow(-1);
+                    row.insertCell(0).innerHTML = userId;
+                    row.insertCell(1).innerHTML = percentage.toFixed(2) + '%';
+                }
+            })
+            .catch(error => console.error('Error fetching size percentage per user:', error));
+    }
+
+    function fetchFileTypePercentagePerUser() {
+        fetch('/api/files/type-percentage-per-user')
+            .then(response => response.json())
+            .then(data => {
+                const table = document.getElementById('typePercentagePerUserTable');
+                table.innerHTML = `
+                    <tr>
+                        <th>User ID</th>
+                        <th>Type</th>
+                        <th>Percentage</th>
+                    </tr>`;
+                for (const [userId, types] of Object.entries(data)) {
+                    for (const [type, percentage] of Object.entries(types)) {
+                        const row = table.insertRow(-1);
+                        row.insertCell(0).innerHTML = userId;
+                        row.insertCell(1).innerHTML = type;
+                        row.insertCell(2).innerHTML = percentage.toFixed(2) + '%';
+                    }
+                }
+            })
+            .catch(error => console.error('Error fetching type percentage per user:', error));
+    }
+
+    // Initial fetch of files and statistics
     fetchFiles();
+    fetchFileSizePercentagePerUser();
+    fetchFileTypePercentagePerUser();
 </script>
 </body>
 </html>
