@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HostIT Analytics Service</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .button {
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<h1>File List</h1>
+<button onclick="fetchFiles()" class="button">Refresh Files</button>
+<table id="filesTable">
+    <tr>
+        <th>Name</th>
+        <th>Content Type</th>
+        <th>Size</th>
+        <th>Download</th>
+    </tr>
+</table>
+
+<script>
+    function fetchFiles() {
+        fetch('/api/files')
+            .then(response => response.json())
+            .then(files => {
+                const table = document.getElementById('filesTable');
+                table.innerHTML = `
+                        <tr>
+                            <th>Name</th>
+                            <th>Content Type</th>
+                            <th>Size</th>
+                            <th>Download</th>
+                        </tr>`;
+                files.forEach(file => {
+                    const row = table.insertRow(-1);
+                    const name = row.insertCell(0);
+                    const contentType = row.insertCell(1);
+                    const size = row.insertCell(2);
+                    const download = row.insertCell(3);
+
+                    name.innerHTML = file.name;
+                    contentType.innerHTML = file.contentType;
+                    size.innerHTML = file.size;
+                    download.innerHTML = `<a href="${file.downloadUri}">Download</a>`;
+                });
+            })
+            .catch(error => console.error('Error fetching files:', error));
+    }
+
+    // Initial fetch of files
+    fetchFiles();
+</script>
+</body>
+</html>
