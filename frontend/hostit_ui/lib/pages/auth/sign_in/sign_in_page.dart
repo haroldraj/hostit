@@ -62,7 +62,7 @@ class SignInPage extends StatelessWidget {
             children: [
               Expanded(child: Container()),
               Card(
-                color: CustomColors.cardBgColor,
+                //color: CustomColors.cardBgColor,
                 elevation: 10,
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 50),

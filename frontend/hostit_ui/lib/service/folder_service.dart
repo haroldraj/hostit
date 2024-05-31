@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:hostit_ui/constants/ngrok_headers.dart';
 import 'package:hostit_ui/constants/url_config.dart';
 import 'package:hostit_ui/models/folder_content_model.dart';
 import 'package:http/http.dart' as http;
@@ -14,7 +15,7 @@ class FolderService {
     try {
       final url =
           Uri.parse("$_baseUrl/create?userId=$userId&folderPath=$folderPath");
-      final response = await http.post(url);
+      final response = await http.post(url, headers: ngrokHeaders);
       if (response.statusCode == 200) {
         _logger.i("Folder created");
         return true;
@@ -31,7 +32,7 @@ class FolderService {
 
   Future<List<FolderContentModel>>? getFolderContent(int userId, String folderName) async {
     final url = Uri.parse("$_baseUrl/foldercontents?userId=$userId&folderName=$folderName");
-    final response = await http.get(url);
+    final response = await http.get(url, headers: ngrokHeaders);
     if (response.statusCode == 200) {
       _logger.i("Data fetched");
       final List<dynamic> userFiles = json

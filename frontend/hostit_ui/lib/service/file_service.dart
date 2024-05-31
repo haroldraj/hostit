@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:hostit_ui/constants/ngrok_headers.dart';
 import 'package:hostit_ui/constants/url_config.dart';
 import 'package:hostit_ui/models/file_model.dart';
 import 'package:http/http.dart' as http;
@@ -19,6 +20,8 @@ class FileService {
       var request = http.MultipartRequest('POST', Uri.parse(url));
       request.fields['userId'] = userId.toString();
       request.fields['filepath'] = folderName;
+      request.headers['ngrok-skip-browser-warning'] =
+          ngrokHeaders['ngrok-skip-browser-warning']!;
       request.files.add(
         http.MultipartFile.fromBytes(
           'file',
@@ -43,7 +46,7 @@ class FileService {
 
   Future<List<FileModel>>? getUserFiles(int userId) async {
     final url = Uri.parse("$_baseUrl/files?userId=$userId");
-    final response = await http.get(url);
+    final response = await http.get(url, headers: ngrokHeaders);
     if (response.statusCode == 200) {
       _logger.i("Data fetched");
       final List<dynamic> userFiles = json
@@ -62,7 +65,7 @@ class FileService {
     try {
       final url =
           Uri.parse("$_baseUrl/delete?userId=$userId&filePath=$filePath");
-      final response = await http.delete(url);
+      final response = await http.delete(url, headers: ngrokHeaders);
       if (response.statusCode == 200) {
         _logger.i("File deleted");
         return true;
@@ -80,7 +83,7 @@ class FileService {
   Future getFileDownloadUri(int userId, String filePath) async {
     final url =
         Uri.parse("$_baseUrl/download?&userId=$userId&filePath=$filePath");
-    final response = await http.get(url);
+    final response = await http.get(url, headers: ngrokHeaders);
     if (response.statusCode == 200) {
       _logger.i("Data fetched");
       final String fileDownloadUri =
@@ -100,7 +103,7 @@ class FileService {
     final url = Uri.parse(
       await getFileDownloadUri(userId, filePath),
     );
-    final response = await http.get(url);
+    final response = await http.get(url, headers: ngrokHeaders);
     final blob = html.Blob([response.bodyBytes]);
     final anchorElement = html.AnchorElement(
       href: html.Url.createObjectUrlFromBlob(blob).toString(),
