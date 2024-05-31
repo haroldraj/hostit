@@ -6,7 +6,7 @@ class FolderPathProvider extends ChangeNotifier {
   List<String> get folderPath => _folderPath;
 
   String get folderPathToString {
-    if (_folderPath.length > 2) {
+    if (_folderPath.length > 1) {
       return _folderPath.join('/');
     } else {
       return _folderPath.join();
@@ -26,7 +26,8 @@ class FolderPathProvider extends ChangeNotifier {
   }
 
   void addFolderPath(String folder) {
-    _folderPath.add(folder);
+    List<String> parts = folder.split('/');
+    _folderPath.add(parts.last);
     notifyListeners();
   }
 

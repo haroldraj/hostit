@@ -9,9 +9,9 @@ Widget buildMenuRoutes() {
   return Consumer<MenuInfo>(
     builder: (BuildContext context, MenuInfo value, Widget? child) {
       if (value.menuType == MenuType.home) {
-        return  FolderNavigationPage();
+        return const HomePage();
       } else {
-        return  FolderNavigationPage();
+        return FolderNavigationPage();
       }
     },
   );

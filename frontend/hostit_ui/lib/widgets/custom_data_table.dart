@@ -289,12 +289,8 @@ class _CustomDataTableState extends State<CustomDataTable> {
     if (isAFolder) {
       var folderPathProvider =
           Provider.of<FolderPathProvider>(context, listen: false);
+      
       folderPathProvider.addFolderPath(fileOrFolderName);
-      /*goTo(
-          context,
-          FolderNavigationPage(
-              folderPath: folderPathProvider.folderPathToString),
-          isReplaced: true);*/
     } else {
       await _fileService.openFile(userId, filePath);
     }

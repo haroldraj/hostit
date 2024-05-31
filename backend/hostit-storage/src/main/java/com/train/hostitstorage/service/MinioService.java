@@ -62,7 +62,7 @@ public class MinioService {
             minioClient.putObject(
                     PutObjectArgs.builder().bucket(bucketName).object(baseFolderName + "/.init").stream(
                             new ByteArrayInputStream(new byte[0]), 0, -1).build());
-            createFolder(defaultSubfolderName);
+            //createFolder(defaultSubfolderName);
         }
     }
 
@@ -114,7 +114,7 @@ public class MinioService {
             createBaseFolder(baseFolderName);
 
             minioClient.putObject(
-                    PutObjectArgs.builder().bucket(bucketName).object(folderName + "/").stream(
+                    PutObjectArgs.builder().bucket(bucketName).object(folderName + "/.init").stream(
                             new ByteArrayInputStream(new byte[0]), 0, -1).build());
             return true;
         } catch (Exception e){
