@@ -4,9 +4,14 @@ import com.train.hostitstorage.entity.FileMetadata;
 import com.train.hostitstorage.model.FileUploadResponse;
 import com.train.hostitstorage.model.FileDownloadUri;
 import com.train.hostitstorage.repository.FileMetadataRepository;
+import io.minio.GetObjectArgs;
+import io.minio.MinioClient;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
@@ -23,11 +28,13 @@ public class FileService {
     private final MinioService minioService;
     private final FolderService folderService;
     private final FileMetadataRepository fileMetadataRepository;
+    private final MinioClient minioClient;
 
-    public FileService(MinioService minioService, FolderService folderService, FileMetadataRepository fileMetadataRepository) {
+    public FileService(MinioService minioService, FolderService folderService, FileMetadataRepository fileMetadataRepository, MinioClient minioClient) {
         this.minioService = minioService;
         this.folderService = folderService;
         this.fileMetadataRepository = fileMetadataRepository;
+        this.minioClient = minioClient;
     }
 
     public FileUploadResponse uploadFile(MultipartFile file, Long userId, String filepath) throws FileUploadException, ExecutionException, InterruptedException {
@@ -121,14 +128,15 @@ public class FileService {
         return fileMetadataRepository.findByUserIdAndPath(userId, filePath).getId();
     }
 
-    /*@Scheduled(fixedRate = 3600000) // Run every hour
-    public void regenerateDownloadUris() {
-        List<FileMetadata> allFiles = fileMetadataRepository.findAll();
-        for (FileMetadata file : allFiles) {
-            String newUri = minioService.generateDownloadUri(file.getName()); // 1 hour expiry
-            file.setDownloadUri(newUri);
-            fileMetadataRepository.save(file);
+    public  InputStreamResource downloadFile(Long userId, String filePath) {
+        try {
+            String userFolder = folderService.getUserFolder(userId);
+            String fileName = userFolder + "/" + filePath;
+            return minioService.downloadFile(fileName);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
-    }*/
+    }
 
 }

@@ -82,7 +82,7 @@ class FileService {
 
   Future getFileDownloadUri(int userId, String filePath) async {
     final url =
-        Uri.parse("$_baseUrl/download?&userId=$userId&filePath=$filePath");
+        Uri.parse("$_baseUrl/uridownload?&userId=$userId&filePath=$filePath");
     final response = await http.get(url, headers: ngrokHeaders);
     if (response.statusCode == 200) {
       _logger.i("Data fetched");
@@ -100,17 +100,24 @@ class FileService {
 
   Future downloadFile(int userId, String filePath) async {
     debugPrint('Download file: $filePath');
-    final url = Uri.parse(
-      await getFileDownloadUri(userId, filePath),
-    );
-    final response = await http.get(url, headers: ngrokHeaders);
-    final blob = html.Blob([response.bodyBytes]);
-    final anchorElement = html.AnchorElement(
-      href: html.Url.createObjectUrlFromBlob(blob).toString(),
-    )..setAttribute('download', filePath);
-    html.document.body!.children.add(anchorElement);
-    anchorElement.click();
-    html.document.body!.children.remove(anchorElement);
+    try {
+      final url =
+          Uri.parse("$_baseUrl/download?&userId=$userId&filePath=$filePath");
+      _logger.i("url : $url");
+
+      var response = await http.get(url);
+      final blob = html.Blob([response.bodyBytes]);
+      final anchorElement = html.AnchorElement(
+        href: html.Url.createObjectUrlFromBlob(blob).toString(),
+      )..setAttribute('download', filePath);
+      html.document.body!.children.add(anchorElement);
+      anchorElement.click();
+      html.document.body!.children.remove(anchorElement);
+      _logger.i("Trying to write ");
+    } catch (e) {
+      _logger.e(e);
+      throw Exception(e);
+    }
   }
 
   Future openFile(int userId, String filePath) async {

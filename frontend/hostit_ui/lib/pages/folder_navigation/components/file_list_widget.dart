@@ -38,7 +38,6 @@ class _FileListWidgetState extends State<FileListWidget> {
                       .contains(folderPathProvider.searchQuery.toLowerCase()))
                   .toList();
               return CustomDataTable(
-                key: GlobalKey(),
                 folderNavigation: true,
                 fullScreen: true,
                 clickable: true,

@@ -5,6 +5,7 @@ import io.minio.errors.*;
 import io.minio.http.Method;
 import io.minio.messages.Item;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -134,6 +135,25 @@ public class MinioService {
         }*/
 
         return results;
+    }
+
+    InputStreamResource downloadFile(String filePath) throws Exception {
+        try{
+            if (!fileExists(filePath)) {
+                throw new Exception(("File with name " + filePath + " doesn't exist"));
+            }
+            InputStream stream = minioClient.getObject(
+                    GetObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(filePath)
+                            .build());
+            System.out.println("Generated URI: " + stream);
+            return new InputStreamResource(stream);
+        } catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+
     }
 
 }

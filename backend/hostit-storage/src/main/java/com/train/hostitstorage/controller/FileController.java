@@ -65,7 +65,22 @@ public class FileController {
             @RequestParam("filePath") String filePath,
             @RequestParam("userId") Long userId){
         try {
-            return ResponseEntity.ok(fileService.getFileDownloadUri(userId, filePath));
+           // return ResponseEntity.ok(fileService.getFileDownloadUri(userId, filePath));
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(fileService.downloadFile(userId, filePath));
+        } catch (Exception e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @GetMapping("/uridownload")
+    public ResponseEntity getUridownloadFile(
+            @RequestParam("filePath") String filePath,
+            @RequestParam("userId") Long userId){
+        try {
+             return ResponseEntity.ok(fileService.getFileDownloadUri(userId, filePath));
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", e.getMessage());
@@ -106,4 +121,6 @@ public class FileController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+
 }
