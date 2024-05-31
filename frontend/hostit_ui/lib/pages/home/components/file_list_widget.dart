@@ -4,7 +4,7 @@ import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/models/file_model.dart';
 import 'package:hostit_ui/responsive.dart';
 import 'package:hostit_ui/service/user_service.dart';
-import 'package:hostit_ui/widgets/custom_data_table.dart';
+import 'package:hostit_ui/widgets/custom_data_table/custom_data_table.dart';
 
 class FileListWidget extends StatefulWidget {
   final List<FileModel>? files;

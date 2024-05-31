@@ -4,7 +4,7 @@ import 'package:hostit_ui/providers/folder_path_provider.dart';
 import 'package:hostit_ui/responsive.dart';
 import 'package:hostit_ui/service/folder_service.dart';
 import 'package:hostit_ui/service/user_service.dart';
-import 'package:hostit_ui/widgets/custom_data_table.dart';
+import 'package:hostit_ui/widgets/custom_data_table/custom_data_table.dart';
 import 'package:hostit_ui/widgets/custom_progress_indicator.dart';
 import 'package:provider/provider.dart';
 

@@ -4,14 +4,13 @@ import 'package:hostit_ui/constants/card_size.dart';
 import 'package:hostit_ui/constants/custom_colors.dart';
 import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/constants/screen_size.dart';
-import 'package:hostit_ui/constants/svg_file_type.dart';
 import 'package:hostit_ui/pages/main/main_menu_page.dart';
 import 'package:hostit_ui/providers/folder_path_provider.dart';
 import 'package:hostit_ui/responsive.dart';
 import 'package:hostit_ui/service/file_service.dart';
 import 'package:hostit_ui/service/user_service.dart';
+import 'package:hostit_ui/widgets/custom_data_table/components/build_first_cell.dart';
 import 'package:path/path.dart' as path;
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class CustomDataTable extends StatefulWidget {
@@ -170,7 +169,9 @@ class _CustomDataTableState extends State<CustomDataTable> {
       int cellIndex = entry.key;
       var cellData = entry.value;
       return DataCell(
-        cellIndex == 0 ? _buildFirstCell(cellData) : Text(cellData ?? ''),
+        cellIndex == 0
+            ? buildFirstCell(cellData, widget.folderNavigation)
+            : Text(cellData ?? ''),
       );
     }).toList();
 
@@ -179,27 +180,6 @@ class _CustomDataTableState extends State<CustomDataTable> {
     }
 
     return cells;
-  }
-
-  Widget _buildFirstCell(String cellData) {
-    return Row(
-      children: [
-        path.extension(cellData).isNotEmpty
-            ? SvgPicture.asset(
-                fileTypeToSvg.putIfAbsent(path.extension(cellData).substring(1),
-                    () => unknownFileType),
-                height: 20,
-                width: 20,
-              )
-            : SvgPicture.asset(
-                folderSvg,
-                height: 25,
-                width: 25,
-              ),
-        const SizedBox(width: 15),
-        Text(cellData),
-      ],
-    );
   }
 
   DataCell _buildActionCell(List<dynamic> rowData) {
