@@ -41,7 +41,7 @@ class _FileListWidgetState extends State<FileListWidget> {
                 key: GlobalKey(),
                 folderNavigation: true,
                 fullScreen: true,
-                clickable: false,
+                clickable: true,
                 showActionsColumn: true,
                 columns: Responsive.isMobile(context)
                     ? const ["Name"]

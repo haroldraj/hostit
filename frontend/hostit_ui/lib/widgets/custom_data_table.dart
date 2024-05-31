@@ -110,10 +110,12 @@ class _CustomDataTableState extends State<CustomDataTable> {
     if (widget.showActionsColumn) {
       result.add(
         const DataColumn(
-          label: Center(
-            child: Text(
-              "Actions",
-              style: TextStyle(fontWeight: FontWeight.bold),
+          label: Flexible(
+            child: Center(
+              child: Text(
+                "Actions",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
           ),
         ),
@@ -147,11 +149,15 @@ class _CustomDataTableState extends State<CustomDataTable> {
     return widget.data.asMap().entries.map((entry) {
       int index = entry.key;
       List<dynamic> rowData = entry.value;
+      String filePath = widget.folderNavigation ? rowData.first : rowData.last;
+      String fileOrFolderName = rowData.first;
+
       return DataRow(
         selected: selectedRows[index],
         onSelectChanged: (bool? value) {
           if (widget.clickable) {
             debugPrint("Row tapped");
+            _handleOpenFile(userId, filePath, fileOrFolderName);
           }
         },
         cells: _buildCells(rowData, index),
@@ -198,14 +204,10 @@ class _CustomDataTableState extends State<CustomDataTable> {
 
   DataCell _buildActionCell(List<dynamic> rowData) {
     String filePath = widget.folderNavigation ? rowData.first : rowData.last;
-    String fileOrFolderName = rowData.first;
     return DataCell(
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildActionIcon(Icons.visibility, "View", () {
-            _handleOpenFile(userId, filePath, fileOrFolderName);
-          }),
           _buildActionIcon(Icons.download_sharp, "Download", () {
             _handleDownloadFile(userId, filePath);
           }),
@@ -289,7 +291,7 @@ class _CustomDataTableState extends State<CustomDataTable> {
     if (isAFolder) {
       var folderPathProvider =
           Provider.of<FolderPathProvider>(context, listen: false);
-      
+
       folderPathProvider.addFolderPath(fileOrFolderName);
     } else {
       await _fileService.openFile(userId, filePath);
