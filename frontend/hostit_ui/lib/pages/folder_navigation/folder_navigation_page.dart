@@ -60,7 +60,7 @@ class FolderPathWidget extends StatelessWidget {
                 if (idx < folderPath.length - 1)
                   const Text(
                     ' > ',
-                    style: TextStyle(fontSize: 40),
+                    style: TextStyle(fontSize: 20),
                   ),
               ];
             }).toList(),
