@@ -4,18 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:hostit_ui/constants/ngrok_headers.dart';
 import 'package:hostit_ui/constants/url_config.dart';
 import 'package:hostit_ui/models/file_model.dart';
+import 'package:hostit_ui/providers/file_data_model_provider.dart';
+import 'package:hostit_ui/service/user_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:http_parser/http_parser.dart';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 
+import 'package:provider/provider.dart';
+
 class FileService {
   final String _baseUrl = UrlConfig.baseFileStorageUrl;
   final Logger _logger = Logger();
 
-  Future uploadBytes(int userId, FileModel fileModel, String folderName) async {
+  Future uploadBytes(FileModel fileModel, String folderName,
+      BuildContext context) async {
     final url = "$_baseUrl/upload";
+    int userId = UserService().getUserId();
     try {
       var request = http.MultipartRequest('POST', Uri.parse(url));
       request.fields['userId'] = userId.toString();
@@ -36,6 +42,10 @@ class FileService {
       if (response.statusCode == 200) {
         var finalResponse = await response.stream.bytesToString();
         _logger.i(finalResponse);
+        var fileDataModelProvider =
+            // ignore: use_build_context_synchronously
+            Provider.of<FileDataModelProvider>(context, listen: false);
+        fileDataModelProvider.fetchFiles();
       } else {
         _logger.e('Failed to upload file: ${response.reasonPhrase}');
       }
@@ -44,7 +54,8 @@ class FileService {
     }
   }
 
-  Future<List<FileModel>>? getUserFiles(int userId) async {
+  Future<List<FileModel>>? getUserFiles() async {
+    int userId = UserService().getUserId();
     final url = Uri.parse("$_baseUrl/files?userId=$userId");
     final response = await http.get(url, headers: ngrokHeaders);
     if (response.statusCode == 200) {
@@ -61,7 +72,8 @@ class FileService {
     }
   }
 
-  Future<bool> deleteFile(int userId, String filePath) async {
+  Future<bool> deleteFile(String filePath) async {
+    int userId = UserService().getUserId();
     try {
       final url =
           Uri.parse("$_baseUrl/delete?userId=$userId&filePath=$filePath");
@@ -80,7 +92,8 @@ class FileService {
     }
   }
 
-  Future getFileDownloadUri(int userId, String filePath) async {
+  Future getFileDownloadUri(String filePath) async {
+    int userId = UserService().getUserId();
     final url =
         Uri.parse("$_baseUrl/uridownload?&userId=$userId&filePath=$filePath");
     final response = await http.get(url, headers: ngrokHeaders);
@@ -98,11 +111,12 @@ class FileService {
     }
   }
 
-  Future downloadFile(int userId, String filePath) async {
+  Future downloadFile(String filePath) async {
     debugPrint('Download file: $filePath');
     try {
       final url =
-          Uri.parse("$_baseUrl/download?&userId=$userId&filePath=$filePath");
+          // Uri.parse("$_baseUrl/download?&userId=$userId&filePath=$filePath");
+          Uri.parse(await getFileDownloadUri(filePath));
       _logger.i("url : $url");
 
       var response = await http.get(url);
@@ -120,9 +134,9 @@ class FileService {
     }
   }
 
-  Future openFile(int userId, String filePath) async {
+  Future openFile(String filePath) async {
     html.AnchorElement(
-      href: await getFileDownloadUri(userId, filePath),
+      href: await getFileDownloadUri(filePath),
     )
       ..target = 'blank'
       ..click();

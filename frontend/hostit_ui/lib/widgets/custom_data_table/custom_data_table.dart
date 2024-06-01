@@ -4,11 +4,10 @@ import 'package:hostit_ui/constants/card_size.dart';
 import 'package:hostit_ui/constants/custom_colors.dart';
 import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/constants/screen_size.dart';
-import 'package:hostit_ui/pages/main/main_menu_page.dart';
+import 'package:hostit_ui/providers/file_data_model_provider.dart';
 import 'package:hostit_ui/providers/folder_path_provider.dart';
 import 'package:hostit_ui/responsive.dart';
 import 'package:hostit_ui/service/file_service.dart';
-import 'package:hostit_ui/service/user_service.dart';
 import 'package:hostit_ui/widgets/custom_data_table/components/build_first_cell.dart';
 import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
@@ -46,13 +45,16 @@ class _CustomDataTableState extends State<CustomDataTable> {
   int sortColumnIndex = 0;
   final _scrollController = ScrollController();
   final FileService _fileService = FileService();
-  int userId = UserService().getUserId();
   List<bool> selectedRows = [];
 
   @override
   void initState() {
     super.initState();
     selectedRows = List<bool>.filled(widget.data.length, false);
+  }
+
+  void _close() {
+    Navigator.pop(context);
   }
 
   @override
@@ -156,7 +158,7 @@ class _CustomDataTableState extends State<CustomDataTable> {
         onSelectChanged: (bool? value) {
           if (widget.clickable) {
             debugPrint("Row tapped");
-            _handleOpenFile(userId, filePath, fileOrFolderName);
+            _handleOpenFile(filePath, fileOrFolderName);
           }
         },
         cells: _buildCells(rowData, index),
@@ -189,10 +191,10 @@ class _CustomDataTableState extends State<CustomDataTable> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _buildActionIcon(Icons.download_sharp, "Download", () {
-            _handleDownloadFile(userId, filePath);
+            _handleDownloadFile(filePath);
           }),
           _buildActionIcon(Icons.delete_sharp, "Delete", () {
-            _handleDeleteFile(userId, filePath);
+            _handleDeleteFile(filePath);
           }),
         ],
       ),
@@ -231,11 +233,11 @@ class _CustomDataTableState extends State<CustomDataTable> {
     });
   }
 
-  Future<void> _handleDownloadFile(int userId, String filePath) async {
-    await _fileService.downloadFile(userId, filePath);
+  Future<void> _handleDownloadFile(String filePath) async {
+    await _fileService.downloadFile(filePath);
   }
 
-  Future<void> _handleDeleteFile(int userId, String filePath) async {
+  Future<void> _handleDeleteFile(String filePath) async {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -247,14 +249,18 @@ class _CustomDataTableState extends State<CustomDataTable> {
         content: Text("Do you really want to delete : $filePath ?"),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => _close(),
             child: const Text("NO"),
           ),
           TextButton(
             onPressed: () async {
-              bool isDeleted = await _fileService.deleteFile(userId, filePath);
+              bool isDeleted = await _fileService.deleteFile(filePath);
               if (isDeleted) {
-                goTo(context, const MainMenu(), isReplaced: true);
+                var fileDataModelProvider =
+                    // ignore: use_build_context_synchronously
+                    Provider.of<FileDataModelProvider>(context, listen: false);
+                fileDataModelProvider.fetchFiles();
+                _close();
               }
             },
             child: const Text("YES"),
@@ -264,8 +270,7 @@ class _CustomDataTableState extends State<CustomDataTable> {
     );
   }
 
-  Future<void> _handleOpenFile(
-      int userId, String filePath, String fileOrFolderName) async {
+  Future<void> _handleOpenFile(String filePath, String fileOrFolderName) async {
     bool isAFolder = path.extension(fileOrFolderName).isEmpty;
 
     if (isAFolder) {
@@ -274,7 +279,7 @@ class _CustomDataTableState extends State<CustomDataTable> {
 
       folderPathProvider.addFolderPath(fileOrFolderName);
     } else {
-      await _fileService.openFile(userId, filePath);
+      await _fileService.openFile(filePath);
     }
   }
 }

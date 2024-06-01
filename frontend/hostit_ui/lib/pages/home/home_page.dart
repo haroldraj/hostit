@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hostit_ui/constants/custom_colors.dart';
 import 'package:hostit_ui/constants/helpers.dart';
-import 'package:hostit_ui/models/file_model.dart';
 import 'package:hostit_ui/pages/home/components/file_list_widget.dart';
-import 'package:hostit_ui/service/file_service.dart';
-import 'package:hostit_ui/service/user_service.dart';
+import 'package:hostit_ui/pages/home/components/welcoming_text_widget.dart';
+import 'package:hostit_ui/providers/file_data_model_provider.dart';
 import 'package:hostit_ui/widgets/custom_progress_indicator.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,50 +23,58 @@ class _HomePageState extends State<HomePage> {
           color: CustomColors.pageBgColor,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: const MyHostitPage(),
+        child: const SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            children: [
+              Spacing.vertical,
+              WelcomingTextWidget(),
+              Spacing.vertical,
+              //  SearchFieldWidget(),
+              //Spacing.vertical,
+              MyHostitPage(),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
 
-class MyHostitPage extends StatelessWidget {
+class MyHostitPage extends StatefulWidget {
   const MyHostitPage({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
-    final FileService fileService = FileService();
-    int userId = UserService().getUserId();
+  State<MyHostitPage> createState() => _MyHostitPageState();
+}
 
-    return FutureBuilder<List<FileModel>>(
-      future: fileService.getUserFiles(userId),
-      builder: (context, snapshot) {
-        try {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: customCircularProgressIndicator("Loading file list..."),
-            );
-          } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-            var files = snapshot.data;
-            return SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(
-                children: [
-                  Spacing.vertical,
-                  FileListWidget(files: files),
-                ],
-              ),
-            );
-          } else {
-            return const Center(child: Text("No files found"));
-          }
-        } on Exception catch (error) {
-          return Center(
-            child: Text("Error: $error"),
-          );
-        }
-      },
-    );
+class _MyHostitPageState extends State<MyHostitPage> {
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<FileDataModelProvider>(context, listen: false).fetchFiles();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<FileDataModelProvider>(
+        builder: (context, fileDataModelProvider, child) {
+      if (fileDataModelProvider.files.isEmpty) {
+        return Center(
+          child: customCircularProgressIndicator("Loading file list..."),
+        );
+      }
+      return SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          children: [
+            Spacing.vertical,
+            FileListWidget(files: fileDataModelProvider.files),
+          ],
+        ),
+      );
+    });
   }
 }

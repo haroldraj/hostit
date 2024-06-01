@@ -8,14 +8,14 @@ import 'package:hostit_ui/widgets/custom_data_table/custom_data_table.dart';
 import 'package:hostit_ui/widgets/custom_progress_indicator.dart';
 import 'package:provider/provider.dart';
 
-class FileListWidget extends StatefulWidget {
-  const FileListWidget({super.key});
+class FolderContentWidget extends StatefulWidget {
+  const FolderContentWidget({super.key});
 
   @override
-  State<FileListWidget> createState() => _FileListWidgetState();
+  State<FolderContentWidget> createState() => _FolderContentWidgetState();
 }
 
-class _FileListWidgetState extends State<FileListWidget> {
+class _FolderContentWidgetState extends State<FolderContentWidget> {
   final FolderService _folderService = FolderService();
   int userId = UserService().getUserId();
 
@@ -67,9 +67,5 @@ class _FileListWidgetState extends State<FileListWidget> {
         );
       },
     );
-  }
-
-  void refreshDataTable() {
-    setState(() {}); // Trigger a rebuild of the widget
   }
 }

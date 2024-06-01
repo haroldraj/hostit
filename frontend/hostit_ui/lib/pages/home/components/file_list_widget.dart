@@ -3,7 +3,6 @@ import 'package:hostit_ui/constants/custom_colors.dart';
 import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/models/file_model.dart';
 import 'package:hostit_ui/responsive.dart';
-import 'package:hostit_ui/service/user_service.dart';
 import 'package:hostit_ui/widgets/custom_data_table/custom_data_table.dart';
 
 class FileListWidget extends StatefulWidget {
@@ -19,19 +18,8 @@ class _FileListWidgetState extends State<FileListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    
     return Column(
       children: [
-         Container(
-          margin: const EdgeInsets.only(bottom: 15),
-          child: Center(
-            child: Text(
-              'Welcome to Hostit, ${UserService().getUsername()}',
-              style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-            ),
-          ),
-        ),
-       
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: TextField(
@@ -82,7 +70,6 @@ class _FileListWidgetState extends State<FileListWidget> {
                   )
                   .toList() ??
               [],
-
           context: context,
         ),
       ],

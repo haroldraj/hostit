@@ -4,6 +4,7 @@ import 'package:hostit_ui/pages/main/components/navigation_menu/menu_info.dart';
 import 'package:hostit_ui/pages/main/components/navigation_menu/menu_types.dart';
 import 'package:hostit_ui/pages/auth/sign_in/sign_in_page.dart';
 import 'package:hostit_ui/pages/main/main_menu_page.dart';
+import 'package:hostit_ui/providers/file_data_model_provider.dart';
 import 'package:hostit_ui/providers/folder_path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:hostit_ui/service/auth_service.dart';
@@ -36,6 +37,9 @@ class _HostitAppState extends State<HostitApp> {
         ),
         ChangeNotifierProvider(
           create: (context) => FolderPathProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => FileDataModelProvider(),
         ),
       ],
       child: MaterialApp(

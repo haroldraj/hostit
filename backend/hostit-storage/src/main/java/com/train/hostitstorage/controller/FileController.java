@@ -65,8 +65,8 @@ public class FileController {
             @RequestParam("filePath") String filePath,
             @RequestParam("userId") Long userId){
         try {
-           // return ResponseEntity.ok(fileService.getFileDownloadUri(userId, filePath));
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM)
+            //return ResponseEntity.ok(fileService.getFileDownloadUri(userId, filePath));
+           return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/octet-stream"))
                     .body(fileService.downloadFile(userId, filePath));
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();

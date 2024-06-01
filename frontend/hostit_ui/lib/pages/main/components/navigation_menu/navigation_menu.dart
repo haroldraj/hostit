@@ -114,7 +114,7 @@ class NavigationMenu extends StatelessWidget {
                                     ),
                                     Spacing.horizontal,
                                     SizedBox(
-                                      width: 150,
+                                      width: 120,
                                       height: 35,
                                       child: FloatingActionButton(
                                         backgroundColor:
@@ -156,7 +156,7 @@ class NavigationMenu extends StatelessWidget {
                                               MainAxisAlignment.center,
                                           children: [
                                             Icon(Icons.add),
-                                            Text("Create Folder"),
+                                            Text("Create Folder "),
                                           ],
                                         ),
                                       ),
