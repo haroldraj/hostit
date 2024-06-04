@@ -41,7 +41,7 @@ public class FolderService {
             String fullPath = this.getUserFolder(userId) + "/" + folderPath;
             boolean isFolderDeleted = minioService.deleteFolder(fullPath) ;
             if(isFolderDeleted){
-                 fileMetadataRepository.deleteByUserIdAndFolderName(userId, folderPath);
+                 fileMetadataRepository.deleteByUserIdAndFolderNameStartingWith(userId, folderPath);
                 return true;
             }
         }catch (Exception e){
