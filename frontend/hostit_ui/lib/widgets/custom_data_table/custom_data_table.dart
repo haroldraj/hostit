@@ -1,17 +1,11 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:hostit_ui/constants/card_size.dart';
-import 'package:hostit_ui/constants/custom_colors.dart';
 import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/constants/screen_size.dart';
-import 'package:hostit_ui/providers/file_data_model_provider.dart';
-import 'package:hostit_ui/providers/folder_path_provider.dart';
 import 'package:hostit_ui/responsive.dart';
-import 'package:hostit_ui/service/file_service.dart';
-import 'package:hostit_ui/service/folder_service.dart';
+import 'package:hostit_ui/service/custom_data_table_service.dart';
 import 'package:hostit_ui/widgets/custom_data_table/components/build_first_cell.dart';
-import 'package:path/path.dart' as path;
-import 'package:provider/provider.dart';
 
 class CustomDataTable extends StatefulWidget {
   final List<String> columns;
@@ -45,18 +39,14 @@ class _CustomDataTableState extends State<CustomDataTable> {
   List<bool> sortAscending = List.filled(5, false);
   int sortColumnIndex = 0;
   final _scrollController = ScrollController();
-  final FileService _fileService = FileService();
-  final FolderService _folderService = FolderService();
+  final CustomDataTableService _customDataTableService =
+      CustomDataTableService();
   List<bool> selectedRows = [];
 
   @override
   void initState() {
     super.initState();
     selectedRows = List<bool>.filled(widget.data.length, false);
-  }
-
-  void _close() {
-    Navigator.pop(context);
   }
 
   @override
@@ -160,7 +150,8 @@ class _CustomDataTableState extends State<CustomDataTable> {
         onSelectChanged: (bool? value) {
           if (widget.clickable) {
             debugPrint("Row tapped");
-            _handleOpenFile(filePath, fileOrFolderName);
+            _customDataTableService.handleOpenFile(
+                filePath, fileOrFolderName, context);
           }
         },
         cells: _buildCells(rowData, index),
@@ -195,13 +186,14 @@ class _CustomDataTableState extends State<CustomDataTable> {
         children: [
           _buildActionIcon(Icons.download_sharp, "Download", () {
             type == 'Folder'
-                ? _handleDownloadFolder(filePath)
-                : _handleDownloadFile(filePath);
+                ? _customDataTableService.handleDownloadFolder(
+                    filePath, context)
+                : _customDataTableService.handleDownloadFile(filePath);
           }),
           _buildActionIcon(Icons.delete_sharp, "Delete", () {
             type == 'Folder'
-                ? _handleDeleteFolder(filePath)
-                : _handleDeleteFile(filePath);
+                ? _customDataTableService.handleDeleteFolder(filePath, context)
+                : _customDataTableService.handleDeleteFile(filePath, context);
           }),
         ],
       ),
@@ -238,128 +230,5 @@ class _CustomDataTableState extends State<CustomDataTable> {
             : Comparable.compare(bValue, aValue);
       });
     });
-  }
-
-  Future<void> _handleDownloadFile(String filePath) async {
-    await _fileService.downloadFile(filePath);
-  }
-
-  Future<void> _handleDeleteFile(String filePath) async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: const Text(
-          "Confirmation",
-          style: TextStyle(color: CustomColors.redColor),
-        ),
-        content: Text("Do you really want to delete the file $filePath ?"),
-        actions: [
-          TextButton(
-            onPressed: () => _close(),
-            child: const Text("NO"),
-          ),
-          TextButton(
-            onPressed: () async {
-              bool isDeleted = await _fileService.deleteFile(filePath);
-              if (isDeleted) {
-                var fileDataModelProvider =
-                    // ignore: use_build_context_synchronously
-                    Provider.of<FileDataModelProvider>(context, listen: false);
-                fileDataModelProvider.fetchFiles();
-                _close();
-              }
-            },
-            child: const Text("YES"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _handleDownloadFolder(String folderPath) async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: const Row(
-          children: [
-            Icon(Icons.info, color: Colors.blue),
-            Spacing.horizontal,
-            Text(
-              "Info",
-              style: TextStyle(color: Colors.blue),
-            ),
-          ],
-        ),
-        content: const Text("You'll be able to download folders soon."),
-        actions: [
-          TextButton(
-            onPressed: () => _close(),
-            child: const Text("OK"),
-          ),
-          /* TextButton(
-            onPressed: () async {
-              bool isDeleted = await _fileService.deleteFile(folderPath);
-              if (isDeleted) {
-                var fileDataModelProvider =
-                    // ignore: use_build_context_synchronously
-                    Provider.of<FileDataModelProvider>(context, listen: false);
-                fileDataModelProvider.fetchFiles();
-                _close();
-              }
-            },
-            child: const Text("YES"),
-          ),*/
-        ],
-      ),
-    );
-  }
-
-  Future<void> _handleDeleteFolder(String folderPath) async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: const Text(
-          "Confirmation",
-          style: TextStyle(color: CustomColors.redColor),
-        ),
-        content: Text(
-            "Do you really want to delete the folder $folderPath with its content?"),
-        actions: [
-          TextButton(
-            onPressed: () => _close(),
-            child: const Text("NO"),
-          ),
-          TextButton(
-            onPressed: () async {
-              bool isDeleted = await _folderService.deleteFolder(folderPath);
-              if (isDeleted) {
-                var fileDataModelProvider =
-                    // ignore: use_build_context_synchronously
-                    Provider.of<FileDataModelProvider>(context, listen: false);
-                fileDataModelProvider.fetchFiles();
-                _close();
-              }
-            },
-            child: const Text("YES"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _handleOpenFile(String filePath, String fileOrFolderName) async {
-    bool isAFolder = path.extension(fileOrFolderName).isEmpty;
-
-    if (isAFolder) {
-      var folderPathProvider =
-          Provider.of<FolderPathProvider>(context, listen: false);
-
-      folderPathProvider.addFolderPath(fileOrFolderName);
-    } else {
-      await _fileService.openFile(filePath);
-    }
   }
 }
