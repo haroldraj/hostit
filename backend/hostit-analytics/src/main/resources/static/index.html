@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HostIT Analytics Service</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .button {
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<h1>File List</h1>
+<button onclick="fetchFiles()" class="button">Refresh Files</button>
+<table id="filesTable">
+    <tr>
+        <th>Name</th>
+        <th>Content Type</th>
+        <th>Size</th>
+        <th>Download</th>
+    </tr>
+</table>
+
+<h1>File Size Percentage Per User</h1>
+<table id="sizePercentagePerUserTable">
+    <tr>
+        <th>User ID</th>
+        <th>Percentage</th>
+    </tr>
+</table>
+
+<h1>File Type Percentage Per User</h1>
+<table id="typePercentagePerUserTable">
+    <tr>
+        <th>User ID</th>
+        <th>Type</th>
+        <th>Percentage</th>
+    </tr>
+</table>
+
+<h1>Average Data Usage</h1>
+<p id="averageDataUsage"></p>
+
+<h1>Average File Size by Category</h1>
+<table id="averageFileSizeByCategoryTable">
+    <tr>
+        <th>Category</th>
+        <th>Average Size (MB)</th>
+    </tr>
+</table>
+
+<h1>Overall File Type Percentage</h1>
+<table id="overallFileTypePercentageTable">
+    <tr>
+        <th>Type</th>
+        <th>Percentage</th>
+    </tr>
+</table>
+
+<h1>File Quantity by Directory</h1>
+<table id="fileQuantityByDirectoryTable">
+    <tr>
+        <th>Directory</th>
+        <th>Quantity</th>
+    </tr>
+</table>
+
+<h1>File Quantity by User</h1>
+<table id="fileQuantityByUserTable">
+    <tr>
+        <th>User ID</th>
+        <th>Quantity</th>
+    </tr>
+</table>
+
+<h1>User Classification</h1>
+<table id="userClassificationTable">
+    <tr>
+        <th>User ID</th>
+        <th>Classification</th>
+    </tr>
+</table>
+
+<script>
+    function bytesToMB(bytes) {
+        return (bytes / (1024 * 1024)).toFixed(2);
+    }
+
+    function fetchFiles() {
+        fetch('/api/files')
+            .then(response => response.json())
+            .then(files => {
+                const table = document.getElementById('filesTable');
+                table.innerHTML = `
+                    <tr>
+                        <th>Name</th>
+                        <th>Content Type</th>
+                        <th>Size</th>
+                        <th>Download</th>
+                    </tr>`;
+                files.forEach(file => {
+                    const row = table.insertRow(-1);
+                    const name = row.insertCell(0);
+                    const contentType = row.insertCell(1);
+                    const size = row.insertCell(2);
+                    const download = row.insertCell(3);
+
+                    name.innerHTML = file.name;
+                    contentType.innerHTML = file.contentType;
+                    size.innerHTML = bytesToMB(file.size) + ' MB';
+                    download.innerHTML = `<a href="${file.downloadUri}">Download</a>`;
+                });
+            })
+            .catch(error => console.error('Error fetching files:', error));
+    }
+
+    function fetchFileSizePercentagePerUser() {
+        fetch('/api/files/size-percentage-per-user')
+            .then(response => response.json())
+            .then(data => {
+                const table = document.getElementById('sizePercentagePerUserTable');
+                table.innerHTML = `
+                    <tr>
+                        <th>User ID</th>
+                        <th>Percentage</th>
+                    </tr>`;
+                for (const [userId, percentage] of Object.entries(data)) {
+                    const row = table.insertRow(-1);
+                    row.insertCell(0).innerHTML = userId;
+                    row.insertCell(1).innerHTML = percentage.toFixed(2) + '%';
+                }
+            })
+            .catch(error => console.error('Error fetching size percentage per user:', error));
+    }
+
+    function fetchFileTypePercentagePerUser() {
+        fetch('/api/files/type-percentage-per-user')
+            .then(response => response.json())
+            .then(data => {
+                const table = document.getElementById('typePercentagePerUserTable');
+                table.innerHTML = `
+                    <tr>
+                        <th>User ID</th>
+                        <th>Type</th>
+                        <th>Percentage</th>
+                    </tr>`;
+                for (const [userId, types] of Object.entries(data)) {
+                    for (const [type, percentage] of Object.entries(types)) {
+                        const row = table.insertRow(-1);
+                        row.insertCell(0).innerHTML = userId;
+                        row.insertCell(1).innerHTML = type;
+                        row.insertCell(2).innerHTML = percentage.toFixed(2) + '%';
+                    }
+                }
+            })
+            .catch(error => console.error('Error fetching type percentage per user:', error));
+    }
+
+    function fetchAverageDataUsagePerUser() {
+        fetch('/api/files/average-data-usage-per-user')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('averageDataUsage').innerText = `Average data usage for all users: ${bytesToMB(data)} MB`;
+            })
+            .catch(error => console.error('Error fetching average data usage per user:', error));
+    }
+
+    function fetchAverageFileSizeByCategory() {
+        fetch('/api/files/average-file-size-by-category')
+            .then(response => response.json())
+            .then(data => {
+                const table = document.getElementById('averageFileSizeByCategoryTable');
+                table.innerHTML = `
+                    <tr>
+                        <th>Category</th>
+                        <th>Average Size (MB)</th>
+                    </tr>`;
+                for (const [category, size] of Object.entries(data)) {
+                    const row = table.insertRow(-1);
+                    row.insertCell(0).innerHTML = category;
+                    row.insertCell(1).innerHTML = bytesToMB(size);
+                }
+            })
+            .catch(error => console.error('Error fetching average file size by category:', error));
+    }
+
+    function fetchOverallFileTypePercentage() {
+        fetch('/api/files/type-percentage-overall')
+            .then(response => response.json())
+            .then(data => {
+                const table = document.getElementById('overallFileTypePercentageTable');
+                table.innerHTML = `
+                    <tr>
+                        <th>Type</th>
+                        <th>Percentage</th>
+                    </tr>`;
+                for (const [type, percentage] of Object.entries(data)) {
+                    const row = table.insertRow(-1);
+                    row.insertCell(0).innerHTML = type;
+                    row.insertCell(1).innerHTML = percentage.toFixed(2) + '%';
+                }
+            })
+            .catch(error => console.error('Error fetching overall file type percentage:', error));
+    }
+
+    function fetchFileQuantityByDirectory() {
+        fetch('/api/files/file-quantity-by-directory')
+            .then(response => response.json())
+            .then(data => {
+                const table = document.getElementById('fileQuantityByDirectoryTable');
+                table.innerHTML = `
+                    <tr>
+                        <th>Directory</th>
+                        <th>Quantity</th>
+                    </tr>`;
+                for (const [directory, quantity] of Object.entries(data)) {
+                    const row = table.insertRow(-1);
+                    row.insertCell(0).innerHTML = directory;
+                    row.insertCell(1).innerHTML = quantity;
+                }
+            })
+            .catch(error => console.error('Error fetching file quantity by directory:', error));
+    }
+
+    function fetchFileQuantityByUser() {
+        fetch('/api/files/file-quantity-by-user')
+            .then(response => response.json())
+            .then(data => {
+                const table = document.getElementById('fileQuantityByUserTable');
+                table.innerHTML = `
+                    <tr>
+                        <th>User ID</th>
+                        <th>Quantity</th>
+                    </tr>`;
+                for (const [userId, quantity] of Object.entries(data)) {
+                    const row = table.insertRow(-1);
+                    row.insertCell(0).innerHTML = userId;
+                    row.insertCell(1).innerHTML = quantity;
+                }
+            })
+            .catch(error => console.error('Error fetching file quantity by user:', error));
+    }
+
+    function fetchUserClassification() {
+        fetch('/api/files/classify-users')
+            .then(response => response.json())
+            .then(data => {
+                const table = document.getElementById('userClassificationTable');
+                table.innerHTML = `
+                    <tr>
+                        <th>User ID</th>
+                        <th>Classification</th>
+                    </tr>`;
+                for (const [userId, classification] of Object.entries(data)) {
+                    const row = table.insertRow(-1);
+                    row.insertCell(0).innerHTML = userId;
+                    row.insertCell(1).innerHTML = classification;
+                }
+            })
+            .catch(error => console.error('Error fetching user classification:', error));
+    }
+
+    // Initial fetch of files and statistics
+    fetchFiles();
+    fetchFileSizePercentagePerUser();
+    fetchFileTypePercentagePerUser();
+    fetchAverageDataUsagePerUser();
+    fetchAverageFileSizeByCategory();
+    fetchOverallFileTypePercentage();
+    fetchFileQuantityByDirectory();
+    fetchFileQuantityByUser();
+    fetchUserClassification();
+</script>
+</body>
+</html>
