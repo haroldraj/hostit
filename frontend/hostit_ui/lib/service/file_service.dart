@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -5,6 +7,7 @@ import 'package:hostit_ui/constants/ngrok_headers.dart';
 import 'package:hostit_ui/constants/url_config.dart';
 import 'package:hostit_ui/models/file_model.dart';
 import 'package:hostit_ui/providers/file_data_model_provider.dart';
+import 'package:hostit_ui/providers/folder_path_provider.dart';
 import 'package:hostit_ui/service/user_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
@@ -43,8 +46,10 @@ class FileService {
         var finalResponse = await response.stream.bytesToString();
         _logger.i(finalResponse);
         var fileDataModelProvider =
-            // ignore: use_build_context_synchronously
             Provider.of<FileDataModelProvider>(context, listen: false);
+        var folderPathProvider =
+            Provider.of<FolderPathProvider>(context, listen: false);
+        folderPathProvider.setFolderPath(folderPathProvider.folderPath);
         await fileDataModelProvider.fetchFiles();
       } else {
         _logger.e('Failed to upload file: ${response.reasonPhrase}');
@@ -71,13 +76,16 @@ class FileService {
     }
   }
 
-  Future<bool> deleteFile(String filePath) async {
+  Future<bool> deleteFile(String filePath, BuildContext context) async {
     try {
       final url =
           Uri.parse("$_baseUrl/delete?userId=$userId&filePath=$filePath");
       final response = await http.delete(url, headers: ngrokHeaders);
       if (response.statusCode == 200) {
         _logger.i("File deleted");
+        var folderPathProvider =
+            Provider.of<FolderPathProvider>(context, listen: false);
+        folderPathProvider.setFolderPath(folderPathProvider.folderPath);
         return true;
       } else {
         return false;

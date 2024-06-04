@@ -1,11 +1,16 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:hostit_ui/constants/ngrok_headers.dart';
 import 'package:hostit_ui/constants/url_config.dart';
 import 'package:hostit_ui/models/folder_content_model.dart';
+import 'package:hostit_ui/providers/folder_path_provider.dart';
 import 'package:hostit_ui/service/user_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 // ignore: avoid_web_libraries_in_flutter
 
 class FolderService {
@@ -13,13 +18,16 @@ class FolderService {
   final Logger _logger = Logger();
   int userId = UserService().getUserId();
 
-  Future<bool> createFolder(String folderPath) async {
+  Future<bool> createFolder(String folderPath, BuildContext context) async {
     try {
       final url =
           Uri.parse("$_baseUrl/create?userId=$userId&folderPath=$folderPath");
       final response = await http.post(url, headers: ngrokHeaders);
       if (response.statusCode == 200) {
         _logger.i("Folder created");
+        var folderPathProvider =
+            Provider.of<FolderPathProvider>(context, listen: false);
+        folderPathProvider.setFolderPath(folderPathProvider.folderPath);
         return true;
       } else {
         return false;
@@ -50,13 +58,16 @@ class FolderService {
     }
   }
 
-  Future<bool> deleteFolder(String folderPath) async {
+  Future<bool> deleteFolder(String folderPath, BuildContext context) async {
     try {
       final url =
           Uri.parse("$_baseUrl/delete?userId=$userId&folderPath=$folderPath");
       final response = await http.delete(url, headers: ngrokHeaders);
       if (response.statusCode == 200) {
         _logger.i("Folder deleted");
+        var folderPathProvider =
+            Provider.of<FolderPathProvider>(context, listen: false);
+        folderPathProvider.setFolderPath(folderPathProvider.folderPath);
         return true;
       } else {
         return false;

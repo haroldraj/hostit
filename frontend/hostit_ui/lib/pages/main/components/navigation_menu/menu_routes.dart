@@ -11,7 +11,7 @@ Widget buildMenuRoutes() {
       if (value.menuType == MenuType.home) {
         return const HomePage();
       } else {
-        return FolderNavigationPage();
+        return const FolderNavigationPage();
       }
     },
   );

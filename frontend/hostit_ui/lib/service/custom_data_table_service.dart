@@ -35,7 +35,7 @@ class CustomDataTableService {
           ),
           TextButton(
             onPressed: () async {
-              bool isDeleted = await _fileService.deleteFile(filePath);
+              bool isDeleted = await _fileService.deleteFile(filePath, context);
               if (isDeleted) {
                 var fileDataModelProvider =
                     Provider.of<FileDataModelProvider>(context, listen: false);
@@ -110,7 +110,7 @@ class CustomDataTableService {
           ),
           TextButton(
             onPressed: () async {
-              bool isDeleted = await _folderService.deleteFolder(folderPath);
+              bool isDeleted = await _folderService.deleteFolder(folderPath, context);
               if (isDeleted) {
                 var fileDataModelProvider =
                     Provider.of<FileDataModelProvider>(context, listen: false);

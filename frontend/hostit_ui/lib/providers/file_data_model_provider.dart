@@ -5,11 +5,12 @@ import 'package:hostit_ui/models/file_model.dart';
 class FileDataModelProvider extends ChangeNotifier {
   List<FileModel> _files = [];
   List<FileModel> get files => _files;
-  bool isLoading = false;
+  bool? isLoading;
 
   Future<void> fetchFiles() async {
     try {
       isLoading = true;
+      notifyListeners();
       _files = await FileService().getUserFiles()!;
       isLoading = false;
       notifyListeners();

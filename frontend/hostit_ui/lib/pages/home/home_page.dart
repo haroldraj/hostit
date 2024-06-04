@@ -61,7 +61,7 @@ class _MyHostitPageState extends State<MyHostitPage> {
   Widget build(BuildContext context) {
     return Consumer<FileDataModelProvider>(
         builder: (context, fileDataModelProvider, child) {
-      if (fileDataModelProvider.isLoading) {
+      if (fileDataModelProvider.isLoading!) {
         return Center(
           child: customCircularProgressIndicator("Loading file list..."),
         );

@@ -1,9 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:hostit_ui/models/folder_content_model.dart';
+import 'package:hostit_ui/service/folder_service.dart';
 
 class FolderPathProvider extends ChangeNotifier {
   List<String> _folderPath = ["My Hostit"];
   String _searchQuery = "";
   List<String> get folderPath => _folderPath;
+  List<FolderContentModel> _folderContent = [];
+  List<FolderContentModel> get folderContent => _folderContent;
+
+  Future<void> fetchFolderContents() async {
+    try {
+      _folderContent =
+          await FolderService().getFolderContent(folderPathToString)!;
+      notifyListeners();
+    } catch (e) {
+      throw Exception("Failed to fetch folder contents");
+    }
+  }
 
   String get folderPathToString {
     if (_folderPath.length > 1) {
