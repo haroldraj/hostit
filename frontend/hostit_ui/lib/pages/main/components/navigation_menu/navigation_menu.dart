@@ -32,7 +32,7 @@ class NavigationMenu extends StatelessWidget {
         if (formKey.currentState!.validate()) {
           debugPrint("Creating new folder");
           String folderName = "$folderPath/${folderController.text.trim()}";
-          bool isFolderCrated = await folderService.createFolder(folderName);
+          bool isFolderCrated = await folderService.createFolder(folderName, context);
           if (isFolderCrated) {
             var fileDataModelProvider =
                 // ignore: use_build_context_synchronously
