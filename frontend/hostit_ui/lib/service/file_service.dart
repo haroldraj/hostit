@@ -17,11 +17,11 @@ import 'package:provider/provider.dart';
 class FileService {
   final String _baseUrl = UrlConfig.baseFileStorageUrl;
   final Logger _logger = Logger();
+  int userId = UserService().getUserId();
 
-  Future uploadBytes(FileModel fileModel, String folderName,
-      BuildContext context) async {
+  Future uploadBytes(
+      FileModel fileModel, String folderName, BuildContext context) async {
     final url = "$_baseUrl/upload";
-    int userId = UserService().getUserId();
     try {
       var request = http.MultipartRequest('POST', Uri.parse(url));
       request.fields['userId'] = userId.toString();
@@ -45,7 +45,7 @@ class FileService {
         var fileDataModelProvider =
             // ignore: use_build_context_synchronously
             Provider.of<FileDataModelProvider>(context, listen: false);
-        fileDataModelProvider.fetchFiles();
+        await fileDataModelProvider.fetchFiles();
       } else {
         _logger.e('Failed to upload file: ${response.reasonPhrase}');
       }
@@ -55,7 +55,6 @@ class FileService {
   }
 
   Future<List<FileModel>>? getUserFiles() async {
-    int userId = UserService().getUserId();
     final url = Uri.parse("$_baseUrl/files?userId=$userId");
     final response = await http.get(url, headers: ngrokHeaders);
     if (response.statusCode == 200) {
@@ -73,7 +72,6 @@ class FileService {
   }
 
   Future<bool> deleteFile(String filePath) async {
-    int userId = UserService().getUserId();
     try {
       final url =
           Uri.parse("$_baseUrl/delete?userId=$userId&filePath=$filePath");
@@ -93,7 +91,6 @@ class FileService {
   }
 
   Future getFileDownloadUri(String filePath) async {
-    int userId = UserService().getUserId();
     final url =
         Uri.parse("$_baseUrl/uridownload?&userId=$userId&filePath=$filePath");
     final response = await http.get(url, headers: ngrokHeaders);

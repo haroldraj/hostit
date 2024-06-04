@@ -61,20 +61,25 @@ class _MyHostitPageState extends State<MyHostitPage> {
   Widget build(BuildContext context) {
     return Consumer<FileDataModelProvider>(
         builder: (context, fileDataModelProvider, child) {
-      if (fileDataModelProvider.files.isEmpty) {
+      if (fileDataModelProvider.isLoading) {
         return Center(
           child: customCircularProgressIndicator("Loading file list..."),
         );
+      } else if (fileDataModelProvider.files.isEmpty) {
+        return const Center(
+          child: Text("No file found."),
+        );
+      } else {
+        return SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            children: [
+              Spacing.vertical,
+              FileListWidget(files: fileDataModelProvider.files),
+            ],
+          ),
+        );
       }
-      return SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Column(
-          children: [
-            Spacing.vertical,
-            FileListWidget(files: fileDataModelProvider.files),
-          ],
-        ),
-      );
     });
   }
 }

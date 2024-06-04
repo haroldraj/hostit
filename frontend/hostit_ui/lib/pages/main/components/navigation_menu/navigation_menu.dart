@@ -3,7 +3,7 @@ import 'package:hostit_ui/constants/custom_colors.dart';
 import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/controllers/menu_app_controller.dart';
 import 'package:hostit_ui/pages/main/components/navigation_menu/menu_routes.dart';
-import 'package:hostit_ui/pages/main/main_menu_page.dart';
+import 'package:hostit_ui/providers/file_data_model_provider.dart';
 import 'package:hostit_ui/providers/folder_path_provider.dart';
 import 'package:hostit_ui/responsive.dart';
 import 'package:hostit_ui/service/folder_service.dart';
@@ -22,22 +22,24 @@ class NavigationMenu extends StatelessWidget {
     final TextEditingController folderController = TextEditingController();
     final formKey = GlobalKey<FormState>();
     FolderService folderService = FolderService();
-    int userId = UserService().getUserId();
+
+    void close() {
+      Navigator.pop(context);
+    }
 
     Future<void> onCreatePressed(String folderPath) async {
       try {
         if (formKey.currentState!.validate()) {
           debugPrint("Creating new folder");
           String folderName = "$folderPath/${folderController.text.trim()}";
-          bool isFolderCrated =
-              await folderService.createFolder(userId, folderName);
+          bool isFolderCrated = await folderService.createFolder(folderName);
           if (isFolderCrated) {
-            Future.delayed(
-              const Duration(seconds: 0),
-              () {
-                goTo(context, const MainMenu(), isReplaced: true);
-              },
-            );
+            var fileDataModelProvider =
+                // ignore: use_build_context_synchronously
+                Provider.of<FileDataModelProvider>(context, listen: false);
+            await fileDataModelProvider.fetchFiles();
+            close();
+            folderController.clear();
           } else {
             Future.delayed(
               const Duration(seconds: 0),

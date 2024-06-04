@@ -8,6 +8,7 @@ import 'package:hostit_ui/providers/file_data_model_provider.dart';
 import 'package:hostit_ui/providers/folder_path_provider.dart';
 import 'package:hostit_ui/responsive.dart';
 import 'package:hostit_ui/service/file_service.dart';
+import 'package:hostit_ui/service/folder_service.dart';
 import 'package:hostit_ui/widgets/custom_data_table/components/build_first_cell.dart';
 import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
@@ -45,6 +46,7 @@ class _CustomDataTableState extends State<CustomDataTable> {
   int sortColumnIndex = 0;
   final _scrollController = ScrollController();
   final FileService _fileService = FileService();
+  final FolderService _folderService = FolderService();
   List<bool> selectedRows = [];
 
   @override
@@ -186,15 +188,20 @@ class _CustomDataTableState extends State<CustomDataTable> {
 
   DataCell _buildActionCell(List<dynamic> rowData) {
     String filePath = widget.folderNavigation ? rowData.first : rowData.last;
+    String type = widget.folderNavigation ? rowData.last : '';
     return DataCell(
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _buildActionIcon(Icons.download_sharp, "Download", () {
-            _handleDownloadFile(filePath);
+            type == 'Folder'
+                ? _handleDownloadFolder(filePath)
+                : _handleDownloadFile(filePath);
           }),
           _buildActionIcon(Icons.delete_sharp, "Delete", () {
-            _handleDeleteFile(filePath);
+            type == 'Folder'
+                ? _handleDeleteFolder(filePath)
+                : _handleDeleteFile(filePath);
           }),
         ],
       ),
@@ -246,7 +253,7 @@ class _CustomDataTableState extends State<CustomDataTable> {
           "Confirmation",
           style: TextStyle(color: CustomColors.redColor),
         ),
-        content: Text("Do you really want to delete : $filePath ?"),
+        content: Text("Do you really want to delete the file $filePath ?"),
         actions: [
           TextButton(
             onPressed: () => _close(),
@@ -255,6 +262,79 @@ class _CustomDataTableState extends State<CustomDataTable> {
           TextButton(
             onPressed: () async {
               bool isDeleted = await _fileService.deleteFile(filePath);
+              if (isDeleted) {
+                var fileDataModelProvider =
+                    // ignore: use_build_context_synchronously
+                    Provider.of<FileDataModelProvider>(context, listen: false);
+                fileDataModelProvider.fetchFiles();
+                _close();
+              }
+            },
+            child: const Text("YES"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _handleDownloadFolder(String folderPath) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.info, color: Colors.blue),
+            Spacing.horizontal,
+            Text(
+              "Info",
+              style: TextStyle(color: Colors.blue),
+            ),
+          ],
+        ),
+        content: const Text("You'll be able to download folders soon."),
+        actions: [
+          TextButton(
+            onPressed: () => _close(),
+            child: const Text("OK"),
+          ),
+          /* TextButton(
+            onPressed: () async {
+              bool isDeleted = await _fileService.deleteFile(folderPath);
+              if (isDeleted) {
+                var fileDataModelProvider =
+                    // ignore: use_build_context_synchronously
+                    Provider.of<FileDataModelProvider>(context, listen: false);
+                fileDataModelProvider.fetchFiles();
+                _close();
+              }
+            },
+            child: const Text("YES"),
+          ),*/
+        ],
+      ),
+    );
+  }
+
+  Future<void> _handleDeleteFolder(String folderPath) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          "Confirmation",
+          style: TextStyle(color: CustomColors.redColor),
+        ),
+        content: Text(
+            "Do you really want to delete the folder $folderPath with its content?"),
+        actions: [
+          TextButton(
+            onPressed: () => _close(),
+            child: const Text("NO"),
+          ),
+          TextButton(
+            onPressed: () async {
+              bool isDeleted = await _folderService.deleteFolder(folderPath);
               if (isDeleted) {
                 var fileDataModelProvider =
                     // ignore: use_build_context_synchronously

@@ -160,7 +160,7 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
       name: event.name,
       contentType: await controller.getFileMIME(event),
     );
-    if (!mounted) return;
+    // ignore: use_build_context_synchronously
     await fileService.uploadBytes(fileModel, folderPath, context);
     _close();
     setState(() {
@@ -180,9 +180,8 @@ class _DropzoneWidgetState extends State<DropzoneWidget> {
       name: _filePickerResult!.files.first.name,
       contentType: lookupMimeType(_filePickerResult!.files.first.extension!),
     );
-    if(!mounted) return;
+    // ignore: use_build_context_synchronously
     await fileService.uploadBytes(fileModel, folderPath, context);
     _close();
   }
-
 }
