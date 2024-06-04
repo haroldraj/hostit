@@ -6,14 +6,13 @@ import com.train.hostitstorage.repository.FileMetadataRepository;
 import io.minio.Result;
 import io.minio.errors.*;
 import io.minio.messages.Item;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -34,6 +33,22 @@ public class FolderService {
     public boolean createFolder(Long userId, String folderPath) throws Exception {
         String fullPath = this.getUserFolder(userId) + "/" + folderPath;
         return minioService.createFolder(fullPath) ;
+    }
+
+    @Transactional
+    public boolean deleteFolder(Long userId, String folderPath) throws Exception {
+        try{
+            String fullPath = this.getUserFolder(userId) + "/" + folderPath;
+            boolean isFolderDeleted = minioService.deleteFolder(fullPath) ;
+            if(isFolderDeleted){
+                 fileMetadataRepository.deleteByUserIdAndFolderName(userId, folderPath);
+                return true;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return false;
     }
 
     public List<FileMetadata> getDistinctByUserIdAndFolderName(Long userId, String folderName) {

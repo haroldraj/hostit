@@ -62,4 +62,22 @@ public class FolderController {
         List<FileDTO> contents = folderService.getFilesAndFoldersInFolder(userId, folderName);
         return ResponseEntity.ok(contents);
     }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity deleteFile(
+            @RequestParam("folderPath") String folderPath,
+            @RequestParam("userId") Long userId){
+        try {
+            boolean isFolderDeleted = folderService.deleteFolder(userId, folderPath);
+            if (isFolderDeleted) {
+                return ResponseEntity.ok("Folder deleted successfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Folder not found");
+            }
+        } catch (Exception e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
 }

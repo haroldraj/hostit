@@ -124,6 +124,24 @@ public class MinioService {
         }
     }
 
+    public boolean deleteFolder(String folderPath) {
+        try {
+            Iterable<Result<Item>> results = minioClient.listObjects(
+                    ListObjectsArgs.builder().bucket(bucketName).prefix(folderPath + "/").recursive(true).build());
+
+            for (Result<Item> result : results) {
+                Item item = result.get();
+                minioClient.removeObject(
+                        RemoveObjectArgs.builder().bucket(bucketName).object(item.objectName()).build());
+            }
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public Iterable<Result<Item>> listObjectsInFolder(String folderPath) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         List<String> objects = new ArrayList<>();
         Iterable<Result<Item>> results = minioClient.listObjects(
