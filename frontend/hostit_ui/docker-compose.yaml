@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+  hostit_ui:
+    build: 
+        context: .
+        dockerfile: Dockerfile
+    container_name: hostit_ui
+    ports:
+      - "8080:80"
