@@ -4,17 +4,17 @@ import 'dart:html' as html;
 
 class UserService {
   int getUserId() {
-    //var payload = _getPayload();
-    //int id = jsonDecode(payload)['id'];
-    //return id;
-    return 1;
+    var payload = _getPayload();
+    int id = jsonDecode(payload)['id'];
+    return id;
+    //return 1;
   }
 
   String getUsername() {
-    //var payload = _getPayload();
-    //String username = jsonDecode(payload)['username'];
-    //return username;
-    return 'haroldraj';
+    var payload = _getPayload();
+    String username = jsonDecode(payload)['username'];
+    return username;
+    //return 'haroldraj';
   }
 }
 

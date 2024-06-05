@@ -42,6 +42,7 @@ class _SignInPageState extends State<SignInPage> {
           recaptchaToken = await GRecaptchaV3.execute('submit');
 
           if (recaptchaToken!.isNotEmpty) {
+            user.recaptchaToken = recaptchaToken;
             final errorMessage = await AuthService().logIn(user);
             if (errorMessage.isEmpty) {
               Future.delayed(
