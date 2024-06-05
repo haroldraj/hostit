@@ -19,6 +19,7 @@ public class SyncController {
         this.syncService = syncService;
     }
 
+    // Démarre la synchronisation en réponse à une requête POST
     @PostMapping("/start")
     public ResponseEntity<?> startSynchronization(@RequestBody SyncRequestDto syncRequestDto) {
         try {
@@ -29,7 +30,7 @@ public class SyncController {
             return ResponseEntity.status(500).body("Error starting synchronization: " + e.getMessage());
         }
     }
-
+// Vérifie l'état de la synchronisation en réponse à une requête GET
     @GetMapping("/status/{syncJobId}")
     public ResponseEntity<?> checkSynchronizationStatus(@PathVariable String syncJobId) {
         try {
@@ -42,7 +43,7 @@ public class SyncController {
         }
     }
 
-
+   // Arrête la synchronisation en réponse à une requête POST
     @PostMapping("/stop")
     public ResponseEntity<?> stopSynchronization(@RequestBody String syncJobId) {
         try {
@@ -53,7 +54,7 @@ public class SyncController {
             return ResponseEntity.status(500).body("Error stopping synchronization: " + e.getMessage());
         }
     }
-
+    // Méthode utilitaire pour obtenir l'état de la synchronisation
     public FileSyncStatusDto getSyncStatus(String syncJobId) {
         // Logic to get the current status of the sync job
         // This is just a placeholder. You would implement actual logic here.

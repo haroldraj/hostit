@@ -7,9 +7,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HealthCheckController {
 
+    // Endpoint pour effectuer une vérification de santé
     @GetMapping("/health")
     public ResponseEntity<String> healthCheck() {
-        // Normally, you would also check the health of your dependencies like databases or other services
-        return ResponseEntity.ok("Service is up and running!");
+        // Normalement, vous vérifieriez également la santé de vos dépendances telles que les bases de données ou d'autres services
+        return ResponseEntity.ok("Service is up and running!"); // Retourne une réponse indiquant que le service fonctionne correctement
     }
 }

@@ -17,6 +17,7 @@ import java.security.NoSuchAlgorithmException;
 @EnableScheduling
 public class SyncConfig {
 
+    // Injecter les valeurs des propriétés Minio depuis le fichier de configuration
     @Value("${minio.url}")
     private String minioUrl;
 
@@ -35,6 +36,7 @@ public class SyncConfig {
         this.syncService = syncService;
     }
 
+    // Configuration du client Minio pour communiquer avec le serveur Minio
     @Bean
     public MinioClient minioClient() {
         return MinioClient.builder()
@@ -43,12 +45,12 @@ public class SyncConfig {
                 .build();
     }
 
-    // Scheduled task for synchronization
+    // Tâche planifiée pour la synchronisation
     @Scheduled(cron = "${sync.cron.expression}")
     public void performScheduledSync() throws MinioException, IOException, NoSuchAlgorithmException, InvalidKeyException {
-        // Call synchronization logic from SyncService
+        // Appeler la logique de synchronisation depuis SyncService
         syncService.syncWithMinio(defaultBucketName);
     }
 
-    // Additional configurations or scheduled tasks can be added here
+    // Des configurations supplémentaires ou des tâches planifiées peuvent être ajoutées ici
 }

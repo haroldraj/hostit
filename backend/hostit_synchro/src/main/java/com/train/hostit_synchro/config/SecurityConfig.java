@@ -10,23 +10,25 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-public class    SecurityConfig {
+public class SecurityConfig {
 
+    // Configuration de la sécurité de l'application
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/health").permitAll() // Permit all requests to the health check endpoint
-                        .anyRequest().authenticated() // All other requests must be authenticated
+                        .requestMatchers("/health").permitAll() // Autoriser toutes les demandes à l'endpoint de vérification de santé
+                        .anyRequest().authenticated() // Toutes les autres demandes doivent être authentifiées
                 )
-                .httpBasic(httpBasic -> {}); // Use HTTP Basic Authentication with custom configuration
+                .httpBasic(httpBasic -> {}); // Utiliser l'authentification de base HTTP avec une configuration personnalisée
 
-        // Disable CSRF if it's a REST API or CSRF token handling is implemented in a different way
+        // Désactiver CSRF s'il s'agit d'une API REST ou si la gestion du jeton CSRF est implémentée différemment
         http.csrf(csrf -> csrf.disable());
 
         return http.build();
     }
 
+    // Configuration de l'encodeur de mot de passe pour utiliser BCrypt
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

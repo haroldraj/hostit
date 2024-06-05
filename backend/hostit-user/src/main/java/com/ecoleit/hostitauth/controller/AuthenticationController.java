@@ -6,7 +6,6 @@ import com.ecoleit.hostitauth.service.UserService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,9 +34,10 @@ public class AuthenticationController {
         this.passwordEncoder = passwordEncoder;
     }
 
+    // Endpoint pour l'authentification de l'utilisateur
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody UserDto userDto) {
-        // Attempt to authenticate the user with the provided credentials
+        // Tente d'authentifier l'utilisateur avec les informations fournies
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(
                         userDto.getUsername(),
@@ -45,41 +45,42 @@ public class AuthenticationController {
                 );
 
         try {
+            // Authentifie l'utilisateur auprès du gestionnaire d'authentification de Spring Security
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
+            // Met à jour le contexte de sécurité avec l'authentification réussie
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            // You can now return a custom response or JWT token if needed
-            // ...
 
-            // Retrieve user details
-           Optional<User> userOptional = userService.findByUsername(userDto.getUsername());
+            // Récupère les détails de l'utilisateur à partir du service UserService
+            Optional<User> userOptional = userService.findByUsername(userDto.getUsername());
             if (userOptional.isPresent()) {
                 User user = userOptional.get();
-                // Create a map to hold user details
+                // Crée une carte pour stocker les détails de l'utilisateur
                 Map<String, Object> claims = new HashMap<>();
                 claims.put("id", user.getId());
                 claims.put("username", user.getUsername());
                 claims.put("email", user.getEmail());
 
-                // Generate JWT token with user details as claims
-              String jwtToken = Jwts.builder()
+                // Génère un jeton JWT avec les détails de l'utilisateur comme revendications
+                String jwtToken = Jwts.builder()
                         .setClaims(claims)
                         .setIssuedAt(new Date())
-                        .setExpiration(new Date((new Date()).getTime() + 3600000)) // 1 hour expiration time
-                        .signWith(SignatureAlgorithm.HS256, "yourSecretKey")
+                        .setExpiration(new Date((new Date()).getTime() + 3600000)) // 1 heure de validité du jeton
+                        .signWith(SignatureAlgorithm.HS256, "yourSecretKey") // Clé secrète pour signer le jeton (devrait être sécurisée)
                         .compact();
-                // Create a map to hold the JWT token
+
+                // Crée une carte pour stocker le jeton JWT
                 Map<String, String> tokenMap = new HashMap<>();
                 tokenMap.put("token", jwtToken);
-                // Return JWT token
+                // Retourne le jeton JWT dans la réponse
                 return ResponseEntity.ok(tokenMap);
-           } else {
+            } else {
                 return ResponseEntity.status(404).body("User not found");
             }
         } catch (Exception e) {
-            // Handle authentication failure
+            // Gère l'échec d'authentification
             return ResponseEntity.status(401).body("Authentication failed: " + e.getMessage());
         }
     }
 
-    // Additional endpoints such as change password, reset password, etc.
+    // D'autres endpoints tels que changer le mot de passe, réinitialiser le mot de passe, etc. peuvent être ajoutés ici.
 }

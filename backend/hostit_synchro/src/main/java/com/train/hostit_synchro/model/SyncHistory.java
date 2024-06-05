@@ -11,30 +11,30 @@ public class SyncHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; // Identifiant unique de l'historique de synchronisation
 
     @Column(name = "sync_job_id", nullable = false)
-    private Long syncJobId;
+    private Long syncJobId; // Identifiant de la tâche de synchronisation associée
 
     @Column(nullable = false)
-    private String status;
+    private String status; // Statut de la synchronisation
 
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Date eventTime;
+    private Date eventTime; // Horodatage de l'événement de synchronisation
 
-    // Default constructor
+    // Constructeur par défaut
     public SyncHistory() {
     }
 
-    // Parametrized constructor
+    // Constructeur paramétré
     public SyncHistory(Long syncJobId, String status) {
         this.syncJobId = syncJobId;
         this.status = status;
-        this.eventTime = new Date(); // Set event time as current time
+        this.eventTime = new Date(); // Définit l'heure de l'événement comme l'heure actuelle
     }
 
-    // Getters and setters
+    // Getters et setters
     public Long getId() {
         return id;
     }
@@ -67,7 +67,7 @@ public class SyncHistory {
         this.eventTime = eventTime;
     }
 
-    // toString method for logging and debugging purposes
+    // Méthode toString pour les logs et le débogage
     @Override
     public String toString() {
         return "SyncHistory{" +
