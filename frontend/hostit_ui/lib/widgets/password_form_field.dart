@@ -32,14 +32,13 @@ class _PasswordFormFieldState extends State<PasswordFormField> {
     return Container(
       margin: const EdgeInsets.only(top: 20),
       child: TextFormField(
-        style: const TextStyle(fontSize: 17),
         controller: widget.fieldController,
         decoration: InputDecoration(
           suffix: IconButton(
             icon: Icon(
               _obscureText
-                  ? Icons.visibility //FluentSystemIcons.ic_fluent_eye_show_regular
-                  : Icons.visibility_off//FluentSystemIcons.ic_fluent_eye_hide_regular,
+                  ? Icons.visibility 
+                  : Icons.visibility_off
             ),
             onPressed: () {
               _toggle();
@@ -48,7 +47,6 @@ class _PasswordFormFieldState extends State<PasswordFormField> {
           border: const OutlineInputBorder(),
           labelText: widget.labelText,
         ),
-        cursorHeight: 17,
         validator: (value) {
           if (value == null || value.isEmpty) {
             return widget.textToFill;

@@ -3,6 +3,7 @@ class User {
   String? name;
   String? email;
   String? password;
+  String? recaptchaToken;
 
   User({
     this.email,
@@ -21,6 +22,7 @@ class User {
     return {
       'username': email!,
       'password': password!,
+      'recaptcha': recaptchaToken!
     };
   }
 
@@ -29,6 +31,7 @@ class User {
       'username': name!,
       'email': email!,
       'password': password!,
+      'recaptcha': recaptchaToken!,
     };
   }
 }
