@@ -43,12 +43,12 @@ class _HostitAppState extends State<HostitApp> {
         ),
       ],
       child: MaterialApp(
-          title: 'HOSTIT',
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData.dark().copyWith(),
-          home: const MainMenu() //
-          // _isTokenValid ? const MainMenu() : const SignInPage(),
-          ),
+        title: 'HOSTIT',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData.dark().copyWith(),
+        home: //const MainMenu() //
+            _isTokenValid ? const MainMenu() : const SignInPage(),
+      ),
     );
   }
 }
