@@ -4,16 +4,16 @@ POST http://localhost:8002/api/auth/register
 Content-Type: application/json
 
 {
-    "username": "haroldraj",
+    "username": "haroldraja",
     "password": "password",
-    "email": "haroldraj@email.com"
+    "email": "haroldraja@email.com"
 }
 
 ###
-POST http://localhost:8002/api/auth/login
+POST https://a1e152503d2492b864414204ba9d4f47.loophole.site/api/auth/login
 Content-Type: application/json
 
 {
-  "username": "haroldraj",
+  "username": "haroldraja",
   "password": "password"
 }
