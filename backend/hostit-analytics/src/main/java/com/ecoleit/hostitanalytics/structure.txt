@@ -1,0 +1,64 @@
+hostit-analytics-service/
+│
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   ├── com/
+│   │   │   │   └── hostit/
+│   │   │   │       └── analytics/
+│   │   │   │           ├── config/
+│   │   │   │           │   └── DatabaseConfig.java       # Configurations for the database
+│   │   │   │           ├── controller/
+│   │   │   │           │   ├── FileController.java      # Controls file-related operations
+│   │   │   │           │   └── UserController.java      # Controls user-related operations
+│   │   │   │           ├── service/
+│   │   │   │           │   ├── FileService.java         # Service for file-related logic
+│   │   │   │           │   └── UserService.java         # Service for user-related logic
+│   │   │   │           ├── repository/
+│   │   │   │           │   ├── FileRepository.java      # Repository for accessing file data
+│   │   │   │           │   └── UserRepository.java      # Repository for accessing user data
+│   │   │   │           ├── model/
+│   │   │   │           │   ├── FileInfo.java            # Entity model for file information
+│   │   │   │           │   └── User.java                # Entity model for user information
+│   │   │   │           ├── dto/
+│   │   │   │           │   ├── FileDTO.java             # Data transfer object for file operations
+│   │   │   │           │   └── UserDTO.java             # Data transfer object for user operations
+│   │   │   │           ├── exception/
+│   │   │   │           │   ├── FileNotFoundException.java# Custom exception for file not found
+│   │   │   │           │   └── GlobalExceptionHandler.java # Handles exceptions globally
+│   │   │   │           └── HostitAnalyticsApplication.java # Main application class
+│   │   │   │
+│   │   └── resources/
+│   │       ├── static/
+│   │       │   └── js/                                  # JavaScript files, if any
+│   │       ├── templates/
+│   │       │   └── index.html                           # Basic HTML templates, if serving web pages
+│   │       ├── application.properties                   # Main properties for the application
+│   │       └── banner.txt                               # Custom Spring Boot startup banner
+│   │
+│   └── test/
+│       ├── java/
+│       │   ├── com/
+│       │   │   └── hostit/
+│       │   │       └── analytics/
+│       │   │           ├── controller/
+│       │   │           │   ├── FileControllerTests.java # Tests for FileController
+│       │   │           │   └── UserControllerTests.java # Tests for UserController
+│       │   │           ├── service/
+│       │   │           │   ├── FileServiceTests.java    # Tests for FileService
+│       │   │           │   └── UserServiceTests.java    # Tests for UserService
+│       │   │           └── repository/
+│       │   │               ├── FileRepositoryTests.java # Tests for FileRepository
+│       │   │               └── UserRepositoryTests.java # Tests for UserRepository
+│       │   └── resources/                               # Resources for tests
+│
+├── .mvn/                                  # Maven wrapper files
+│   └── wrapper/
+│       ├── maven-wrapper.jar
+│       └── maven-wrapper.properties
+│
+├── .gitignore                             # Specifies intentionally untracked files to ignore
+├── mvnw                                   # Maven wrapper executable for Unix
+├── mvnw.cmd                               # Maven wrapper executable for Windows
+├── pom.xml                                # Maven configuration file
+└── README.md                              # Project overview and setup instructions

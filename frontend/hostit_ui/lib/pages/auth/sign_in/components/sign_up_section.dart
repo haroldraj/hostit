@@ -9,7 +9,9 @@ Widget signupSection(void Function() onTapFunction) {
       child: RichText(
         text: TextSpan(
           children: [
-            const TextSpan(text: "Don't have an account? "),
+            const TextSpan(
+                text: "Don't have an account? ",
+                style: TextStyle(color: Colors.white)),
             TextSpan(
               semanticsLabel: "test",
               text: " Sign up",

@@ -75,7 +75,7 @@ class SignUpPage extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      backgroundColor: Colors.white,
+      //backgroundColor: Colors.white,
       content: SizedBox(
         width: 500,
         height: 500,
@@ -86,12 +86,10 @@ class SignUpPage extends StatelessWidget {
             children: [
               textFormField(
                 "Name",
-                "Please enter your name",
                 nameController,
               ),
               textFormField(
                 "Email address",
-                "Please enter your email address",
                 emailController,
                 isAnEmail: true,
               ),

@@ -1,5 +1,5 @@
 import 'dart:convert';
-// ignore: avoid_web_libraries_in_flutter
+//ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 
 class UserService {
@@ -7,12 +7,14 @@ class UserService {
     var payload = _getPayload();
     int id = jsonDecode(payload)['id'];
     return id;
+    //return 1;
   }
 
   String getUsername() {
     var payload = _getPayload();
     String username = jsonDecode(payload)['username'];
     return username;
+    //return 'haroldraj';
   }
 }
 

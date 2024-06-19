@@ -16,7 +16,7 @@ public class MinioConfig {
     @Value("${minio.secretKey}")
     public String secretKey;
 
-    @Value("${minio.host.ip.address}")
+    @Value("${minio.host.address}")
     public String minioHostAddress;
 
     @Value("${minio.bucketName}")
@@ -25,9 +25,8 @@ public class MinioConfig {
     @Bean
     public MinioClient minioClient() {
         try {
-            String minioUrl = "http://" + minioHostAddress+":9000";
             MinioClient minioClient = MinioClient.builder()
-                    .endpoint(minioUrl)
+                    .endpoint(minioHostAddress)
                     .credentials(accessKey, secretKey)
                     .build();
 

@@ -23,11 +23,11 @@ class SignInPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
-    final fomrKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
 
     Future<void> onLogInPressed() async {
       try {
-        if (fomrKey.currentState!.validate()) {
+        if (formKey.currentState!.validate()) {
           debugPrint("Loging in");
           User user = User(
             email: emailController.text.trim(),
@@ -62,7 +62,7 @@ class SignInPage extends StatelessWidget {
             children: [
               Expanded(child: Container()),
               Card(
-                color: CustomColors.cardBgColor,
+                //color: CustomColors.cardBgColor,
                 elevation: 10,
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -74,11 +74,10 @@ class SignInPage extends StatelessWidget {
                       titleSection(),
                       const SizedBox(height: 100),
                       Form(
-                        key: fomrKey,
+                        key: formKey,
                         child: Column(children: [
                           textFormField(
                             "Username",
-                            "Please enter your username",
                             emailController,
                             //isAnEmail: true,
                           ),

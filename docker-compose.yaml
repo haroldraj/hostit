@@ -82,12 +82,13 @@ services:
   
   api-user:
     container_name: hostit-api-user
-    image: haroldraj/hostit-user:1.1.0
+    build:
+      context: ./backend/hostit-user/
+      dockerfile: Dockerfile
     environment:
       SPRING_DATASOURCE_URL: jdbc:mariadb://db-user:3306/hostit_user
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
-      MINIO_HOST_IP_ADDRESS: 192.168.129.101
     depends_on:
       - db-user
     ports:
@@ -95,7 +96,9 @@ services:
   
   api-storage:
     container_name: hostit-api-storage
-    image: haroldraj/hostit-storage:1.1.0
+    build:
+      context: ./backend/hostit-storage/
+      dockerfile: Dockerfile
     environment:
       SPRING_DATASOURCE_URL: jdbc:mariadb://db-storage:3306/hostit_storage
       SPRING_DATASOURCE_USERNAME: root
@@ -106,6 +109,17 @@ services:
       - nginx
       - api-user
       - db-storage
+  
+  web:
+    container_name: hostit-ui
+    build:
+      context: ./frontend/hostit_ui/
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - api-user
+      - api-storage
 
 volumes:
   data1-1:

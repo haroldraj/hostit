@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/storage")
+@RequestMapping("/api/storage/file")
 public class FileController {
     private final FileService fileService;
     private final CsvService csvService;  // Add a reference to the CSV service
@@ -31,9 +31,10 @@ public class FileController {
     @PostMapping("/upload")
     public ResponseEntity uploadFile(
             @RequestParam("file") MultipartFile file,
-            @RequestParam("userId") Long userId) {
+            @RequestParam("userId") Long userId,
+            @RequestParam("filepath") String filepath) {
         try {
-            return ResponseEntity.ok(fileService.uploadFile(file, userId));
+            return ResponseEntity.ok(fileService.uploadFile(file, userId, filepath));
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", e.getMessage());
@@ -64,7 +65,22 @@ public class FileController {
             @RequestParam("filePath") String filePath,
             @RequestParam("userId") Long userId){
         try {
-            return ResponseEntity.ok(fileService.getFileDownloadUri(userId, filePath));
+            //return ResponseEntity.ok(fileService.getFileDownloadUri(userId, filePath));
+           return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/octet-stream"))
+                    .body(fileService.downloadFile(userId, filePath));
+        } catch (Exception e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @GetMapping("/uridownload")
+    public ResponseEntity getUridownloadFile(
+            @RequestParam("filePath") String filePath,
+            @RequestParam("userId") Long userId){
+        try {
+             return ResponseEntity.ok(fileService.getFileDownloadUri(userId, filePath));
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", e.getMessage());
@@ -105,4 +121,6 @@ public class FileController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+
 }

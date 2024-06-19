@@ -38,6 +38,7 @@ class AuthService {
         Uri.parse(urlBackend),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
+          "ngrok-skip-browser-warning": "set7up",
         },
         body: jsonEncode(jsonUser),
       );
@@ -66,6 +67,7 @@ class AuthService {
         Uri.parse(urlBackend),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
+          "ngrok-skip-browser-warning": "set7up",
         },
         body: jsonEncode(user.toJsonSignup()),
       );
