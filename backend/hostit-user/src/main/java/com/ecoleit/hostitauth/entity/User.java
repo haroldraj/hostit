@@ -22,27 +22,51 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    // For roles, if you have them implemented
- /*   @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private Set<Role> roles = new HashSet<>();*/
+    @Column(nullable = true)
+    private String twoFactorSecret;
 
-    // Default constructor
-    public User() {
+    @Column()
+    private boolean twoFactorEnabled = false;
+
+    @Column()
+    private boolean emailVerified = false;
+
+    public boolean isEmailVerified() {
+        return emailVerified;
     }
 
-    // Constructor with fields
-    public User(String username, String password, String email) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
     }
 
-    // Getters and setters
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User user)) return false;
+        return twoFactorEnabled == user.twoFactorEnabled && emailVerified == user.emailVerified && Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(email, user.email) && Objects.equals(twoFactorSecret, user.twoFactorSecret);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, password, email, twoFactorSecret, twoFactorEnabled, emailVerified);
+    }
+
+    public String getTwoFactorSecret() {
+        return twoFactorSecret;
+    }
+
+    public void setTwoFactorSecret(String twoFactorSecret) {
+        this.twoFactorSecret = twoFactorSecret;
+    }
+
+    public boolean isTwoFactorEnabled() {
+        return twoFactorEnabled;
+    }
+
+    public void setTwoFactorEnabled(boolean twoFactorEnabled) {
+        this.twoFactorEnabled = twoFactorEnabled;
+    }
+
 
     public Long getId() {
         return id;
@@ -76,23 +100,5 @@ public class User {
         this.email = email;
     }
 
-    /*public Set<Role> getRoles() {
-        return roles;
-    }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }*/
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User user)) return false;
-        return Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(email, user.email) ;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, username, password, email);
-    }
 }

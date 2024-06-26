@@ -33,6 +33,10 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findUserByEmail(email);
+    }
+
     // Méthode pour vérifier si un e-mail existe déjà dans la base de données
     public boolean emailExist(String email) {
         return userRepository.findUserByEmail(email).isPresent();

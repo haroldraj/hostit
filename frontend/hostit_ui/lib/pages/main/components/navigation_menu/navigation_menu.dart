@@ -3,6 +3,7 @@ import 'package:hostit_ui/constants/custom_colors.dart';
 import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/controllers/menu_app_controller.dart';
 import 'package:hostit_ui/pages/main/components/navigation_menu/menu_routes.dart';
+import 'package:hostit_ui/pages/profile/edit_profile_page.dart';
 import 'package:hostit_ui/providers/file_data_model_provider.dart';
 import 'package:hostit_ui/providers/folder_path_provider.dart';
 import 'package:hostit_ui/responsive.dart';
@@ -32,7 +33,8 @@ class NavigationMenu extends StatelessWidget {
         if (formKey.currentState!.validate()) {
           debugPrint("Creating new folder");
           String folderName = "$folderPath/${folderController.text.trim()}";
-          bool isFolderCrated = await folderService.createFolder(folderName, context);
+          bool isFolderCrated =
+              await folderService.createFolder(folderName, context);
           if (isFolderCrated) {
             var fileDataModelProvider =
                 // ignore: use_build_context_synchronously
@@ -172,14 +174,26 @@ class NavigationMenu extends StatelessWidget {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(Icons.person),
+                                  Tooltip(
+                                    message: "Profile details",
+                                    child: IconButton(
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (context) =>
+                                              const EditProfilePage(),
+                                        );
+                                      },
+                                      icon: const Icon(Icons.person),
+                                    ),
                                   ),
                                   Text(
                                     UserService().getUsername(),
                                     style: const TextStyle(fontSize: 20),
                                   ),
+                                  Spacing.horizontal,
+                                  Spacing.horizontal,
                                   Spacing.horizontal
                                 ],
                               ),

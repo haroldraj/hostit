@@ -1,6 +1,5 @@
 // ignore_for_file: file_names, avoid_web_libraries_in_flutter
 import 'dart:convert';
-
 import 'package:hostit_ui/constants/url_config.dart';
 import 'package:hostit_ui/models/user_model.dart';
 import 'package:http/http.dart' as http;
@@ -12,8 +11,12 @@ class AuthService {
   final Logger _logger = Logger();
   final String _baseUrl = UrlConfig.baseAuthUrl;
 
+  String? getUserToken() {
+    return html.window.localStorage['authToken'];
+  }
+
   bool isTokenValid() {
-    final String? token = html.window.localStorage['authToken'];
+    final String? token = getUserToken();
     if (token == null) {
       return false;
     }
@@ -29,7 +32,7 @@ class AuthService {
     return DateTime.now().millisecondsSinceEpoch < tokenExpiration;
   }
 
-  Future<String> logIn(User user) async {
+  Future<String?> logIn(User user) async {
     try {
       Map<String, String> jsonUser = user.toJsonLogin();
       final urlBackend = '$_baseUrl/login';
@@ -44,10 +47,15 @@ class AuthService {
       );
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
-        final authToken = jsonResponse['token'];
-        html.window.localStorage['authToken'] = authToken;
+        String? isTwoFactorRequired = jsonResponse['2fa_required'] ?? "";
+        if (isTwoFactorRequired == 'true') {
+          return '2fa is required';
+        }
+        String? authToken = jsonResponse['token'] ?? "";
+        html.window.localStorage['authToken'] = authToken!;
+
         _logger.i('response:200 user logged in, body: ${response.body}');
-        return '';
+        return null;
       } else {
         const errorMessage = 'Failed to sign in. Please check you credentials';
         _logger.e('Failed to sign in. Status code: ${response.statusCode}');

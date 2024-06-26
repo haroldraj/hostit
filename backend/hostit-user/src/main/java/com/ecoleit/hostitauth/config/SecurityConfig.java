@@ -32,7 +32,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
+                        .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/*").permitAll()
                         .anyRequest().authenticated()
                 )
                 // We don't need to use formLogin() for REST APIs, remove this if you're handling login in a REST controller

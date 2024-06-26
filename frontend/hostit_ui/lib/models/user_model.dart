@@ -3,6 +3,8 @@ class User {
   String? name;
   String? email;
   String? password;
+  bool? emailVerified;
+  bool? twoFactorEnabled;
 
   User({
     this.email,

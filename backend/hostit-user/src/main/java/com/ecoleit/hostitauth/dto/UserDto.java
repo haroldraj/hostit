@@ -20,6 +20,14 @@ public class UserDto {
     @NotBlank(message = "Email is required")
     private String email;
 
+    public @NotBlank(message = "Email is required") String getEmail() {
+        return email;
+    }
+
+    public void setEmail(@NotBlank(message = "Email is required") String email) {
+        this.email = email;
+    }
+
     // Getters and setters
 
     // Your getters and setters here

@@ -2,6 +2,8 @@ import 'dart:convert';
 //ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 
+import 'package:hostit_ui/models/user_model.dart';
+
 class UserService {
   int getUserId() {
     var payload = _getPayload();
@@ -15,6 +17,25 @@ class UserService {
     String username = jsonDecode(payload)['username'];
     return username;
     //return 'haroldraj';
+  }
+
+  String getEmail() {
+    var payload = _getPayload();
+    String email = jsonDecode(payload)['email'];
+    return email;
+    //return 'haroldraj';
+  }
+
+  User getUserDetails() {
+    var payload = _getPayload();
+    User user = User();
+    user.email = getEmail();
+    user.id = getUserId();
+    user.name = getUsername();
+    user.twoFactorEnabled = jsonDecode(payload)['twoFactorEnabled'];
+    user.emailVerified = jsonDecode(payload)['emailVerified'];
+
+    return user;
   }
 }
 

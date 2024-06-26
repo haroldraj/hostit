@@ -35,4 +35,9 @@ class ShowDialog {
     alertDialog(context,
         alertTitle: "Error", message: errorMessage, color: Colors.red);
   }
+
+  static void info(BuildContext context, String infoMessage) {
+    alertDialog(context,
+        alertTitle: "Info", message: infoMessage, color: Colors.blue);
+  }
 }
