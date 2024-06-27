@@ -5,6 +5,7 @@ class User {
   String? password;
   bool? emailVerified;
   bool? twoFactorEnabled;
+  String? recaptchaToken;
 
   User({
     this.email,
@@ -23,6 +24,7 @@ class User {
     return {
       'username': email!,
       'password': password!,
+      'recaptcha': recaptchaToken!
     };
   }
 
@@ -31,6 +33,7 @@ class User {
       'username': name!,
       'email': email!,
       'password': password!,
+      'recaptcha': recaptchaToken!,
     };
   }
 }

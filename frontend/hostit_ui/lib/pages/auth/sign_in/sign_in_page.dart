@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:g_recaptcha_v3/g_recaptcha_v3.dart';
 import 'package:hostit_ui/constants/custom_colors.dart';
 import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/constants/url_config.dart';
@@ -21,9 +22,14 @@ import 'package:hostit_ui/widgets/password_form_field.dart';
 import 'package:http/http.dart' as http;
 import 'dart:html' as html;
 
-class SignInPage extends StatelessWidget {
+class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
 
+  @override
+  State<SignInPage> createState() => _SignInPageState();
+}
+
+class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     final TextEditingController emailController = TextEditingController();
@@ -31,6 +37,7 @@ class SignInPage extends StatelessWidget {
     final formKey = GlobalKey<FormState>();
     final TextEditingController codeEditingController = TextEditingController();
     final faFormKey = GlobalKey<FormState>();
+    String? recaptchaToken;
 
     Future<void> onVerifyCodePressed() async {
       try {
@@ -69,60 +76,66 @@ class SignInPage extends StatelessWidget {
             email: emailController.text.trim(),
             password: passwordController.text.trim(),
           );
-          final errorMessage = await AuthService().logIn(user);
-          if (errorMessage == null) {
-            Future.delayed(
-              const Duration(seconds: 0),
-              () {
-                goTo(context, const MainMenu(), isReplaced: true);
-              },
-            );
-          } else if (errorMessage == '2fa is required') {
-            showDialog(
-              barrierDismissible: false,
-              context: context,
-              builder: (context) => AlertDialog(
-                title: const Text("2FA Code"),
-                content: SizedBox(
-                  width: 500,
-                  child: Form(
-                    key: faFormKey,
-                    child: TextFormField(
-                      controller: codeEditingController,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: "XXXXXX",
-                        labelText: "Enter the code from the authenticator app",
+          recaptchaToken = await GRecaptchaV3.execute('submit');
+
+          if (recaptchaToken!.isNotEmpty) {
+            user.recaptchaToken = recaptchaToken;
+            final errorMessage = await AuthService().logIn(user);
+            if (errorMessage == null) {
+              Future.delayed(
+                const Duration(seconds: 0),
+                () {
+                  goTo(context, const MainMenu(), isReplaced: true);
+                },
+              );
+            } else if (errorMessage == '2fa is required') {
+              showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text("2FA Code"),
+                  content: SizedBox(
+                    width: 500,
+                    child: Form(
+                      key: faFormKey,
+                      child: TextFormField(
+                        controller: codeEditingController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: "XXXXXX",
+                          labelText:
+                              "Enter the code from the authenticator app",
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Please enter the code from the authenticator app";
+                          }
+                          return null;
+                        },
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Please enter the code from the authenticator app";
-                        }
-                        return null;
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        onVerifyCodePressed();
                       },
+                      child: const Text(
+                        "Verify",
+                        style: TextStyle(fontSize: 20),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      onVerifyCodePressed();
-                    },
-                    child: const Text(
-                      "Verify",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          } else {
-            Future.delayed(
-              const Duration(seconds: 0),
-              () {
-                ShowDialog.error(context, errorMessage);
-              },
-            );
+              );
+            } else {
+              Future.delayed(
+                const Duration(seconds: 0),
+                () {
+                  ShowDialog.error(context, errorMessage);
+                },
+              );
+            }
           }
         }
       } catch (error) {
@@ -133,73 +146,77 @@ class SignInPage extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
           child: Row(
             children: [
               Expanded(child: Container()),
               Card(
-                //color: CustomColors.cardBgColor,
                 elevation: 10,
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 50),
                   height: 900,
                   width: 700,
-                  child: Column(
-                    children: [
-                      logoSection,
-                      titleSection(),
-                      const SizedBox(height: 100),
-                      Form(
-                        key: formKey,
-                        child: Column(children: [
-                          textFormField(
-                            "Username",
-                            emailController,
-                            //isAnEmail: true,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        logoSection,
+                        titleSection(),
+                        const SizedBox(height: 100),
+                        Form(
+                          key: formKey,
+                          child: Column(
+                            children: [
+                              textFormField(
+                                "Email",
+                                emailController,
+                                //isAnEmail: true,
+                              ),
+                              PasswordFormField(
+                                labelText: "Password",
+                                textToFill: "Please enter your password",
+                                fieldController: passwordController,
+                              ),
+                            ],
                           ),
-                          PasswordFormField(
-                            labelText: "Password",
-                            textToFill: "Please enter your password",
-                            fieldController: passwordController,
-                          ),
-                        ]),
-                      ),
-                      Spacing.vertical,
-                      Spacing.vertical,
-                      OutlinedButton(
-                        onPressed: () {
-                          onLogInPressed();
-                        },
-                        child: const SizedBox(
-                          width: double.maxFinite,
-                          height: 50,
-                          child: Center(
-                            child: Text(
-                              "Sign In ",
-                              style: TextStyle(
-                                  color: CustomColors.primaryColor,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold),
+                        ),
+                        Spacing.vertical,
+                        Spacing.vertical,
+                        OutlinedButton(
+                          onPressed: () {
+                            onLogInPressed();
+                          },
+                          child: const SizedBox(
+                            width: double.maxFinite,
+                            height: 50,
+                            child: Center(
+                              child: Text(
+                                "Sign In ",
+                                style: TextStyle(
+                                    color: CustomColors.primaryColor,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Spacing.vertical,
-                      signupSection(() {
-                        showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (context) => const SignUpPage(),
-                        );
-                      }),
-                      const SizedBox(height: 10),
-                      divider,
-                      const SizedBox(height: 10),
-                      //const GoogleButton(),
-                      //const MicrosoftButton(),
-                      const SizedBox(height: 25),
-                      privacySection,
-                      const SizedBox(height: 15),
-                    ],
+                        Spacing.vertical,
+                        signupSection(() {
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) => const SignUpPage(),
+                          );
+                        }),
+                        const SizedBox(height: 10),
+                        divider,
+                        const SizedBox(height: 10),
+                        //const GoogleButton(),
+                        //const MicrosoftButton(),
+                        const SizedBox(height: 25),
+                        privacySection,
+                        const SizedBox(height: 15),
+                      ],
+                    ),
                   ),
                 ),
               ),

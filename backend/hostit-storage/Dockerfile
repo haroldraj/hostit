@@ -1,6 +1,3 @@
-#FROM amazoncorretto:21-alpine-jdk
-#COPY target/hostit-user-0.0.1-SNAPSHOT.jar hostit-user.jar
-#ENTRYPOINT ["java", "-jar", "hostit-user.jar"]
 
 # Use an official Maven image as the base image
 FROM maven:3.9.7-amazoncorretto-21  AS build

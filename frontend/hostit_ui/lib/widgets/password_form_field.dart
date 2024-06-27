@@ -34,12 +34,12 @@ class _PasswordFormFieldState extends State<PasswordFormField> {
         controller: widget.fieldController,
         decoration: InputDecoration(
           suffix: IconButton(
-            icon: Icon(_obscureText
-                    ? Icons
-                        .visibility //FluentSystemIcons.ic_fluent_eye_show_regular
-                    : Icons
-                        .visibility_off //FluentSystemIcons.ic_fluent_eye_hide_regular,
-                ),
+
+            icon: Icon(
+              _obscureText
+                  ? Icons.visibility 
+                  : Icons.visibility_off
+            ),
             onPressed: () {
               _toggle();
             },

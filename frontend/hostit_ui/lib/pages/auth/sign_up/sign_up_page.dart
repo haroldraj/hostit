@@ -1,4 +1,7 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:flutter/material.dart';
+import 'package:g_recaptcha_v3/g_recaptcha_v3.dart';
 import 'package:hostit_ui/constants/custom_colors.dart';
 import 'package:hostit_ui/constants/helpers.dart';
 import 'package:hostit_ui/models/user_model.dart';
@@ -18,8 +21,9 @@ class SignUpPage extends StatelessWidget {
     final TextEditingController passwordConfirmationController =
         TextEditingController();
     final formKey = GlobalKey<FormState>();
+    String? recaptchaToken;
 
-    void onSignupPressed() async {
+    Future<void> onSignupPressed() async {
       try {
         if (formKey.currentState!.validate()) {
           if (passwordConfirmationController.text.trim() !=
@@ -32,6 +36,7 @@ class SignUpPage extends StatelessWidget {
               },
             );
           } else {
+            recaptchaToken = await GRecaptchaV3.execute('submit');
             debugPrint("Signing Up");
             User user = User(
               email: emailController.text.trim(),
