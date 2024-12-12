@@ -32,12 +32,9 @@ This project aims to create a highly scalable and available cloud storage platfo
 ## Microservice architectures
 Each service have his own database
 
-![Signup](screenshoots/signup.png)
-![Login](screenshoots/login.png)
-![LoginError](screenshoots/login_error.png)
 ![Home](screenshoots/home.png)
-![FileSearch](screenshoots/file_search.png)
-![Logout](screenshoots/logout.png)
+![Folders](screenshoots/folders.png)
+![Mobile](screenshoots/mobile.png)
 
 
 
