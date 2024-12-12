@@ -34,7 +34,7 @@ Each service have his own database
 
 ![Home](screenshoots/home.png)
 ![Folders](screenshoots/folders.png)
-![Mobile](screenshoots/mobile.png)
+![Mobile](screenshoots/mobile.jpg)
 
 
 
